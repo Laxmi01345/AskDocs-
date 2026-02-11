@@ -1,0 +1,11 @@
+fastapi
+uvicorn
+python-dotenv
+sentence-transformers == 5.2.2
+numpy == 1.24.3
+cerebras-cloud-sdk
+python-multipart
+pypdf
+python-docx
+psycopg[binary]
+psycopg-pool
