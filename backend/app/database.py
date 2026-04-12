@@ -6,11 +6,18 @@ from dotenv import load_dotenv
 
 load_dotenv()
 
-DB_URL = os.getenv("DATABASE_URL")
+
+def _get_db_url() -> str:
+    db_url = os.getenv("DATABASE_URL")
+    if not db_url:
+        raise RuntimeError(
+            "DATABASE_URL is not set. Create backend/.env with DATABASE_URL=postgresql://USER:PASSWORD@HOST:PORT/DBNAME"
+        )
+    return db_url
 
 
 def init_db():
-    with psycopg.connect(DB_URL) as conn:
+    with psycopg.connect(_get_db_url()) as conn:
         with conn.cursor() as cur:
             cur.execute("""
                 CREATE TABLE IF NOT EXISTS documents (
@@ -32,7 +39,7 @@ def init_db():
 
 
 def store_document(doc_id: str, filename: str, chunks: list[str], embeddings: list):
-    with psycopg.connect(DB_URL) as conn:
+    with psycopg.connect(_get_db_url()) as conn:
         with conn.cursor() as cur:
             # Insert document
             cur.execute(
@@ -50,7 +57,7 @@ def store_document(doc_id: str, filename: str, chunks: list[str], embeddings: li
 
 
 def retrieve_chunks(doc_id: str, question_emb: list, top_k: int = 3):
-    with psycopg.connect(DB_URL) as conn:
+    with psycopg.connect(_get_db_url()) as conn:
         with conn.cursor() as cur:
             cur.execute(
                 "SELECT content, embedding FROM chunks WHERE doc_id = %s",
