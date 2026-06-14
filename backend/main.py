@@ -1,22 +1,18 @@
 import os
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
-from app.api import router
-from app.database import init_db, load_chunks
-from app.bm25_store import build_bm25_retriever
 
-app = FastAPI(title="Doc Q&A with PostgreSQL")
+app = FastAPI(title="Doc Q&A with RAG")
 
 allowed_origins = [
     origin.strip()
     for origin in os.getenv(
         "FRONTEND_URL",
-        "http://localhost:5173,http://127.0.0.1:5173",
+        "*",
     ).split(",")
     if origin.strip()
 ]
 
-# Enable CORS
 app.add_middleware(
     CORSMiddleware,
     allow_origins=allowed_origins,
@@ -25,7 +21,24 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
+
+@app.on_event("startup")
+def startup():
+    from app.database import init_db
+    init_db()
+    # Lazy BM25 rebuild - only if chunks exist
+    try:
+        _rebuild_bm25_indices()
+    except Exception:
+        pass
+    # Load router after startup so imports don't block port binding
+    from app.api import router
+    app.include_router(router)
+
+
 def _rebuild_bm25_indices():
+    from app.database import load_chunks
+    from app.bm25_store import build_bm25_retriever
     chunks_dir = os.getenv("CHUNKS_DIR", "./chunks_store")
     if not os.path.exists(chunks_dir):
         return
@@ -35,11 +48,3 @@ def _rebuild_bm25_indices():
             chunks = load_chunks(doc_id)
             if chunks:
                 build_bm25_retriever(doc_id, chunks)
-
-
-@app.on_event("startup")
-def startup():
-    init_db()
-    _rebuild_bm25_indices()
-
-app.include_router(router)

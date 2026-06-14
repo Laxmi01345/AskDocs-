@@ -1,14 +1,8 @@
+import os
+import uuid
 from fastapi import APIRouter, UploadFile, File, HTTPException
 from pydantic import BaseModel
 from typing import Optional
-import uuid
-from app.chunking import chunk_text
-from app.parsing import load_document
-from app.database import store_document
-from app.utils.logger import log_rag_interaction
-from app.retrieval import answer_with_rag
-from app.session import session_manager
-from app.context_builder import should_summarize, build_summarization_prompt
 
 router = APIRouter()
 
@@ -43,6 +37,10 @@ def list_documents():
 
 @router.post("/upload")
 async def upload_file(file: UploadFile = File(...)):
+    from app.chunking import chunk_text
+    from app.parsing import load_document
+    from app.database import store_document
+
     data = await file.read()
     ext = (file.filename or "").lower().split(".")[-1]
 
@@ -50,9 +48,7 @@ async def upload_file(file: UploadFile = File(...)):
         raise HTTPException(status_code=400, detail="Unsupported file type")
 
     text = load_document(data, file.filename or "document")
-
     doc_id = str(uuid.uuid4())
-
     chunks = chunk_text(text)
     store_document(doc_id, file.filename or "document", chunks)
 
@@ -62,6 +58,8 @@ async def upload_file(file: UploadFile = File(...)):
 @router.post("/ask")
 def ask(req: AskRequest):
     from app.retrieval import answer_with_rag_with_history
+    from app.session import session_manager
+    from app.context_builder import should_summarize, build_summarization_prompt
 
     # 1. Get or create session
     if req.session_id:
