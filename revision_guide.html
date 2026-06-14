@@ -1,0 +1,489 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AskDocs - Project Revision Guide</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background: #0f0f23; color: #e0e0e0; line-height: 1.7; }
+        .container { max-width: 1100px; margin: 0 auto; padding: 20px; }
+        header { background: linear-gradient(135deg, #1a1a3e, #2d1b69); padding: 60px 40px; text-align: center; border-bottom: 3px solid #7c3aed; }
+        header h1 { font-size: 3em; color: #a78bfa; margin-bottom: 10px; }
+        header p { font-size: 1.2em; color: #94a3b8; }
+        .badge { display: inline-block; background: #7c3aed; color: white; padding: 4px 12px; border-radius: 20px; font-size: 0.8em; margin: 5px; }
+        nav { background: #1a1a2e; padding: 20px; position: sticky; top: 0; z-index: 100; border-bottom: 1px solid #333; }
+        nav ul { list-style: none; display: flex; flex-wrap: wrap; gap: 10px; justify-content: center; }
+        nav a { color: #a78bfa; text-decoration: none; padding: 8px 16px; border-radius: 8px; transition: all 0.3s; }
+        nav a:hover { background: #7c3aed; color: white; }
+        section { background: #1a1a2e; margin: 30px 0; padding: 40px; border-radius: 16px; border: 1px solid #333; }
+        h2 { color: #a78bfa; font-size: 1.8em; margin-bottom: 20px; border-bottom: 2px solid #7c3aed; padding-bottom: 10px; }
+        h3 { color: #c4b5fd; font-size: 1.3em; margin: 20px 0 10px; }
+        h4 { color: #8b5cf6; margin: 15px 0 8px; }
+        table { width: 100%; border-collapse: collapse; margin: 15px 0; }
+        th { background: #7c3aed; color: white; padding: 12px; text-align: left; }
+        td { padding: 12px; border-bottom: 1px solid #333; }
+        tr:hover { background: #2d2d4e; }
+        .code { background: #0d1117; padding: 20px; border-radius: 8px; font-family: 'Fira Code', monospace; overflow-x: auto; border-left: 4px solid #7c3aed; margin: 15px 0; font-size: 0.9em; }
+        .highlight { color: #a78bfa; font-weight: bold; }
+        .tag { display: inline-block; background: #374151; color: #e5e7eb; padding: 2px 8px; border-radius: 4px; font-size: 0.85em; margin: 2px; }
+        .flow-diagram { background: #0d1117; padding: 30px; border-radius: 8px; text-align: center; font-family: monospace; margin: 20px 0; line-height: 2; }
+        .flow-box { display: inline-block; background: #7c3aed; color: white; padding: 8px 16px; border-radius: 8px; margin: 5px; }
+        .flow-arrow { color: #a78bfa; font-size: 1.5em; }
+        .qa { background: #1e1e3a; padding: 20px; border-radius: 8px; margin: 15px 0; border-left: 4px solid #7c3aed; }
+        .qa strong { color: #a78bfa; }
+        .tip { background: #1a2e1a; padding: 15px; border-radius: 8px; border-left: 4px solid #22c55e; margin: 15px 0; }
+        .warning { background: #2e1a1a; padding: 15px; border-radius: 8px; border-left: 4px solid #ef4444; margin: 15px 0; }
+        .grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 20px; }
+        .card { background: #1e1e3a; padding: 25px; border-radius: 12px; border: 1px solid #333; }
+        .card h4 { color: #a78bfa; margin-bottom: 10px; }
+        ul { margin-left: 20px; }
+        li { margin: 5px 0; }
+        footer { text-align: center; padding: 40px; color: #64748b; border-top: 1px solid #333; margin-top: 40px; }
+    </style>
+</head>
+<body>
+
+<header>
+    <h1>AskDocs</h1>
+    <p>RAG-based Document Q&A System - Complete Revision Guide</p>
+    <div>
+        <span class="badge">FastAPI</span>
+        <span class="badge">ChromaDB</span>
+        <span class="badge">Cerebras AI</span>
+        <span class="badge">React</span>
+        <span class="badge">Hybrid Search</span>
+        <span class="badge">RAG</span>
+    </div>
+</header>
+
+<nav>
+    <ul>
+        <li><a href="#overview">Overview</a></li>
+        <li><a href="#architecture">Architecture</a></li>
+        <li><a href="#techstack">Tech Stack</a></li>
+        <li><a href="#features">Features</a></li>
+        <li><a href="#flow">Code Flow</a></li>
+        <li><a href="#concepts">Key Concepts</a></li>
+        <li><a href="#validation">Validation</a></li>
+        <li><a href="#files">File Structure</a></li>
+        <li><a href="#interview">Interview Q&A</a></li>
+    </ul>
+</nav>
+
+<div class="container">
+
+    <!-- OVERVIEW -->
+    <section id="overview">
+        <h2>1. Project Overview</h2>
+        <p><strong>AskDocs</strong> is a Retrieval-Augmented Generation (RAG) system that lets users upload documents and ask questions about them. It combines keyword search (BM25) with semantic search (vector embeddings), reranks results with a cross-encoder, and generates grounded answers using Cerebras AI.</p>
+        <br>
+        <h3>Problem It Solves</h3>
+        <ul>
+            <li>Large documents are hard to search manually</li>
+            <li>Keyword search misses conceptual queries</li>
+            <li>Semantic search misses exact terms (names, dates, codes)</li>
+            <li>LLMs hallucinate without grounded context</li>
+        </ul>
+        <br>
+        <h3>Our Solution</h3>
+        <ul>
+            <li><strong>Hybrid Retrieval</strong> - BM25 + Vector search via RRF fusion</li>
+            <li><strong>Reranking</strong> - Cross-encoder re-scores for precision</li>
+            <li><strong>Conversational Memory</strong> - Multi-turn chat with session tracking</li>
+            <li><strong>Grounded Generation</strong> - LLM answers ONLY from retrieved context</li>
+        </ul>
+    </section>
+
+    <!-- ARCHITECTURE -->
+    <section id="architecture">
+        <h2>2. Architecture</h2>
+        <h3>High-Level Flow</h3>
+        <div class="flow-diagram">
+            <span class="flow-box">Upload</span>
+            <span class="flow-arrow"> &rarr; </span>
+            <span class="flow-box">Chunk</span>
+            <span class="flow-arrow"> &rarr; </span>
+            <span class="flow-box">Embed</span>
+            <span class="flow-arrow"> &rarr; </span>
+            <span class="flow-box">Store</span>
+            <br><br>
+            <span class="flow-box">Question</span>
+            <span class="flow-arrow"> &rarr; </span>
+            <span class="flow-box">BM25 + Vector</span>
+            <span class="flow-arrow"> &rarr; </span>
+            <span class="flow-box">RRF Fusion</span>
+            <span class="flow-arrow"> &rarr; </span>
+            <span class="flow-box">Rerank</span>
+            <span class="flow-arrow"> &rarr; </span>
+            <span class="flow-box">LLM</span>
+            <span class="flow-arrow"> &rarr; </span>
+            <span class="flow-box">Answer</span>
+        </div>
+
+        <h3>Retrieval Pipeline (Detailed)</h3>
+        <div class="flow-diagram">
+            User Query<br><br>
+            &darr;<br><br>
+            <span class="flow-box">BM25 (40%)</span> &nbsp;&nbsp; <span class="flow-box">Vector (60%)</span><br><br>
+            &darr; &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &darr;<br><br>
+            <span style="color:#a78bfa;">Reciprocal Rank Fusion (RRF)</span><br><br>
+            &darr;<br><br>
+            <span class="flow-box">Cross-Encoder Reranker</span><br><br>
+            &darr;<br><br>
+            Top-K Chunks &rarr; LLM &rarr; Answer
+        </div>
+    </section>
+
+    <!-- TECH STACK -->
+    <section id="techstack">
+        <h2>3. Tech Stack</h2>
+        <table>
+            <tr><th>Layer</th><th>Technology</th><th>Why This Choice</th></tr>
+            <tr><td>Backend Framework</td><td>FastAPI</td><td>Async, fast, auto-docs, Pydantic validation</td></tr>
+            <tr><td>Vector Database</td><td>ChromaDB</td><td>Local, lightweight, LangChain integration</td></tr>
+            <tr><td>Embeddings</td><td>sentence-transformers/all-MiniLM-L6-v2</td><td>Fast, 80MB, good accuracy</td></tr>
+            <tr><td>Keyword Search</td><td>rank_bm25</td><td>Fast BM25 implementation</td></tr>
+            <tr><td>Reranker</td><td>cross-encoder/ms-marco-MiniLM-L6-v2</td><td>High accuracy, lightweight</td></tr>
+            <tr><td>LLM</td><td>Cerebras AI (gpt-oss-120b)</td><td>Fast inference, good quality</td></tr>
+            <tr><td>Document Parsing</td><td>LangChain loaders (PyPDF, Docx2txt, TextLoader)</td><td>Multi-format support</td></tr>
+            <tr><td>Chunking</td><td>RecursiveCharacterTextSplitter</td><td>Respects document structure</td></tr>
+            <tr><td>Frontend</td><td>React + Vite + Tailwind CSS</td><td>Modern, fast dev experience</td></tr>
+            <tr><td>Markdown Rendering</td><td>react-markdown</td><td>Renders LLM markdown output</td></tr>
+        </table>
+    </section>
+
+    <!-- FEATURES -->
+    <section id="features">
+        <h2>4. Key Features</h2>
+
+        <h3>4.1 Hybrid Retrieval</h3>
+        <div class="card">
+            <h4>What it does</h4>
+            <p>Combines BM25 (keyword matching) with Vector search (semantic matching) using Reciprocal Rank Fusion.</p>
+            <br>
+            <h4>Why it matters</h4>
+            <ul>
+                <li><strong>BM25</strong> catches exact terms: names, dates, acronyms, codes</li>
+                <li><strong>Vector search</strong> catches concepts: paraphrases, synonyms</li>
+                <li><strong>RRF fusion</strong> merges both ranked lists into one optimal result</li>
+            </ul>
+            <br>
+            <h4>Weights</h4>
+            <p>BM25: 40% | Vector: 60% (lean toward semantic for general queries)</p>
+        </div>
+        <br>
+
+        <h3>4.2 Cross-Encoder Reranking</h3>
+        <div class="card">
+            <h4>What it does</h4>
+            <p>After hybrid retrieval returns 9-12 candidates, a cross-encoder reads each (query, chunk) pair together and re-scores them.</p>
+            <br>
+            <h4>Why it matters</h4>
+            <ul>
+                <li>Initial ranking scores query and chunk independently</li>
+                <li>Cross-encoder reads them together for true relevance</li>
+                <li>Catches false positives and boosts hidden gems</li>
+            </ul>
+        </div>
+        <br>
+
+        <h3>4.3 Conversational Memory</h3>
+        <div class="card">
+            <h4>What it does</h4>
+            <p>Tracks chat history per session so follow-up questions work naturally.</p>
+            <br>
+            <h4>How it works</h4>
+            <ul>
+                <li><strong>SessionManager</strong> - Thread-safe dict with TTL (1hr) and LRU eviction (1000 max)</li>
+                <li><strong>Context Builder</strong> - Assembles prompt: system + context + summary + recent turns + question</li>
+                <li><strong>Summarization</strong> - When >3000 tokens, LLM summarizes older turns</li>
+                <li><strong>Sliding Window</strong> - Keeps last 5 turns verbatim</li>
+            </ul>
+        </div>
+        <br>
+
+        <h3>4.4 Document Parsing</h3>
+        <div class="card">
+            <h4>Supported Formats</h4>
+            <p><span class="tag">.txt</span> <span class="tag">.pdf</span> <span class="tag">.docx</span></p>
+            <br>
+            <h4>Chunking Strategy</h4>
+            <ul>
+                <li>Chunk size: 1000 characters</li>
+                <li>Overlap: 200 characters</li>
+                <li>Separators: \n\n, \n, space, empty</li>
+            </ul>
+        </div>
+    </section>
+
+    <!-- CODE FLOW -->
+    <section id="flow">
+        <h2>5. Code Flow</h2>
+
+        <h3>5.1 Upload Flow</h3>
+        <div class="code">
+POST /upload<br>
+&nbsp;&nbsp;&rarr; api.py: Read file, check extension<br>
+&nbsp;&nbsp;&rarr; parsing.py: Load with PyPDF/Docx2txt/TextLoader<br>
+&nbsp;&nbsp;&rarr; chunking.py: Split into 1000-char chunks<br>
+&nbsp;&nbsp;&rarr; database.py: Store in ChromaDB + save chunks as JSON<br>
+&nbsp;&nbsp;&rarr; Return: doc_id, filename, chunk_count
+        </div>
+
+        <h3>5.2 Ask Flow</h3>
+        <div class="code">
+POST /ask<br>
+&nbsp;&nbsp;&rarr; api.py: Get/create session<br>
+&nbsp;&nbsp;&rarr; session.py: Load or create session<br>
+&nbsp;&nbsp;&rarr; context_builder.py: Check if summarization needed<br>
+&nbsp;&nbsp;&rarr; retrieval.py: answer_with_rag_with_history()<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&rarr; _build_hybrid_retriever(): BM25 + Vector &rarr; RRF<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&rarr; _rerank(): Cross-encoder re-scores<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&rarr; build_rag_prompt(): Assembles full prompt<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&rarr; CerebrasLLM.invoke(): Generate answer<br>
+&nbsp;&nbsp;&rarr; session.py: Save turn (question, answer)<br>
+&nbsp;&nbsp;&rarr; Return: answer, chunks, session_id
+        </div>
+
+        <h3>5.3 Session Memory Flow</h3>
+        <div class="code">
+Question 1: "What is the salary?"<br>
+&nbsp;&nbsp;&rarr; Session created, turn saved<br><br>
+Question 2: "And for senior level?"<br>
+&nbsp;&nbsp;&rarr; Session loaded<br>
+&nbsp;&nbsp;&rarr; build_rag_prompt() includes:<br>
+&nbsp;&nbsp;&nbsp;&nbsp;"Human: What is the salary?<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Assistant: $75k-$240k depending on level...<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Human: And for senior level?"<br>
+&nbsp;&nbsp;&rarr; LLM understands "senior level" context<br><br>
+After 10 questions:<br>
+&nbsp;&nbsp;&rarr; should_summarize() returns True<br>
+&nbsp;&nbsp;&rarr; LLM summarizes turns 1-5<br>
+&nbsp;&nbsp;&rarr; Turns 6-10 kept verbatim<br>
+&nbsp;&nbsp;&rarr; Prompt uses summary + recent turns
+        </div>
+    </section>
+
+    <!-- KEY CONCEPTS -->
+    <section id="concepts">
+        <h2>6. Key Concepts Explained</h2>
+
+        <div class="qa">
+            <strong>Q: What is RAG?</strong>
+            <p>Retrieval-Augmented Generation. Instead of relying on LLM's training data, you retrieve relevant documents first, then give them to the LLM as context. This grounds the answer in actual data and reduces hallucination.</p>
+        </div>
+
+        <div class="qa">
+            <strong>Q: What is Semantic Search?</strong>
+            <p>Converting text into numerical vectors (embeddings) that capture meaning. Similar meanings get similar vectors. "Happy" and "joyful" will have close vectors. Used for conceptual queries.</p>
+        </div>
+
+        <div class="qa">
+            <strong>Q: What is BM25?</strong>
+            <p>A 1990s keyword search algorithm. Counts word frequency and position. Great for exact matches: names, dates, acronyms. Weak at understanding synonyms.</p>
+        </div>
+
+        <div class="qa">
+            <strong>Q: What is RRF (Reciprocal Rank Fusion)?</strong>
+            <p>A formula that merges two ranked lists: score = 1/(60 + position). Chunks appearing in both lists get boosted. Combines BM25 and Vector search results.</p>
+        </div>
+
+        <div class="qa">
+            <strong>Q: What is a Cross-Encoder?</strong>
+            <p>A model that reads query AND document together, then scores relevance. More accurate than bi-encoders (which score independently) but slower. Used for reranking.</p>
+        </div>
+
+        <div class="qa">
+            <strong>Q: What is Reranking?</strong>
+            <p>Re-ordering initial search results using a more accurate model. First pass gets candidates fast, reranking picks the best ones.</p>
+        </div>
+
+        <div class="qa">
+            <strong>Q: What is Chunking?</strong>
+            <p>Splitting documents into smaller pieces for embedding and retrieval. Our settings: 1000 chars with 200 overlap to preserve context across chunks.</p>
+        </div>
+
+        <div class="qa">
+            <strong>Q: What is Hallucination in LLMs?</strong>
+            <p>When the LLM generates facts not present in the provided context. We mitigate this by: (1) grounding in retrieved context, (2) instructing "answer ONLY from context", (3) validation with hallucination scoring.</p>
+        </div>
+    </section>
+
+    <!-- VALIDATION -->
+    <section id="validation">
+        <h2>7. Validation System</h2>
+
+        <h3>7.1 Retrieval Validation</h3>
+        <table>
+            <tr><th>Metric</th><th>What It Measures</th><th>Range</th></tr>
+            <tr><td>Avg Relevance</td><td>How relevant are chunks to the question</td><td>0-1</td></tr>
+            <tr><td>Diversity</td><td>Are chunks different from each other</td><td>0-1</td></tr>
+            <tr><td>Hit Rate</td><td>Fraction of chunks above relevance threshold</td><td>0-1</td></tr>
+            <tr><td>Precision</td><td>Of retrieved chunks, how many are correct</td><td>0-1</td></tr>
+            <tr><td>Recall</td><td>Of all correct chunks, how many we found</td><td>0-1</td></tr>
+        </table>
+
+        <h3>7.2 Generation Validation</h3>
+        <table>
+            <tr><th>Metric</th><th>What It Measures</th><th>How</th></tr>
+            <tr><td>Faithfulness</td><td>Is answer grounded in context?</td><td>LLM-as-judge</td></tr>
+            <tr><td>Answer Relevancy</td><td>Does answer address the question?</td><td>LLM-as-judge</td></tr>
+            <tr><td>Hallucination Score</td><td>Did LLM invent facts?</td><td>LLM-as-judge</td></tr>
+            <tr><td>Ground Truth Similarity</td><td>How close to correct answer?</td><td>LLM-as-judge</td></tr>
+        </table>
+
+        <h3>7.3 Running Validation</h3>
+        <div class="code">
+# Upload document first, get doc_id<br>
+python validate.py --doc-id YOUR_DOC_ID<br><br>
+# Output:<br>
+# Avg Retrieval Relevance: 0.74<br>
+# Avg Generation Score: 0.86<br>
+# Excellent Retrieval: 80%<br>
+# Excellent Generation: 87%
+        </div>
+    </section>
+
+    <!-- FILE STRUCTURE -->
+    <section id="files">
+        <h2>8. File Structure</h2>
+        <div class="code">
+AskDocs-/<br>
+&ensp;backend/<br>
+&ensp;&ensp;app/<br>
+&ensp;&ensp;&ensp;api.py              &ensp;&ensp;&ensp;&ensp;&ensp;&ensp;# FastAPI endpoints (/upload, /ask, /documents)<br>
+&ensp;&ensp;&ensp;retrieval.py        &ensp;&ensp;&ensp;&ensp;# Hybrid retrieval + reranking pipeline<br>
+&ensp;&ensp;&ensp;database.py         &ensp;&ensp;&ensp;&ensp;# ChromaDB + chunk persistence<br>
+&ensp;&ensp;&ensp;embeddings.py       &ensp;&ensp;&ensp;&ensp;# HuggingFace embeddings singleton<br>
+&ensp;&ensp;&ensp;chunking.py         &ensp;&ensp;&ensp;&ensp;# RecursiveCharacterTextSplitter<br>
+&ensp;&ensp;&ensp;parsing.py          &ensp;&ensp;&ensp;&ensp;&ensp;# PDF/DOCX/TXT loaders<br>
+&ensp;&ensp;&ensp;llm.py              &ensp;&ensp;&ensp;&ensp;&ensp;&ensp;# Cerebras AI wrapper<br>
+&ensp;&ensp;&ensp;reranker.py         &ensp;&ensp;&ensp;&ensp;&ensp;# Cross-encoder singleton<br>
+&ensp;&ensp;&ensp;bm25_store.py       &ensp;&ensp;&ensp;&ensp;&ensp;# BM25 index build/cache<br>
+&ensp;&ensp;&ensp;session.py          &ensp;&ensp;&ensp;&ensp;&ensp;&ensp;# Session manager (TTL, LRU)<br>
+&ensp;&ensp;&ensp;context_builder.py  &ensp;&ensp;# Prompt assembly with history<br>
+&ensp;&ensp;&ensp;validation/<br>
+&ensp;&ensp;&ensp;&ensp;retrieval_validation.py  # Retrieval scoring<br>
+&ensp;&ensp;&ensp;&ensp;generation_validation.py # Generation scoring<br>
+&ensp;&ensp;&ensp;utils/<br>
+&ensp;&ensp;&ensp;&ensp;logger.py           &ensp;&ensp;&ensp;&ensp;# JSONL logging<br>
+&ensp;&ensp;main.py               &ensp;&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;# FastAPI app setup<br>
+&ensp;&ensp;validate.py           &ensp;&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;# Validation script<br>
+&ensp;&ensp;requirements.txt      &ensp;&ensp;&ensp;&ensp;&ensp;&ensp;# Python dependencies<br>
+&ensp;&ensp;.env                  &ensp;&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;# API keys + config<br>
+&ensp;&ensp;demo.txt              &ensp;&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;# Sample document<br>
+&ensp;&ensp;employee_eval.json    &ensp;&ensp;&ensp;&ensp;# Evaluation dataset<br>
+&ensp;frontend/<br>
+&ensp;&ensp;src/<br>
+&ensp;&ensp;&ensp;App.jsx             &ensp;&ensp;&ensp;&ensp;&ensp;&ensp;# Main app component<br>
+&ensp;&ensp;&ensp;components/<br>
+&ensp;&ensp;&ensp;&ensp;Upload.jsx       &ensp;&ensp;&ensp;&ensp;&ensp;# File upload UI<br>
+&ensp;&ensp;&ensp;&ensp;Chat.jsx         &ensp;&ensp;&ensp;&ensp;&ensp;&ensp;# Chat + markdown rendering<br>
+        </div>
+    </section>
+
+    <!-- INTERVIEW Q&A -->
+    <section id="interview">
+        <h2>9. Interview Q&A</h2>
+
+        <div class="qa">
+            <strong>Q: Why hybrid search instead of just vector search?</strong>
+            <p>Vector search misses exact terms (names, dates, codes). BM25 catches those. Together they cover both conceptual and keyword queries. RRF merges the results optimally.</p>
+        </div>
+
+        <div class="qa">
+            <strong>Q: Why reranking after hybrid retrieval?</strong>
+            <p>Initial retrieval (BM25 + Vector) scores independently. Cross-encoder reads query+chunk together for true relevance. It catches false positives and boosts hidden gems. Adds ~200ms but improves precision by 15-25%.</p>
+        </div>
+
+        <div class="qa">
+            <strong>Q: How does conversational memory work?</strong>
+            <p>SessionManager stores turns per session. Context builder assembles: system prompt + document context + summary of old turns + last 5 turns verbatim + current question. When history exceeds 3000 tokens, older turns are summarized by the LLM.</p>
+        </div>
+
+        <div class="qa">
+            <strong>Q: How do you prevent LLM hallucination?</strong>
+            <p>Three layers: (1) Ground answers in retrieved context only, (2) Prompt instructs "answer ONLY from context, say I don't know if not present", (3) Validation layer scores faithfulness and hallucination.</p>
+        </div>
+
+        <div class="qa">
+            <strong>Q: Why ChromaDB over Pinecone/Weaviate?</strong>
+            <p>ChromaDB is local, zero-config, free, and perfect for prototyping. No cloud setup needed. For production, we'd migrate to a managed service.</p>
+        </div>
+
+        <div class="qa">
+            <strong>Q: What is the chunk overlap for?</strong>
+            <p>Overlap (200 chars) ensures context isn't lost at chunk boundaries. A sentence split across two chunks still has context in both.</p>
+        </div>
+
+        <div class="qa">
+            <strong>Q: How would you scale this to production?</strong>
+            <ul>
+                <li>Replace in-memory sessions with Redis</li>
+                <li>Use managed vector DB (Pinecone/Weaviate)</li>
+                <li>Add streaming responses (SSE)</li>
+                <li>Add authentication and rate limiting</li>
+                <li>Deploy with Docker + Kubernetes</li>
+                <li>Add monitoring (LangSmith/Langfuse)</li>
+            </ul>
+        </div>
+
+        <div class="qa">
+            <strong>Q: What are the validation metrics?</strong>
+            <p><strong>Retrieval:</strong> relevance, diversity, hit rate, precision, recall. <strong>Generation:</strong> faithfulness (grounded in context), answer relevancy (addresses question), hallucination score (invented facts).</p>
+        </div>
+
+        <div class="qa">
+            <strong>Q: Why Cerebras AI?</strong>
+            <p>Fast inference speed, competitive quality, good for real-time chat. Alternative: OpenAI GPT-4, Claude, or local models via Ollama.</p>
+        </div>
+
+        <div class="qa">
+            <strong>Q: What happens if the answer isn't in the document?</strong>
+            <p>The prompt instructs the LLM to say "I don't know" if the answer isn't in the context. Validation checks for hallucination to catch cases where the LLM fabricates answers.</p>
+        </div>
+    </section>
+
+    <!-- QUICK REFERENCE -->
+    <section>
+        <h2>10. Quick Reference</h2>
+        <h3>Commands</h3>
+        <div class="code">
+# Start backend<br>
+cd backend && uvicorn main:app --reload<br><br>
+# Start frontend<br>
+cd frontend && npm run dev<br><br>
+# List documents<br>
+curl http://127.0.0.1:8000/documents<br><br>
+# Run validation<br>
+python validate.py --doc-id YOUR_DOC_ID<br><br>
+# Upload via curl<br>
+curl -X POST http://127.0.0.1:8000/upload -F "file=@demo.txt"
+        </div>
+
+        <h3>Key Numbers to Remember</h3>
+        <table>
+            <tr><th>Parameter</th><th>Value</th></tr>
+            <tr><td>Chunk size</td><td>1000 characters</td></tr>
+            <tr><td>Chunk overlap</td><td>200 characters</td></tr>
+            <tr><td>BM25 weight</td><td>40%</td></tr>
+            <tr><td>Vector weight</td><td>60%</td></tr>
+            <tr><td>RRF constant (k)</td><td>60</td></tr>
+            <tr><td>Session TTL</td><td>1 hour</td></tr>
+            <tr><td>Max sessions</td><td>1000</td></tr>
+            <tr><td>Recent window</td><td>5 turns</td></tr>
+            <tr><td>Summary trigger</td><td>3000 tokens</td></tr>
+            <tr><td>Embedding model</td><td>all-MiniLM-L6-v2 (80MB)</td></tr>
+            <tr><td>Reranker model</td><td>ms-marco-MiniLM-L6-v2</td></tr>
+        </table>
+    </section>
+
+</div>
+
+<footer>
+    <p>AskDocs Revision Guide | Built for Interview Preparation</p>
+</footer>
+
+</body>
+</html>

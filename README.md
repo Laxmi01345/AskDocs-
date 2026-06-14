@@ -36,5 +36,24 @@ Upload → Chunk → Embed → Store → Retrieve → Generate
 - Tailwind CSS (if used)
 
 
+## 📊 Evaluation with RAGAS
+
+AskDocs includes a lightweight evaluation layer powered by RAGAS.
+
+- Dataset: `backend/eval/envalution_dataset.json`
+- API: `POST /evaluate`
+- CLI: `python eval/run_ragas.py`
+
+The evaluation flow runs the same RAG pipeline used in production, collects retrieved
+contexts and model answers, and scores them with RAGAS metrics such as faithfulness,
+answer relevancy, context precision, and context recall.
+
+Example CLI usage from the `backend` folder:
+
+```powershell
+python eval/run_ragas.py --dataset eval/envalution_dataset.json --top-k 3
+```
+
+
 ## 🎥 Demo
 https://github.com/user-attachments/assets/3e2d3ca6-abd3-4b1e-a1d2-4f08ee27dcba

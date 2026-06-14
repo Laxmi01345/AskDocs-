@@ -1,0 +1,575 @@
+{
+  "total": 15,
+  "avg_retrieval_relevance": 0.3047,
+  "avg_generation_score": 0.994,
+  "excellent_retrieval": 0,
+  "excellent_generation": 15,
+  "results": [
+    {
+      "question": "What are the working hours?",
+      "answer": "Standard working hours are\u202f9:00\u202fAM\u202fto\u202f5:30\u202fPM Pacific Time, Monday through Friday.",
+      "ground_truth": "Standard working hours are 9:00 AM to 5:30 PM Pacific Time, Monday through Friday.",
+      "retrieval": {
+        "num_chunks_retrieved": 3,
+        "metrics": {
+          "diversity": 0.7317,
+          "avg_relevance": 0.2984,
+          "max_relevance": 0.4379,
+          "min_relevance": 0.1943,
+          "hit_rate": 0.3333,
+          "hits_above_threshold": 1
+        },
+        "relevance_per_chunk": [
+          0.4379,
+          0.1943,
+          0.2629
+        ],
+        "verdict": "POOR"
+      },
+      "generation": {
+        "answer": "Standard working hours are\u202f9:00\u202fAM\u202fto\u202f5:30\u202fPM Pacific Time, Monday through Friday.",
+        "metrics": {
+          "faithfulness": null,
+          "answer_relevancy": 1.0,
+          "relevancy_reason": "The answer directly provides the specific working hours and days, fully addressing the question.",
+          "hallucination_score": 0.0,
+          "hallucinated_facts": [],
+          "overall_score": 1.0
+        },
+        "verdict": "EXCELLENT"
+      }
+    },
+    {
+      "question": "How many PTO days do full-time employees get?",
+      "answer": "20 days per year.",
+      "ground_truth": "Full-time employees receive 20 days of PTO per year.",
+      "retrieval": {
+        "num_chunks_retrieved": 3,
+        "metrics": {
+          "diversity": 0.5116,
+          "avg_relevance": 0.456,
+          "max_relevance": 0.6942,
+          "min_relevance": 0.2932,
+          "hit_rate": 0.6667,
+          "hits_above_threshold": 2
+        },
+        "relevance_per_chunk": [
+          0.6942,
+          0.2932,
+          0.3807
+        ],
+        "verdict": "GOOD"
+      },
+      "generation": {
+        "answer": "20 days per year.",
+        "metrics": {
+          "faithfulness": null,
+          "faithfulness_error": "1 validation error for Generation\ntext\n  Input should be a valid string [type=string_type, input_value=None, input_type=NoneType]\n    For further information visit https://errors.pydantic.dev/2.12/v/string_type",
+          "answer_relevancy": 1.0,
+          "relevancy_reason": "The answer directly states the number of PTO days for full-time employees, fully addressing the question.",
+          "hallucination_score": 0.0,
+          "hallucinated_facts": [],
+          "ground_truth_similarity": 0.9,
+          "key_facts_matched": [
+            "20 days per year"
+          ],
+          "key_facts_missed": [
+            "Full-time employees",
+            "PTO"
+          ],
+          "overall_score": 1.0
+        },
+        "verdict": "EXCELLENT"
+      }
+    },
+    {
+      "question": "What is the salary range for a senior developer?",
+      "answer": "$130,000\u202f\u2013\u202f$170,000.",
+      "ground_truth": "Senior Developer: $130,000 - $170,000.",
+      "retrieval": {
+        "num_chunks_retrieved": 3,
+        "metrics": {
+          "diversity": 0.5116,
+          "avg_relevance": 0.353,
+          "max_relevance": 0.5443,
+          "min_relevance": 0.243,
+          "hit_rate": 0.3333,
+          "hits_above_threshold": 1
+        },
+        "relevance_per_chunk": [
+          0.5443,
+          0.2718,
+          0.243
+        ],
+        "verdict": "FAIR"
+      },
+      "generation": {
+        "answer": "$130,000\u202f\u2013\u202f$170,000.",
+        "metrics": {
+          "faithfulness": null,
+          "answer_relevancy": 1.0,
+          "relevancy_reason": "The answer directly provides a salary range for a senior developer, fully addressing the question.",
+          "hallucination_score": 0.0,
+          "hallucinated_facts": [],
+          "overall_score": 1.0
+        },
+        "verdict": "EXCELLENT"
+      }
+    },
+    {
+      "question": "How much is the sign-on bonus?",
+      "answer": "Up to $10,000.",
+      "ground_truth": "Sign-on bonus: Up to $10,000 for senior positions.",
+      "retrieval": {
+        "num_chunks_retrieved": 3,
+        "metrics": {
+          "diversity": 0.5116,
+          "avg_relevance": 0.2508,
+          "max_relevance": 0.4089,
+          "min_relevance": 0.1551,
+          "hit_rate": 0.3333,
+          "hits_above_threshold": 1
+        },
+        "relevance_per_chunk": [
+          0.4089,
+          0.1886,
+          0.1551
+        ],
+        "verdict": "POOR"
+      },
+      "generation": {
+        "answer": "Up to $10,000.",
+        "metrics": {
+          "faithfulness": null,
+          "faithfulness_error": "1 validation error for Generation\ntext\n  Input should be a valid string [type=string_type, input_value=None, input_type=NoneType]\n    For further information visit https://errors.pydantic.dev/2.12/v/string_type",
+          "answer_relevancy": 1.0,
+          "relevancy_reason": "The answer directly provides the amount of the sign-on bonus, fully addressing the question.",
+          "hallucination_score": 0.0,
+          "hallucinated_facts": [],
+          "overall_score": 1.0
+        },
+        "verdict": "EXCELLENT"
+      }
+    },
+    {
+      "question": "What is the 401(k) matching?",
+      "answer": "4% of salary.",
+      "ground_truth": "401(k) matching: 4% of salary.",
+      "retrieval": {
+        "num_chunks_retrieved": 3,
+        "metrics": {
+          "diversity": 0.5116,
+          "avg_relevance": 0.2004,
+          "max_relevance": 0.2869,
+          "min_relevance": 0.1422,
+          "hit_rate": 0.0,
+          "hits_above_threshold": 0
+        },
+        "relevance_per_chunk": [
+          0.2869,
+          0.1721,
+          0.1422
+        ],
+        "verdict": "POOR"
+      },
+      "generation": {
+        "answer": "4% of salary.",
+        "metrics": {
+          "faithfulness": null,
+          "faithfulness_error": "1 validation error for Generation\ntext\n  Input should be a valid string [type=string_type, input_value=None, input_type=NoneType]\n    For further information visit https://errors.pydantic.dev/2.12/v/string_type",
+          "answer_relevancy": null,
+          "hallucination_score": 0.0,
+          "hallucinated_facts": [],
+          "ground_truth_similarity": 0.9,
+          "key_facts_matched": [
+            "4% of salary"
+          ],
+          "key_facts_missed": [
+            "401(k) matching"
+          ],
+          "overall_score": 1.0
+        },
+        "verdict": "EXCELLENT"
+      }
+    },
+    {
+      "question": "When are performance reviews conducted?",
+      "answer": "Performance reviews are conducted semi\u2011annually, in June and December.",
+      "ground_truth": "Performance reviews are conducted semi-annually, in June and December.",
+      "retrieval": {
+        "num_chunks_retrieved": 3,
+        "metrics": {
+          "diversity": 0.6964,
+          "avg_relevance": 0.2949,
+          "max_relevance": 0.746,
+          "min_relevance": 0.039,
+          "hit_rate": 0.3333,
+          "hits_above_threshold": 1
+        },
+        "relevance_per_chunk": [
+          0.746,
+          0.0995,
+          0.039
+        ],
+        "verdict": "POOR"
+      },
+      "generation": {
+        "answer": "Performance reviews are conducted semi\u2011annually, in June and December.",
+        "metrics": {
+          "faithfulness": null,
+          "answer_relevancy": 1.0,
+          "relevancy_reason": "The answer directly states the timing of performance reviews, specifying they occur semi\u2011annually in June and December, which fully addresses the question.",
+          "hallucination_score": 0.0,
+          "hallucinated_facts": [],
+          "ground_truth_similarity": 1.0,
+          "key_facts_matched": [
+            "Performance reviews are conducted semi\u2011annually, in June and December."
+          ],
+          "key_facts_missed": [],
+          "overall_score": 1.0
+        },
+        "verdict": "EXCELLENT"
+      }
+    },
+    {
+      "question": "What happens if an employee receives Needs Improvement twice?",
+      "answer": "If an employee receives a \u201cNeeds Improvement\u201d rating twice in a row, they will be placed on a Performance Improvement Plan (PIP).",
+      "ground_truth": "Employees receiving Needs Improvement twice in a row will be placed on a Performance Improvement Plan (PIP).",
+      "retrieval": {
+        "num_chunks_retrieved": 3,
+        "metrics": {
+          "diversity": 0.6964,
+          "avg_relevance": 0.2905,
+          "max_relevance": 0.4059,
+          "min_relevance": 0.2139,
+          "hit_rate": 0.3333,
+          "hits_above_threshold": 1
+        },
+        "relevance_per_chunk": [
+          0.4059,
+          0.2139,
+          0.2518
+        ],
+        "verdict": "POOR"
+      },
+      "generation": {
+        "answer": "If an employee receives a \u201cNeeds Improvement\u201d rating twice in a row, they will be placed on a Performance Improvement Plan (PIP).",
+        "metrics": {
+          "faithfulness": null,
+          "faithfulness_error": "1 validation error for Generation\ntext\n  Input should be a valid string [type=string_type, input_value=None, input_type=NoneType]\n    For further information visit https://errors.pydantic.dev/2.12/v/string_type",
+          "answer_relevancy": 1.0,
+          "relevancy_reason": "The answer directly and succinctly explains the consequence (placement on a Performance Improvement Plan) of receiving a 'Needs Improvement' rating twice, fully addressing the question.",
+          "hallucination_score": 0.0,
+          "hallucinated_facts": [],
+          "overall_score": 1.0
+        },
+        "verdict": "EXCELLENT"
+      }
+    },
+    {
+      "question": "How much notice is required for voluntary resignation?",
+      "answer": "Employees must give **2\u202fweeks\u2019 notice** for a voluntary resignation (senior positions require **4\u202fweeks\u2019 notice**).",
+      "ground_truth": "Employees must provide 2 weeks notice for voluntary resignation. Senior positions require 4 weeks notice.",
+      "retrieval": {
+        "num_chunks_retrieved": 3,
+        "metrics": {
+          "diversity": 0.5316,
+          "avg_relevance": 0.3659,
+          "max_relevance": 0.5816,
+          "min_relevance": 0.2092,
+          "hit_rate": 0.3333,
+          "hits_above_threshold": 1
+        },
+        "relevance_per_chunk": [
+          0.5816,
+          0.3069,
+          0.2092
+        ],
+        "verdict": "FAIR"
+      },
+      "generation": {
+        "answer": "Employees must give **2\u202fweeks\u2019 notice** for a voluntary resignation (senior positions require **4\u202fweeks\u2019 notice**).",
+        "metrics": {
+          "faithfulness": null,
+          "answer_relevancy": 0.95,
+          "relevancy_reason": "The answer directly states the required notice period for voluntary resignation, including a note on senior positions, thus fully addressing the question.",
+          "hallucination_score": 0.0,
+          "hallucinated_facts": [],
+          "ground_truth_similarity": 1.0,
+          "key_facts_matched": [
+            "Employees must provide 2 weeks notice for voluntary resignation.",
+            "Senior positions require 4 weeks notice."
+          ],
+          "key_facts_missed": [],
+          "overall_score": 0.975
+        },
+        "verdict": "EXCELLENT"
+      }
+    },
+    {
+      "question": "What is the learning stipend?",
+      "answer": "The learning stipend is $2,000 per year.",
+      "ground_truth": "Learning stipend: $2,000 per year.",
+      "retrieval": {
+        "num_chunks_retrieved": 3,
+        "metrics": {
+          "diversity": 0.5116,
+          "avg_relevance": 0.2985,
+          "max_relevance": 0.409,
+          "min_relevance": 0.1379,
+          "hit_rate": 0.3333,
+          "hits_above_threshold": 1
+        },
+        "relevance_per_chunk": [
+          0.409,
+          0.3486,
+          0.1379
+        ],
+        "verdict": "POOR"
+      },
+      "generation": {
+        "answer": "The learning stipend is $2,000 per year.",
+        "metrics": {
+          "faithfulness": 1.0,
+          "supported_claims": [
+            "The learning stipend is $2,000 per year."
+          ],
+          "unsupported_claims": [],
+          "answer_relevancy": 1.0,
+          "relevancy_reason": "The answer directly provides the amount of the learning stipend, fully addressing the question.",
+          "hallucination_score": 0.0,
+          "hallucinated_facts": [],
+          "ground_truth_similarity": 1.0,
+          "key_facts_matched": [
+            "Learning stipend: $2,000 per year"
+          ],
+          "key_facts_missed": [],
+          "overall_score": 1.0
+        },
+        "verdict": "EXCELLENT"
+      }
+    },
+    {
+      "question": "How many employees work at Riverton?",
+      "answer": "1,847 employees.",
+      "ground_truth": "As of January 2024, Riverton employs 1,847 people across 5 offices worldwide.",
+      "retrieval": {
+        "num_chunks_retrieved": 3,
+        "metrics": {
+          "diversity": 0.6782,
+          "avg_relevance": 0.4404,
+          "max_relevance": 0.6936,
+          "min_relevance": 0.1626,
+          "hit_rate": 0.6667,
+          "hits_above_threshold": 2
+        },
+        "relevance_per_chunk": [
+          0.6936,
+          0.4651,
+          0.1626
+        ],
+        "verdict": "GOOD"
+      },
+      "generation": {
+        "answer": "1,847 employees.",
+        "metrics": {
+          "faithfulness": 1.0,
+          "supported_claims": [
+            "Riverton employs 1,847 employees"
+          ],
+          "unsupported_claims": [],
+          "answer_relevancy": 1.0,
+          "relevancy_reason": "The answer directly provides the number of employees, directly addressing the question.",
+          "hallucination_score": 0.0,
+          "hallucinated_facts": [],
+          "overall_score": 1.0
+        },
+        "verdict": "EXCELLENT"
+      }
+    },
+    {
+      "question": "What days are employees required to work from the office?",
+      "answer": "Employees are required to work from the office on Tuesdays and Thursdays.",
+      "ground_truth": "Employees are required to work from the office on Tuesdays and Thursdays.",
+      "retrieval": {
+        "num_chunks_retrieved": 3,
+        "metrics": {
+          "diversity": 0.5116,
+          "avg_relevance": 0.3475,
+          "max_relevance": 0.4277,
+          "min_relevance": 0.3044,
+          "hit_rate": 0.3333,
+          "hits_above_threshold": 1
+        },
+        "relevance_per_chunk": [
+          0.4277,
+          0.3044,
+          0.3103
+        ],
+        "verdict": "FAIR"
+      },
+      "generation": {
+        "answer": "Employees are required to work from the office on Tuesdays and Thursdays.",
+        "metrics": {
+          "faithfulness": null,
+          "answer_relevancy": 1.0,
+          "relevancy_reason": "The answer directly states the specific days employees must work from the office, fully addressing the question.",
+          "hallucination_score": 0.0,
+          "hallucinated_facts": [],
+          "ground_truth_similarity": 1.0,
+          "key_facts_matched": [
+            "Employees are required to work from the office on Tuesdays and Thursdays."
+          ],
+          "key_facts_missed": [],
+          "overall_score": 1.0
+        },
+        "verdict": "EXCELLENT"
+      }
+    },
+    {
+      "question": "What is the home office setup allowance?",
+      "answer": "The home office setup allowance is $1,500 (one\u2011time).",
+      "ground_truth": "Home office setup: $1,500 one-time.",
+      "retrieval": {
+        "num_chunks_retrieved": 3,
+        "metrics": {
+          "diversity": 0.5116,
+          "avg_relevance": 0.331,
+          "max_relevance": 0.3417,
+          "min_relevance": 0.3248,
+          "hit_rate": 0.0,
+          "hits_above_threshold": 0
+        },
+        "relevance_per_chunk": [
+          0.3417,
+          0.3266,
+          0.3248
+        ],
+        "verdict": "FAIR"
+      },
+      "generation": {
+        "answer": "The home office setup allowance is $1,500 (one\u2011time).",
+        "metrics": {
+          "faithfulness": 1.0,
+          "supported_claims": [
+            "The home office setup allowance is $1,500 (one\u2011time)."
+          ],
+          "unsupported_claims": [],
+          "answer_relevancy": 1.0,
+          "relevancy_reason": "The answer directly provides the requested information about the home office setup allowance, specifying the amount and that it is a one-time payment.",
+          "hallucination_score": 0.0,
+          "hallucinated_facts": [],
+          "ground_truth_error": "1 validation error for Generation\ntext\n  Input should be a valid string [type=string_type, input_value=None, input_type=NoneType]\n    For further information visit https://errors.pydantic.dev/2.12/v/string_type",
+          "overall_score": 1.0
+        },
+        "verdict": "EXCELLENT"
+      }
+    },
+    {
+      "question": "What percentage of premium does the company cover for health insurance?",
+      "answer": "80%",
+      "ground_truth": "Health insurance: Company covers 80% of premium.",
+      "retrieval": {
+        "num_chunks_retrieved": 3,
+        "metrics": {
+          "diversity": 0.5116,
+          "avg_relevance": 0.1892,
+          "max_relevance": 0.2869,
+          "min_relevance": 0.1253,
+          "hit_rate": 0.0,
+          "hits_above_threshold": 0
+        },
+        "relevance_per_chunk": [
+          0.2869,
+          0.1553,
+          0.1253
+        ],
+        "verdict": "POOR"
+      },
+      "generation": {
+        "answer": "80%",
+        "metrics": {
+          "faithfulness": null,
+          "faithfulness_error": "1 validation error for Generation\ntext\n  Input should be a valid string [type=string_type, input_value=None, input_type=NoneType]\n    For further information visit https://errors.pydantic.dev/2.12/v/string_type",
+          "answer_relevancy": 1.0,
+          "relevancy_reason": "The answer directly provides the requested percentage (80%) for the company's health insurance premium coverage, fully addressing the question.",
+          "hallucination_score": null,
+          "hallucination_error": "1 validation error for Generation\ntext\n  Input should be a valid string [type=string_type, input_value=None, input_type=NoneType]\n    For further information visit https://errors.pydantic.dev/2.12/v/string_type",
+          "ground_truth_error": "1 validation error for Generation\ntext\n  Input should be a valid string [type=string_type, input_value=None, input_type=NoneType]\n    For further information visit https://errors.pydantic.dev/2.12/v/string_type",
+          "overall_score": 1.0
+        },
+        "verdict": "EXCELLENT"
+      }
+    },
+    {
+      "question": "How often must passwords be changed?",
+      "answer": "Every 90 days.",
+      "ground_truth": "Passwords must be changed every 90 days.",
+      "retrieval": {
+        "num_chunks_retrieved": 3,
+        "metrics": {
+          "diversity": 0.6782,
+          "avg_relevance": 0.1013,
+          "max_relevance": 0.1693,
+          "min_relevance": 0.0616,
+          "hit_rate": 0.0,
+          "hits_above_threshold": 0
+        },
+        "relevance_per_chunk": [
+          0.1693,
+          0.073,
+          0.0616
+        ],
+        "verdict": "POOR"
+      },
+      "generation": {
+        "answer": "Every 90 days.",
+        "metrics": {
+          "faithfulness": null,
+          "faithfulness_error": "1 validation error for Generation\ntext\n  Input should be a valid string [type=string_type, input_value=None, input_type=NoneType]\n    For further information visit https://errors.pydantic.dev/2.12/v/string_type",
+          "answer_relevancy": 0.97,
+          "relevancy_reason": "The answer directly provides a specific interval (every 90 days) that addresses the question of how often passwords must be changed, making it highly relevant.",
+          "hallucination_score": 0.0,
+          "hallucinated_facts": [],
+          "ground_truth_error": "1 validation error for Generation\ntext\n  Input should be a valid string [type=string_type, input_value=None, input_type=NoneType]\n    For further information visit https://errors.pydantic.dev/2.12/v/string_type",
+          "overall_score": 0.985
+        },
+        "verdict": "EXCELLENT"
+      }
+    },
+    {
+      "question": "What is the severance for involuntary termination?",
+      "answer": "The severance is\u202f1\u202fmonth of pay for each year of service.",
+      "ground_truth": "Severance: 1 month per year of service for involuntary termination.",
+      "retrieval": {
+        "num_chunks_retrieved": 3,
+        "metrics": {
+          "diversity": 0.4111,
+          "avg_relevance": 0.3532,
+          "max_relevance": 0.5666,
+          "min_relevance": 0.1777,
+          "hit_rate": 0.3333,
+          "hits_above_threshold": 1
+        },
+        "relevance_per_chunk": [
+          0.5666,
+          0.3153,
+          0.1777
+        ],
+        "verdict": "FAIR"
+      },
+      "generation": {
+        "answer": "The severance is\u202f1\u202fmonth of pay for each year of service.",
+        "metrics": {
+          "faithfulness": null,
+          "answer_relevancy": 0.9,
+          "relevancy_reason": "The answer directly provides the severance amount for involuntary termination (1 month of pay per year of service), which addresses the question, though it may lack additional context or exceptions.",
+          "hallucination_score": 0.0,
+          "hallucinated_facts": [],
+          "overall_score": 0.95
+        },
+        "verdict": "EXCELLENT"
+      }
+    }
+  ]
+}

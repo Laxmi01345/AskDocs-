@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import Upload from './components/Upload';
 import Chat from './components/Chat';
 import './index.css';
+
 function App() {
   const [docId, setDocId] = useState(null);
   const [filename, setFilename] = useState(null);
@@ -20,7 +21,7 @@ function App() {
           <>
             <div className="bg-white rounded-lg shadow-lg p-6 mb-6 flex justify-between items-center">
               <p className="text-lg font-semibold text-gray-700">📄 <span className="text-purple-600">{filename}</span></p>
-              <button 
+              <button
                 onClick={() => { setDocId(null); setFilename(null); }}
                 className="bg-purple-600 hover:bg-purple-700 text-white px-4 py-2 rounded-lg transition"
               >
