@@ -15,5 +15,3 @@ python-multipart
 pypdf
 python-docx
 chromadb
-psycopg[binary]
-psycopg-pool

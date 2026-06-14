@@ -5,7 +5,7 @@ from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel
 from typing import Optional
 
-app = FastAPI(title="Doc Q&A with RAG")
+app = FastAPI(title="AskDocs - RAG Document Q&A")
 
 # CORS - must be added before routes
 app.add_middleware(
