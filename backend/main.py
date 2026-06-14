@@ -4,19 +4,11 @@ from fastapi.middleware.cors import CORSMiddleware
 
 app = FastAPI(title="Doc Q&A with RAG")
 
-allowed_origins = [
-    origin.strip()
-    for origin in os.getenv(
-        "FRONTEND_URL",
-        "*",
-    ).split(",")
-    if origin.strip()
-]
-
+# Allow all origins for development/demo
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=allowed_origins,
-    allow_credentials=True,
+    allow_origins=["*"],
+    allow_credentials=False,
     allow_methods=["*"],
     allow_headers=["*"],
 )
