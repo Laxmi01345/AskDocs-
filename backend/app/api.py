@@ -7,6 +7,11 @@ from typing import Optional
 router = APIRouter()
 
 
+@router.get("/")
+def root():
+    return {"message": "AskDocs API is running", "status": "healthy"}
+
+
 class AskRequest(BaseModel):
     doc_id: str
     question: str
