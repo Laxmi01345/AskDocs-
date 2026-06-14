@@ -1,11 +1,17 @@
-from sentence_transformers import SentenceTransformer
+import os
 
-_model = SentenceTransformer("all-MiniLM-L6-v2")
+from dotenv import load_dotenv
+from langchain_huggingface import HuggingFaceEmbeddings
+
+load_dotenv()
+
+EMB_MODEL = os.getenv("EMB_MODEL", "sentence-transformers/all-MiniLM-L6-v2")
+
+_embeddings: HuggingFaceEmbeddings | None = None
 
 
-def embed_text(text: str):
-    return _model.encode(text)
-
-
-def embed_chunks(chunks: list[str]):
-    return [_model.encode(c) for c in chunks]
+def get_embeddings() -> HuggingFaceEmbeddings:
+    global _embeddings
+    if _embeddings is None:
+        _embeddings = HuggingFaceEmbeddings(model_name=EMB_MODEL)
+    return _embeddings

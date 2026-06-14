@@ -1,0 +1,110 @@
+# Riverton Technology Inc. - Employee Handbook 2024
+
+## 1. Company Overview
+
+Riverton Technology Inc. is a leading software development company founded in 2015, headquartered in Portland, Oregon. The company specializes in cloud computing solutions and enterprise software. As of January 2024, Riverton employs 1,847 people across 5 offices worldwide.
+
+## 2. Work Policy
+
+### 2.1 Remote Work
+Riverton offers a hybrid work model. Employees are required to work from the office on Tuesdays and Thursdays. Remote work is permitted on Monday, Wednesday, and Friday. Employees must be available during core hours: 10:00 AM - 3:00 PM Pacific Time.
+
+### 2.2 Working Hours
+Standard working hours are 9:00 AM to 5:30 PM Pacific Time, Monday through Friday. Employees are expected to work 40 hours per week. Overtime must be pre-approved by a manager and will be compensated at 1.5x the regular rate.
+
+### 2.3 PTO Policy
+- Full-time employees receive 20 days of PTO per year
+- PTO accrues at 1.67 days per month
+- Unused PTO can be carried over to the next year (maximum 10 days)
+- PTO requests must be submitted at least 2 weeks in advance
+- Sick leave: 10 days per year (no carryover)
+
+## 3. Compensation
+
+### 3.1 Salary Bands
+- Junior Developer: $75,000 - $95,000
+- Mid-Level Developer: $95,000 - $130,000
+- Senior Developer: $130,000 - $170,000
+- Lead Developer: $150,000 - $200,000
+- Engineering Manager: $180,000 - $240,000
+
+### 3.2 Bonuses
+- Annual performance bonus: 5-15% of base salary
+- Sign-on bonus: Up to $10,000 for senior positions
+- Referral bonus: $3,000 for successful referrals
+
+### 3.3 Benefits
+- Health insurance: Company covers 80% of premium
+- Dental and vision: Company covers 100%
+- 401(k) matching: 4% of salary
+- Learning stipend: $2,000 per year
+- Home office setup: $1,500 one-time
+
+## 4. Performance Reviews
+
+Performance reviews are conducted semi-annually, in June and December. The review process includes:
+
+1. Self-assessment (due 1 week before review meeting)
+2. Manager assessment
+3. Peer feedback (360 review for senior positions)
+4. Review meeting (30-45 minutes)
+5. Goal setting for next period
+
+Performance ratings:
+- Exceeds Expectations: 15-20% of employees
+- Meets Expectations: 70-75% of employees
+- Needs Improvement: 5-10% of employees
+
+Employees receiving "Needs Improvement" twice in a row will be placed on a Performance Improvement Plan (PIP).
+
+## 5. Code of Conduct
+
+### 5.1 Professional Behavior
+All employees are expected to maintain a professional and respectful work environment. Harassment, discrimination, or bullying will not be tolerated and may result in immediate termination.
+
+### 5.2 Data Security
+- All company data must be encrypted at rest and in transit
+- Passwords must be changed every 90 days
+- Two-factor authentication is required for all systems
+- Unauthorized access to customer data will result in immediate termination
+
+### 5.3 Intellectual Property
+All work product created during employment belongs to Riverton Technology Inc. Employees must not use company resources for personal projects without written approval from their manager.
+
+## 6. Training and Development
+
+### 6.1 Onboarding
+New employees complete a 2-week onboarding program:
+- Week 1: Company orientation, team introductions, tool setup
+- Week 2: Project-specific training, buddy system pairing
+
+### 6.2 Continuous Learning
+- Monthly tech talks (first Friday of each quarter)
+- Annual conference attendance (budget: $3,000 per employee)
+- Online learning platforms: Company provides access to Udemy, Pluralsight
+- Internal mentorship program available for career growth
+
+## 7. Termination Policy
+
+### 7.1 Voluntary Resignation
+Employees must provide 2 weeks notice for voluntary resignation. Senior positions require 4 weeks notice.
+
+### 7.2 Involuntary Termination
+- Probationary period: First 90 days of employment
+- At-will employment: Either party may terminate with 2 weeks notice
+- Severance: 1 month per year of service (for involuntary termination)
+- Final paycheck: Within 3 business days of termination date
+
+### 7.3 Exit Process
+1. Manager notification
+2. HR exit interview
+3. Return of company assets
+4. Knowledge transfer documentation
+5. Final paycheck and benefits information
+
+## 8. Contact Information
+
+- HR Department: hr@rivertontech.com
+- IT Support: support@rivertontech.com
+- Emergency: 503-555-0100
+- Main Office: 1234 Technology Drive, Portland, OR 97201

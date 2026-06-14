@@ -1,20 +1,27 @@
-from io import BytesIO
-from pypdf import PdfReader
-from docx import Document
+from pathlib import Path
+from tempfile import TemporaryDirectory
+
+from langchain_community.document_loaders import Docx2txtLoader, PyPDFLoader, TextLoader
 
 
-def parse_txt(data: bytes) -> str:
-    return data.decode("utf-8", errors="ignore")
+def load_document(data: bytes, filename: str) -> str:
+    suffix = Path(filename).suffix.lower()
 
+    loader_map = {
+        ".txt": TextLoader,
+        ".pdf": PyPDFLoader,
+        ".docx": Docx2txtLoader,
+    }
 
-def parse_pdf(data: bytes) -> str:
-    reader = PdfReader(BytesIO(data))
-    text = []
-    for page in reader.pages:
-        text.append(page.extract_text() or "")
-    return "\n".join(text).strip()
+    loader_class = loader_map.get(suffix)
+    if loader_class is None:
+        raise ValueError(f"Unsupported file type: {suffix}")
 
-
-def parse_docx(data: bytes) -> str:
-    doc = Document(BytesIO(data))
-    return "\n".join(p.text for p in doc.paragraphs).strip()
+    with TemporaryDirectory() as temp_dir:
+        temp_path = Path(temp_dir) / filename
+        temp_path.write_bytes(data)
+        if suffix == ".txt":
+            documents = loader_class(str(temp_path), encoding="utf-8").load()
+        else:
+            documents = loader_class(str(temp_path)).load()
+        return "\n".join(doc.page_content for doc in documents).strip()

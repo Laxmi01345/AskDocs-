@@ -1,0 +1,62 @@
+[
+  {
+    "question": "What are the working hours?",
+    "ground_truth": "Standard working hours are 9:00 AM to 5:30 PM Pacific Time, Monday through Friday."
+  },
+  {
+    "question": "How many PTO days do full-time employees get?",
+    "ground_truth": "Full-time employees receive 20 days of PTO per year."
+  },
+  {
+    "question": "What is the salary range for a senior developer?",
+    "ground_truth": "Senior Developer: $130,000 - $170,000."
+  },
+  {
+    "question": "How much is the sign-on bonus?",
+    "ground_truth": "Sign-on bonus: Up to $10,000 for senior positions."
+  },
+  {
+    "question": "What is the 401(k) matching?",
+    "ground_truth": "401(k) matching: 4% of salary."
+  },
+  {
+    "question": "When are performance reviews conducted?",
+    "ground_truth": "Performance reviews are conducted semi-annually, in June and December."
+  },
+  {
+    "question": "What happens if an employee receives Needs Improvement twice?",
+    "ground_truth": "Employees receiving Needs Improvement twice in a row will be placed on a Performance Improvement Plan (PIP)."
+  },
+  {
+    "question": "How much notice is required for voluntary resignation?",
+    "ground_truth": "Employees must provide 2 weeks notice for voluntary resignation. Senior positions require 4 weeks notice."
+  },
+  {
+    "question": "What is the learning stipend?",
+    "ground_truth": "Learning stipend: $2,000 per year."
+  },
+  {
+    "question": "How many employees work at Riverton?",
+    "ground_truth": "As of January 2024, Riverton employs 1,847 people across 5 offices worldwide."
+  },
+  {
+    "question": "What days are employees required to work from the office?",
+    "ground_truth": "Employees are required to work from the office on Tuesdays and Thursdays."
+  },
+  {
+    "question": "What is the home office setup allowance?",
+    "ground_truth": "Home office setup: $1,500 one-time."
+  },
+  {
+    "question": "What percentage of premium does the company cover for health insurance?",
+    "ground_truth": "Health insurance: Company covers 80% of premium."
+  },
+  {
+    "question": "How often must passwords be changed?",
+    "ground_truth": "Passwords must be changed every 90 days."
+  },
+  {
+    "question": "What is the severance for involuntary termination?",
+    "ground_truth": "Severance: 1 month per year of service for involuntary termination."
+  }
+]

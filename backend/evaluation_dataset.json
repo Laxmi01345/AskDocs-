@@ -1,0 +1,152 @@
+[
+  {
+    "question": "What is the population of Riverton?",
+    "ground_truth": "Riverton has a population of about 420,000 people.",
+    "relevant_chunks": [0]
+  },
+  {
+    "question": "How many residents rely on bus or light rail?",
+    "ground_truth": "Nearly one-third of Riverton's residents commute by bus or light rail.",
+    "relevant_chunks": [0]
+  },
+  {
+    "question": "How much were commute times reduced after transit expansion?",
+    "ground_truth": "Average commute times decreased from 47 minutes to 34 minutes, a reduction of 13 minutes.",
+    "relevant_chunks": [0]
+  },
+  {
+    "question": "What downside resulted from expanding public transit routes?",
+    "ground_truth": "The expansion increased annual transit operating costs by 18 percent, creating budget pressure.",
+    "relevant_chunks": [0]
+  },
+  {
+    "question": "Why do city officials support the transit expansion project?",
+    "ground_truth": "Officials believe faster commutes improve productivity and reduce household transportation costs.",
+    "relevant_chunks": [0]
+  },
+  {
+    "question": "Why did Riverton start a flood-resilience initiative?",
+    "ground_truth": "The city launched the initiative after two severe monsoon seasons damaged infrastructure.",
+    "relevant_chunks": [1]
+  },
+  {
+    "question": "What measures were included in the flood-resilience program?",
+    "ground_truth": "The program included upgraded drainage channels, permeable sidewalks, and wetland restoration.",
+    "relevant_chunks": [1]
+  },
+  {
+    "question": "How effective were the drainage upgrades during heavy rainfall?",
+    "ground_truth": "Neighborhoods with upgrades experienced a 41 percent reduction in street-flood incidents.",
+    "relevant_chunks": [1]
+  },
+  {
+    "question": "What flooding problem still affects older neighborhoods?",
+    "ground_truth": "Insurance claims related to basement flooding remain high in older housing blocks.",
+    "relevant_chunks": [1]
+  },
+  {
+    "question": "Which ecosystem restoration effort was part of the flood program?",
+    "ground_truth": "Wetland restoration near the river delta was part of the program.",
+    "relevant_chunks": [1]
+  },
+  {
+    "question": "What industries are central to Riverton's economy?",
+    "ground_truth": "Marine logistics, specialty food processing, and software services are the city's main economic sectors.",
+    "relevant_chunks": [2]
+  },
+  {
+    "question": "What caused cargo throughput to increase at the port?",
+    "ground_truth": "Cargo throughput increased largely because of refrigerated exports.",
+    "relevant_chunks": [2]
+  },
+  {
+    "question": "Why did food-processing companies begin automating packaging?",
+    "ground_truth": "Companies adopted automation because of rising energy costs and labor shortages.",
+    "relevant_chunks": [2]
+  },
+  {
+    "question": "How many software jobs were created over the last five years?",
+    "ground_truth": "The software sector added approximately 3,500 jobs in five years.",
+    "relevant_chunks": [2]
+  },
+  {
+    "question": "Which technical career paths have become harder for graduates to enter?",
+    "ground_truth": "Entry-level roles in data engineering and cybersecurity have become more selective.",
+    "relevant_chunks": [2]
+  },
+  {
+    "question": "What objectives does Riverton's ten-year urban plan pursue?",
+    "ground_truth": "The plan focuses on mixed-use housing, shaded pedestrian corridors, and stricter building efficiency standards.",
+    "relevant_chunks": [3]
+  },
+  {
+    "question": "How many new homes are planned by 2035?",
+    "ground_truth": "The city plans to build 60,000 new housing units by 2035.",
+    "relevant_chunks": [3]
+  },
+  {
+    "question": "What percentage of planned housing will be below-market rentals?",
+    "ground_truth": "Thirty-five percent of the new housing units will be below-market rentals.",
+    "relevant_chunks": [3]
+  },
+  {
+    "question": "What concerns have residents raised about the urban development plan?",
+    "ground_truth": "Residents are concerned about construction noise and pressure on public schools.",
+    "relevant_chunks": [3]
+  },
+  {
+    "question": "When will the urban plan undergo a midterm review?",
+    "ground_truth": "The midterm review is scheduled for 2029.",
+    "relevant_chunks": [3]
+  },
+  {
+    "question": "What actions has Riverton taken to improve infrastructure and resilience?",
+    "ground_truth": "Riverton expanded public transit, upgraded drainage systems, installed permeable sidewalks, and restored wetlands.",
+    "relevant_chunks": [0,1]
+  },
+  {
+    "question": "What major investments has the city made in transportation and flood prevention?",
+    "ground_truth": "The city invested in expanded public transit routes and a flood-resilience program including drainage upgrades and wetland restoration.",
+    "relevant_chunks": [0,1]
+  },
+  {
+    "question": "How is Riverton balancing economic growth with quality of life?",
+    "ground_truth": "The city supports economic sectors while implementing housing, pedestrian, and efficiency initiatives through its urban plan.",
+    "relevant_chunks": [2,3]
+  },
+  {
+    "question": "What challenges does Riverton face despite recent infrastructure improvements?",
+    "ground_truth": "The city still faces transit budget pressure and continued basement flooding in older housing blocks.",
+    "relevant_chunks": [0,1]
+  },
+  {
+    "question": "How is the city addressing affordability and population growth?",
+    "ground_truth": "The city plans 60,000 new housing units, including below-market rentals, while improving transit access.",
+    "relevant_chunks": [0,3]
+  },
+  {
+    "question": "What recent developments have affected both Riverton's economy and housing market?",
+    "ground_truth": "Economic growth in logistics, food processing, and software coincides with a major housing expansion plan targeting affordability.",
+    "relevant_chunks": [2,3]
+  },
+  {
+    "question": "What initiatives are intended to improve sustainability and climate resilience?",
+    "ground_truth": "The flood-resilience program and the urban plan's building-efficiency standards are intended to improve sustainability and resilience.",
+    "relevant_chunks": [1,3]
+  },
+  {
+    "question": "What evidence suggests Riverton is investing in its future growth?",
+    "ground_truth": "The city expanded transit, launched a flood-resilience program, supported economic development, and approved a long-term urban plan.",
+    "relevant_chunks": [0,1,2,3]
+  },
+  {
+    "question": "What are Riverton's biggest transportation, housing, and climate challenges?",
+    "ground_truth": "The city faces transit budget pressure, housing affordability concerns, and persistent flooding issues in older neighborhoods.",
+    "relevant_chunks": [0,1,3]
+  },
+  {
+    "question": "How are public policy decisions influencing both jobs and livability in Riverton?",
+    "ground_truth": "Policies support economic growth through logistics and software industries while improving housing, transit, and pedestrian infrastructure.",
+    "relevant_chunks": [2,3]
+  }
+]

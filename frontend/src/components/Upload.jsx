@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import axios from 'axios';
+import API_BASE from '../api';
 
 function Upload({ onUpload }) {
   const [file, setFile] = useState(null);
@@ -23,7 +24,7 @@ function Upload({ onUpload }) {
     formData.append('file', file);
 
     try {
-      const response = await axios.post('http://127.0.0.1:8000/upload', formData);
+      const response = await axios.post(`${API_BASE}/upload`, formData);
       onUpload(response.data.doc_id, response.data.filename);
     } catch (err) {
       setError(err.response?.data?.detail || 'Upload failed');
