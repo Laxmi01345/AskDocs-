@@ -1,17 +1,27 @@
 import os
-
 from dotenv import load_dotenv
-from langchain_huggingface import HuggingFaceEmbeddings
 
 load_dotenv()
 
-EMB_MODEL = os.getenv("EMB_MODEL", "sentence-transformers/all-MiniLM-L6-v2")
-
-_embeddings: HuggingFaceEmbeddings | None = None
+_embeddings = None
 
 
-def get_embeddings() -> HuggingFaceEmbeddings:
+class ChromaONNXEmbeddings:
+    """Lightweight ONNX-based embeddings (no torch required, ~50MB vs 500MB+)."""
+
+    def __init__(self):
+        from chromadb.utils.embedding_functions import ONNXMiniLM_L6_V2
+        self._ef = ONNXMiniLM_L6_V2()
+
+    def embed_documents(self, texts):
+        return self._ef(list(texts))
+
+    def embed_query(self, text):
+        return self._ef([text])[0]
+
+
+def get_embeddings():
     global _embeddings
     if _embeddings is None:
-        _embeddings = HuggingFaceEmbeddings(model_name=EMB_MODEL)
+        _embeddings = ChromaONNXEmbeddings()
     return _embeddings

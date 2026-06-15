@@ -115,12 +115,6 @@ def ask(req: AskRequest):
 def startup():
     from app.database import init_db
     init_db()
-    # Preload embedding model so first request doesn't crash
-    try:
-        from app.embeddings import get_embeddings
-        get_embeddings()
-    except Exception:
-        pass
     try:
         from app.database import load_chunks
         from app.bm25_store import build_bm25_retriever

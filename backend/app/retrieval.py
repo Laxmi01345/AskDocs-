@@ -57,6 +57,8 @@ def _build_hybrid_retriever(doc_id: str, top_k: int = 3):
 
 def _rerank(query, docs, top_k):
     cross_encoder = get_cross_encoder()
+    if cross_encoder is None:
+        return docs[:top_k]
     pairs = [[query, doc.page_content] for doc in docs]
     scores = cross_encoder.score(pairs)
     ranked = sorted(zip(docs, scores), key=lambda x: x[1], reverse=True)
