@@ -1,0 +1,14 @@
+__pycache__
+*.pyc
+.env
+.venv
+chroma_db
+bm25_cache
+chunks_store
+.git
+.gitignore
+*.md
+demo.txt
+validation_report.json
+full_validation_report.json
+validate.py
