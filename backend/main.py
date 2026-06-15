@@ -2,25 +2,25 @@ import os
 import uuid
 from fastapi import FastAPI, UploadFile, File, HTTPException, Request
 from fastapi.middleware.cors import CORSMiddleware
-from fastapi.responses import JSONResponse
+from fastapi.responses import JSONResponse, ORJSONResponse
 from pydantic import BaseModel
 from typing import Optional
 
 app = FastAPI(title="AskDocs - RAG Document Q&A")
 
-# CORS middleware
-app.add_middleware(
-    CORSMiddleware,
-    allow_origins=["*"],
-    allow_credentials=False,
-    allow_methods=["*"],
-    allow_headers=["*"],
-)
 
-
-# Explicit CORS headers on every response (backup for Render proxy)
 @app.middleware("http")
-async def add_cors_headers(request: Request, call_next):
+async def cors_middleware(request: Request, call_next):
+    if request.method == "OPTIONS":
+        return JSONResponse(
+            content={"status": "ok"},
+            headers={
+                "Access-Control-Allow-Origin": "*",
+                "Access-Control-Allow-Methods": "GET, POST, PUT, DELETE, OPTIONS",
+                "Access-Control-Allow-Headers": "*",
+                "Access-Control-Max-Age": "86400",
+            },
+        )
     response = await call_next(request)
     response.headers["Access-Control-Allow-Origin"] = "*"
     response.headers["Access-Control-Allow-Methods"] = "GET, POST, PUT, DELETE, OPTIONS"
