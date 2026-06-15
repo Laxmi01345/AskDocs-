@@ -1,0 +1,25 @@
+services:
+  - type: web
+    name: askdocs
+    runtime: docker
+    dockerfilePath: backend/Dockerfile
+    dockerContext: backend
+    envVars:
+      - key: CEREBRAS_API_KEY
+        sync: false
+      - key: CHROMA_PERSIST_DIR
+        value: ./chroma_db
+      - key: CHUNKS_DIR
+        value: ./chunks_store
+      - key: ENABLE_RERANKER
+        value: "false"
+
+  - type: static
+    name: askdocs-frontend
+    runtime: static
+    rootDir: frontend
+    buildCommand: npm install && npm run build
+    staticPublishPath: frontend/dist
+    envVars:
+      - key: VITE_API_URL
+        value: https://askdocs.onrender.com
