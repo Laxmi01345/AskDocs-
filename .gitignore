@@ -3,3 +3,6 @@ venv/
 __pycache__/
 node_modules/
 dist/
+backend/chroma_db/
+backend/chunks_store/
+*.pyc
