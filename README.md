@@ -1,11 +1,5 @@
 # AskDocs – RAG-based Document Q&A System
 
-Built a RAG-based system for querying and extracting answers from documents.
-
-- Implemented semantic search using embeddings and vector database
-- Integrated LLMs for context-aware response generation
-- Tech: Python, LLMs, Vector DB, Embeddings
-
 AskDocs is a Retrieval-Augmented Generation (RAG) based Document Question Answering system.
 
 It allows users to upload documents (PDF, DOCX, TXT), generate semantic embeddings, retrieve relevant context using hybrid search, and generate grounded answers using Cerebras AI.
