@@ -115,16 +115,3 @@ def ask(req: AskRequest):
 def startup():
     from app.database import init_db
     init_db()
-    try:
-        from app.database import load_chunks
-        from app.bm25_store import build_bm25_retriever
-        chunks_dir = os.getenv("CHUNKS_DIR", "./chunks_store")
-        if os.path.exists(chunks_dir):
-            for filename in os.listdir(chunks_dir):
-                if filename.endswith(".json"):
-                    doc_id = filename.replace(".json", "")
-                    chunks = load_chunks(doc_id)
-                    if chunks:
-                        build_bm25_retriever(doc_id, chunks)
-    except Exception:
-        pass

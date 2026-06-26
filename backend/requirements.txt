@@ -5,7 +5,6 @@ langchain
 langchain-community
 langchain-text-splitters
 numpy
-rank_bm25
 cerebras-cloud-sdk
 python-multipart
 pypdf

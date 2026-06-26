@@ -8,8 +8,7 @@ from pathlib import Path
 
 sys.path.insert(0, os.path.dirname(__file__))
 
-from app.retrieval import answer_with_rag, _build_hybrid_retriever, _rerank
-from app.database import get_vectorstore
+from app.retrieval import _retrieve_and_rerank
 from app.validation.retrieval_validation import validate_retrieval
 from app.validation.generation_validation import validate_generation
 
@@ -38,10 +37,7 @@ def run_full_validation(doc_id, dataset_path="employee_eval.json", top_k=3):
 
         try:
             # Get retrieval results
-            vectordb = get_vectorstore(doc_id)
-            hybrid_retriever = _build_hybrid_retriever(doc_id, top_k)
-            retrieved_docs = hybrid_retriever(question)
-            retrieved_docs = _rerank(question, retrieved_docs, top_k)
+            retrieved_docs = _retrieve_and_rerank(doc_id, question, top_k)
 
             chunk_texts = [doc.page_content for doc in retrieved_docs]
 
