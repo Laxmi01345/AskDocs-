@@ -52,7 +52,7 @@
         <span class="badge">ChromaDB</span>
         <span class="badge">Cerebras AI</span>
         <span class="badge">React</span>
-        <span class="badge">Hybrid Search</span>
+        <span class="badge">Vector Search</span>
         <span class="badge">RAG</span>
     </div>
 </header>
@@ -76,7 +76,7 @@
     <!-- OVERVIEW -->
     <section id="overview">
         <h2>1. Project Overview</h2>
-        <p><strong>AskDocs</strong> is a Retrieval-Augmented Generation (RAG) system that lets users upload documents and ask questions about them. It combines keyword search (BM25) with semantic search (vector embeddings), reranks results with a cross-encoder, and generates grounded answers using Cerebras AI.</p>
+        <p><strong>AskDocs</strong> is a Retrieval-Augmented Generation (RAG) system that lets users upload documents and ask questions about them. It uses vector search (embedding similarity) to retrieve relevant chunks, reranks them with a cross-encoder, and generates grounded answers using Cerebras AI.</p>
         <br>
         <h3>Problem It Solves</h3>
         <ul>
@@ -88,7 +88,7 @@
         <br>
         <h3>Our Solution</h3>
         <ul>
-            <li><strong>Hybrid Retrieval</strong> - BM25 + Vector search via RRF fusion</li>
+            <li><strong>Vector Retrieval</strong> - Embedding search + cross-encoder reranker</li>
             <li><strong>Reranking</strong> - Cross-encoder re-scores for precision</li>
             <li><strong>Conversational Memory</strong> - Multi-turn chat with session tracking</li>
             <li><strong>Grounded Generation</strong> - LLM answers ONLY from retrieved context</li>
@@ -110,9 +110,7 @@
             <br><br>
             <span class="flow-box">Question</span>
             <span class="flow-arrow"> &rarr; </span>
-            <span class="flow-box">BM25 + Vector</span>
-            <span class="flow-arrow"> &rarr; </span>
-            <span class="flow-box">RRF Fusion</span>
+            <span class="flow-box">Vector Search</span>
             <span class="flow-arrow"> &rarr; </span>
             <span class="flow-box">Rerank</span>
             <span class="flow-arrow"> &rarr; </span>
@@ -125,9 +123,7 @@
         <div class="flow-diagram">
             User Query<br><br>
             &darr;<br><br>
-            <span class="flow-box">BM25 (40%)</span> &nbsp;&nbsp; <span class="flow-box">Vector (60%)</span><br><br>
-            &darr; &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &darr;<br><br>
-            <span style="color:#a78bfa;">Reciprocal Rank Fusion (RRF)</span><br><br>
+            <span class="flow-box">Vector Search (top_k x 4)</span><br><br>
             &darr;<br><br>
             <span class="flow-box">Cross-Encoder Reranker</span><br><br>
             &darr;<br><br>
@@ -143,7 +139,6 @@
             <tr><td>Backend Framework</td><td>FastAPI</td><td>Async, fast, auto-docs, Pydantic validation</td></tr>
             <tr><td>Vector Database</td><td>ChromaDB</td><td>Local, lightweight, LangChain integration</td></tr>
             <tr><td>Embeddings</td><td>sentence-transformers/all-MiniLM-L6-v2</td><td>Fast, 80MB, good accuracy</td></tr>
-            <tr><td>Keyword Search</td><td>rank_bm25</td><td>Fast BM25 implementation</td></tr>
             <tr><td>Reranker</td><td>cross-encoder/ms-marco-MiniLM-L6-v2</td><td>High accuracy, lightweight</td></tr>
             <tr><td>LLM</td><td>Cerebras AI (gpt-oss-120b)</td><td>Fast inference, good quality</td></tr>
             <tr><td>Document Parsing</td><td>LangChain loaders (PyPDF, Docx2txt, TextLoader)</td><td>Multi-format support</td></tr>
@@ -157,31 +152,31 @@
     <section id="features">
         <h2>4. Key Features</h2>
 
-        <h3>4.1 Hybrid Retrieval</h3>
+        <h3>4.1 Vector Retrieval + Reranking</h3>
         <div class="card">
             <h4>What it does</h4>
-            <p>Combines BM25 (keyword matching) with Vector search (semantic matching) using Reciprocal Rank Fusion.</p>
+            <p>Uses embedding similarity to retrieve candidate chunks, then a cross-encoder re-scores them for precision.</p>
             <br>
             <h4>Why it matters</h4>
             <ul>
-                <li><strong>BM25</strong> catches exact terms: names, dates, acronyms, codes</li>
-                <li><strong>Vector search</strong> catches concepts: paraphrases, synonyms</li>
-                <li><strong>RRF fusion</strong> merges both ranked lists into one optimal result</li>
+                <li><strong>Vector search</strong> retrieves semantically relevant chunks (top_k x 4 candidates)</li>
+                <li><strong>Cross-encoder</strong> reads query + chunk together for true relevance scoring</li>
+                <li><strong>Two-stage</strong> design: fast recall first, precise ranking second</li>
             </ul>
             <br>
-            <h4>Weights</h4>
-            <p>BM25: 40% | Vector: 60% (lean toward semantic for general queries)</p>
+            <h4>Candidates</h4>
+            <p>Retrieve 12, rerank to top 3</p>
         </div>
         <br>
 
         <h3>4.2 Cross-Encoder Reranking</h3>
         <div class="card">
             <h4>What it does</h4>
-            <p>After hybrid retrieval returns 9-12 candidates, a cross-encoder reads each (query, chunk) pair together and re-scores them.</p>
+            <p>After vector retrieval returns 12 candidates, a cross-encoder reads each (query, chunk) pair together and re-scores them to pick the top 3.</p>
             <br>
             <h4>Why it matters</h4>
             <ul>
-                <li>Initial ranking scores query and chunk independently</li>
+                <li>Vector search scores query and chunk independently (cosine similarity)</li>
                 <li>Cross-encoder reads them together for true relevance</li>
                 <li>Catches false positives and boosts hidden gems</li>
             </ul>
@@ -238,8 +233,7 @@ POST /ask<br>
 &nbsp;&nbsp;&rarr; session.py: Load or create session<br>
 &nbsp;&nbsp;&rarr; context_builder.py: Check if summarization needed<br>
 &nbsp;&nbsp;&rarr; retrieval.py: answer_with_rag_with_history()<br>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&rarr; _build_hybrid_retriever(): BM25 + Vector &rarr; RRF<br>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&rarr; _rerank(): Cross-encoder re-scores<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&rarr; _retrieve_and_rerank(): Vector search &rarr; Cross-encoder<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&rarr; build_rag_prompt(): Assembles full prompt<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&rarr; CerebrasLLM.invoke(): Generate answer<br>
 &nbsp;&nbsp;&rarr; session.py: Save turn (question, answer)<br>
@@ -280,13 +274,8 @@ After 10 questions:<br>
         </div>
 
         <div class="qa">
-            <strong>Q: What is BM25?</strong>
-            <p>A 1990s keyword search algorithm. Counts word frequency and position. Great for exact matches: names, dates, acronyms. Weak at understanding synonyms.</p>
-        </div>
-
-        <div class="qa">
-            <strong>Q: What is RRF (Reciprocal Rank Fusion)?</strong>
-            <p>A formula that merges two ranked lists: score = 1/(60 + position). Chunks appearing in both lists get boosted. Combines BM25 and Vector search results.</p>
+            <strong>Q: Why vector search instead of BM25?</strong>
+            <p>For a pure RAG system, semantic understanding matters more than keyword matching. Embeddings handle synonyms, paraphrases, and conceptual queries naturally. Cross-encoder reranking compensates for any relevance gaps, making BM25 redundant for this use case.</p>
         </div>
 
         <div class="qa">
@@ -353,14 +342,13 @@ AskDocs-/<br>
 &ensp;backend/<br>
 &ensp;&ensp;app/<br>
 &ensp;&ensp;&ensp;api.py              &ensp;&ensp;&ensp;&ensp;&ensp;&ensp;# FastAPI endpoints (/upload, /ask, /documents)<br>
-&ensp;&ensp;&ensp;retrieval.py        &ensp;&ensp;&ensp;&ensp;# Hybrid retrieval + reranking pipeline<br>
+&ensp;&ensp;&ensp;retrieval.py        &ensp;&ensp;&ensp;&ensp;# Vector retrieval + reranking pipeline<br>
 &ensp;&ensp;&ensp;database.py         &ensp;&ensp;&ensp;&ensp;# ChromaDB + chunk persistence<br>
 &ensp;&ensp;&ensp;embeddings.py       &ensp;&ensp;&ensp;&ensp;# HuggingFace embeddings singleton<br>
 &ensp;&ensp;&ensp;chunking.py         &ensp;&ensp;&ensp;&ensp;# RecursiveCharacterTextSplitter<br>
 &ensp;&ensp;&ensp;parsing.py          &ensp;&ensp;&ensp;&ensp;&ensp;# PDF/DOCX/TXT loaders<br>
 &ensp;&ensp;&ensp;llm.py              &ensp;&ensp;&ensp;&ensp;&ensp;&ensp;# Cerebras AI wrapper<br>
 &ensp;&ensp;&ensp;reranker.py         &ensp;&ensp;&ensp;&ensp;&ensp;# Cross-encoder singleton<br>
-&ensp;&ensp;&ensp;bm25_store.py       &ensp;&ensp;&ensp;&ensp;&ensp;# BM25 index build/cache<br>
 &ensp;&ensp;&ensp;session.py          &ensp;&ensp;&ensp;&ensp;&ensp;&ensp;# Session manager (TTL, LRU)<br>
 &ensp;&ensp;&ensp;context_builder.py  &ensp;&ensp;# Prompt assembly with history<br>
 &ensp;&ensp;&ensp;validation/<br>
@@ -388,13 +376,13 @@ AskDocs-/<br>
         <h2>9. Interview Q&A</h2>
 
         <div class="qa">
-            <strong>Q: Why hybrid search instead of just vector search?</strong>
-            <p>Vector search misses exact terms (names, dates, codes). BM25 catches those. Together they cover both conceptual and keyword queries. RRF merges the results optimally.</p>
+            <strong>Q: Why vector search + reranker instead of hybrid search?</strong>
+            <p>For a RAG system, semantic retrieval is the primary need. Vector search handles synonyms and concepts well. The cross-encoder reranker fine-tunes relevance, making BM25 redundant. This simplifies the architecture (one retriever instead of two) while maintaining accuracy.</p>
         </div>
 
         <div class="qa">
-            <strong>Q: Why reranking after hybrid retrieval?</strong>
-            <p>Initial retrieval (BM25 + Vector) scores independently. Cross-encoder reads query+chunk together for true relevance. It catches false positives and boosts hidden gems. Adds ~200ms but improves precision by 15-25%.</p>
+            <strong>Q: Why reranking after vector retrieval?</strong>
+            <p>Vector search scores query and chunk independently (cosine similarity). Cross-encoder reads them together for true relevance. It catches false positives and boosts hidden gems. Adds ~200ms but improves precision by 15-25%.</p>
         </div>
 
         <div class="qa">
@@ -467,9 +455,8 @@ curl -X POST http://127.0.0.1:8000/upload -F "file=@demo.txt"
             <tr><th>Parameter</th><th>Value</th></tr>
             <tr><td>Chunk size</td><td>1000 characters</td></tr>
             <tr><td>Chunk overlap</td><td>200 characters</td></tr>
-            <tr><td>BM25 weight</td><td>40%</td></tr>
-            <tr><td>Vector weight</td><td>60%</td></tr>
-            <tr><td>RRF constant (k)</td><td>60</td></tr>
+            <tr><td>Initial retrieve count</td><td>top_k x 4 (default 12)</td></tr>
+            <tr><td>Rerank to top</td><td>top_k (default 3)</td></tr>
             <tr><td>Session TTL</td><td>1 hour</td></tr>
             <tr><td>Max sessions</td><td>1000</td></tr>
             <tr><td>Recent window</td><td>5 turns</td></tr>

@@ -49,18 +49,7 @@ def store_document(doc_id: str, filename: str, chunks: List[str] | None = None, 
     vectorstore.add_texts(texts=chunks, metadatas=metadatas)
     vectorstore.persist()
 
-    # Persist raw chunks for BM25 rebuild
     os.makedirs(CHUNKS_DIR, exist_ok=True)
     chunks_path = Path(CHUNKS_DIR) / f"{doc_id}.json"
     with open(chunks_path, "w") as f:
         json.dump({"filename": filename, "chunks": chunks}, f)
-
-
-def load_chunks(doc_id: str):
-    """Load persisted chunks for a document (for BM25 index rebuild)."""
-    chunks_path = Path(CHUNKS_DIR) / f"{doc_id}.json"
-    if not chunks_path.exists():
-        return None
-    with open(chunks_path, "r") as f:
-        data = json.load(f)
-    return data.get("chunks")

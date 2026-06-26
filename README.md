@@ -2,7 +2,7 @@
 
 AskDocs is a Retrieval-Augmented Generation (RAG) based Document Question Answering system.
 
-It allows users to upload documents (PDF, DOCX, TXT), generate semantic embeddings, retrieve relevant context using hybrid search, and generate grounded answers using Cerebras AI.
+It allows users to upload documents (PDF, DOCX, TXT), generate semantic embeddings, retrieve relevant context using vector search + cross-encoder reranking, and generate grounded answers using Cerebras AI.
 
 **Live Demo:** [https://askdocs-1.onrender.com](https://askdocs-1.onrender.com)
 
@@ -11,12 +11,12 @@ It allows users to upload documents (PDF, DOCX, TXT), generate semantic embeddin
 ## 🚀 Features
 
 - 📄 **Document Upload** – Supports PDF, DOCX, and TXT files
-- 🧠 **Hybrid Retrieval** – Combines BM25 keyword search + vector similarity search with Reciprocal Rank Fusion (RRF)
+- 🧠 **Vector Retrieval** – Embedding similarity search + cross-encoder reranking for precision
 - 🔎 **Semantic Search** – ChromaDB with ONNX-based embeddings (all-MiniLM-L6-v2)
 - 🤖 **Context-Aware Answers** – Cerebras AI LLM with RAG prompt assembly
 - 💬 **Conversational Memory** – Multi-turn sessions with automatic summarization and sliding window
 - ✅ **Validation Layer** – Retrieval validation + generation validation for answer quality
-- 🎯 **Reranking** – Optional cross-encoder reranking for improved precision
+- 🎯 **Cross-Encoder Reranking** – Re-ranks top candidates for improved precision
 - 💻 **Modern Frontend** – React + Vite + Tailwind CSS with markdown rendering
 
 ---
@@ -25,8 +25,8 @@ It allows users to upload documents (PDF, DOCX, TXT), generate semantic embeddin
 
 ```
 Upload → Parse → Chunk → Embed → Store
-                                          ↓
-Question → Hybrid Retrieve (BM25 + Vector) → RRF Fusion → [Optional Rerank] → Context Assembly → Cerebras LLM → Answer
+                                     ↓
+Question → Vector Search → Cross-Encoder Reranker → Context Assembly → Cerebras LLM → Answer
 ```
 
 ### Pipeline Steps
@@ -34,11 +34,10 @@ Question → Hybrid Retrieve (BM25 + Vector) → RRF Fusion → [Optional Rerank
 1. **Parse** – Extract text from PDF/DOCX/TXT using LangChain document loaders
 2. **Chunk** – Split into overlapping chunks using `RecursiveCharacterTextSplitter`
 3. **Embed** – Generate embeddings with ChromaDB ONNX embeddings (all-MiniLM-L6-v2)
-4. **Store** – Persist in ChromaDB vector store + raw chunks for BM25
-5. **Retrieve** – Hybrid search: BM25 keyword matching + vector similarity
-6. **Fuse** – Reciprocal Rank Fusion (RRF) merges ranked results from both retrievers
-7. **Rerank** – Optional cross-encoder reranking for top precision
-8. **Generate** – Assemble RAG prompt with conversation history and send to Cerebras AI
+4. **Store** – Persist in ChromaDB vector store
+5. **Retrieve** – Vector similarity search returns top-k × 4 candidates
+6. **Rerank** – Cross-encoder re-scores each (query, chunk) pair, returns top-k
+7. **Generate** – Assemble RAG prompt with conversation history and send to Cerebras AI
 
 ---
 
@@ -51,7 +50,7 @@ Question → Hybrid Retrieve (BM25 + Vector) → RRF Fusion → [Optional Rerank
 | LLM | Cerebras AI |
 | Embeddings | ChromaDB ONNX (all-MiniLM-L6-v2) |
 | Vector Store | ChromaDB |
-| Keyword Search | rank_bm25 |
+| Reranker | cross-encoder/ms-marco-MiniLM-L6-v2 |
 | Text Splitting | LangChain RecursiveCharacterTextSplitter |
 | Document Parsing | PyPDF, python-docx, Docx2txt |
 
@@ -80,9 +79,8 @@ AskDocs-
 │   ├── app/
 │   │   ├── embeddings.py        # ChromaDB ONNX embeddings
 │   │   ├── database.py          # ChromaDB vector store + chunk persistence
-│   │   ├── retrieval.py         # Hybrid retrieval + RRF fusion + reranking
-│   │   ├── bm25_store.py        # BM25 index build/cache/persist
-│   │   ├── reranker.py          # Cross-encoder reranker (optional)
+│   │   ├── retrieval.py         # Vector retrieval + cross-encoder reranking
+│   │   ├── reranker.py          # Cross-encoder reranker singleton
 │   │   ├── chunking.py          # Text chunking
 │   │   ├── parsing.py           # Document parsing (PDF/DOCX/TXT)
 │   │   ├── llm.py               # Cerebras LLM wrapper
@@ -197,7 +195,7 @@ Frontend runs on `http://localhost:5173` and connects to backend at `http://loca
 2. Render → New → Web Service
 3. Connect repo, select `backend/` as root directory
 4. Runtime: Docker
-5. Add env vars: `CEREBRAS_API_KEY`, `ENABLE_RERANKER=false`
+5. Add env var: `CEREBRAS_API_KEY`
 6. Deploy
 
 ### Frontend (Render – Static Site)
