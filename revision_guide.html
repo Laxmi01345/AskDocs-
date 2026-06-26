@@ -145,42 +145,9 @@ sim range: -1.0 (opposite) to 1.0 (identical)
         </div>
 
         <h4>Cross-Encoder Reranker (Stage 2)</h4>
-        <div class="code">
-Input:  [CLS] query_tokens [SEP] chunk_tokens [SEP]
-        (both sequences processed TOGETHER by transformer)
-
-Architecture:
-  cross-encoder/ms-marco-MiniLM-L6-v2
-  ├── 6 transformer layers (MiniLM-L6-v2, 384 hidden dim)
-  ├── 12 attention heads per layer
-  ├── Self-attention across ALL tokens of both sequences
-  │   (query tokens attend to chunk tokens and vice versa)
-  └── Classification head:
-        [CLS] token hidden state → Linear(384 → 1) → logit
-
-Output: raw logit (unbounded real number, NOT sigmoid)
-  logit &gt; 0  → model predicts "relevant"
-  logit &lt; 0  → model predicts "not relevant"
-  Higher logit = more relevant
-
-Example output:
-  Pair(query="What is the salary?",
-       chunk="Senior Developer: $130k-$170k")   → logit = -5.5  (most relevant)
-  Pair(query="What is the salary?",
-       chunk="Office locations: SF, NYC")       → logit = -11.3 (least relevant)
-  Pair(query="What is the salary?",
-       chunk="Salary ranges: Junior $70k...")   → logit = -6.2  (mid relevant)
-
-Note: raw logits are used for RANKING (sort descending).
-      The absolute values don't matter, only the relative order.
-      This model was trained on MS MARCO with pairwise ranking loss,
-      so it learns "which chunk is more relevant" not "how relevant is this chunk."
-
-Why it beats cosine similarity:
-  Cosine: encodes Q and C independently, compares at end → misses word interactions
-  Cross-encoder: Q tokens attend to C tokens through all 6 layers →
-  catches nuances like negation, entity matches, and contextual relevance
-        </div>
+        <p>See <strong>§4.2</strong> for the complete reference, including architecture (4.2.2), forward pass step-by-step (4.2.3), pairwise ranking loss (4.2.4), internal attention math (4.2.9), and a detailed worked example with real scores (4.2.6).</p>
+        <br>
+        <p><strong>TL;DR:</strong> Cross-encoder reads Q and C as a single sequence <code>[CLS] Q [SEP] C [SEP]</code>, runs 6 MiniLM layers where every token attends to every other token (query↔chunk), and projects the [CLS] hidden state to a raw logit. Higher logit = more relevant. Sort descending, pick top_k.</p>
     </section>
 
     <!-- TECH STACK -->
@@ -222,32 +189,491 @@ Why it beats cosine similarity:
         <br>
 
         <h3>4.2 Cross-Encoder Reranker</h3>
+
+        <h4>4.2.1 What is a Cross-Encoder?</h4>
         <div class="card">
-            <h4>What it does</h4>
-            <p>After vector retrieval returns 12 candidates, a cross-encoder evaluates each (query, chunk) pair jointly and re-scores them to pick the top 3.</p>
+            <p>A cross-encoder is a transformer model that takes two text sequences <strong>concatenated as one input</strong> and outputs a single relevance score. Unlike bi-encoders (which encode query and chunk separately and compare at the end), the cross-encoder lets every token in the query attend to every token in the chunk through all transformer layers — capturing word-level interactions.</p>
             <br>
-            <h4>How it works</h4>
-            <div class="code" style="margin:10px 0; font-size:0.85em">
-Input format: [CLS] query_tokens [SEP] chunk_tokens [SEP]
-Model: cross-encoder/ms-marco-MiniLM-L6-v2
-  - 6 transformer layers with self-attention across ALL tokens
-  - [CLS] final state → Linear layer → single logit (unbounded)
-  - Higher logit = more relevant
+            <p>In AskDocs, after vector search retrieves 12 candidate chunks, the cross-encoder re-scores each (query, chunk) pair jointly and selects the top 3.</p>
+        </div>
+        <br>
 
-Example scores (raw logits):
-  Q: "What is the salary?" + chunk "Senior: $130k-$170k"   → -5.5
-  Q: "What is the salary?" + chunk "Junior: $70k-$90k"     → -6.2
-  Q: "What is the salary?" + chunk "Office: San Francisco" → -11.3
+        <h4>4.2.2 Architecture</h4>
+        <div class="card">
+            <p><strong>Model:</strong> <code>cross-encoder/ms-marco-MiniLM-L6-v2</code></p>
+            <div class="code" style="margin:10px 0;">
+Input construction:
+  query = "What is the salary?"
+  chunk = "Senior Developer: $130k-$170k"
 
-Sorted descending: -5.5 &gt; -6.2 &gt; -11.3 → top 3 selected
+  input = [CLS] what is the salary ? [SEP] Senior Developer : $130k - $170k [SEP]
+           ↑────── query tokens ──────↑     ↑──────── chunk tokens ────────↑
+
+Forward pass:
+  [CLS]  what  is  the  salary  ?  [SEP]  Senior  Developer  :  $130k  -  $170k  [SEP]
+    ↓      ↓    ↓    ↓     ↓     ↓     ↓      ↓        ↓      ↓      ↓     ↓      ↓     ↓
+    └─────────────────────── MiniLM-L6-v2 ───────────────────────────────────────┘
+                          6 layers × 12 heads
+                      384 hidden dimension
+                    Self-attention across all 14 tokens
+                                    ↓
+    [CLS] final hidden state (384-dim)
+                                    ↓
+                    Linear(384 → 1) + bias
+                                    ↓
+                           raw logit (scalar)
             </div>
-            <h4>Why it matters</h4>
-            <ul>
-                <li>Vector search scores query and chunk independently (cosine similarity)</li>
-                <li>Cross-encoder reads them together through 6 attention layers</li>
-                <li>Catches false positives and boosts hidden gems</li>
-                <li>Adds ~200ms but improves precision by 15-25%</li>
-            </ul>
+            <p><strong>Key architectural detail:</strong> The chunk tokens are NOT masked from query tokens. Layer 1 already computes attention between "what" and "Senior", "salary" and "$130k", etc. This is what gives the cross-encoder its superiority — it sees how the two texts interact at every layer.</p>
+        </div>
+        <br>
+
+        <h4>4.2.3 Forward Pass — Step by Step</h4>
+        <div class="card">
+            <table>
+                <tr><th>Step</th><th>Operation</th><th>Output Shape</th><th>Detail</th></tr>
+                <tr>
+                    <td>1</td>
+                    <td>Tokenize</td>
+                    <td><code>[1, n_tokens]</code></td>
+                    <td>WordPiece tokenizer. n = len(query_tokens) + len(chunk_tokens) + 3 (special tokens). Typically 12–64 tokens.</td>
+                </tr>
+                <tr>
+                    <td>2</td>
+                    <td>Embed</td>
+                    <td><code>[1, n, 384]</code></td>
+                    <td>Token IDs → learned embeddings (384-dim each).</td>
+                </tr>
+                <tr>
+                    <td>3</td>
+                    <td>Positional encoding</td>
+                    <td><code>[1, n, 384]</code></td>
+                    <td>Sinusoidal position info added so the model knows token order.</td>
+                </tr>
+                <tr>
+                    <td>4</td>
+                    <td>x6 MiniLM layers</td>
+                    <td><code>[1, n, 384]</code></td>
+                    <td>Each layer: Self-Attention → Add &amp; Norm → FFN → Add &amp; Norm. Query tokens attend to chunk tokens (and vice versa) in every head of every layer.</td>
+                </tr>
+                <tr>
+                    <td>5</td>
+                    <td>Extract [CLS]</td>
+                    <td><code>[1, 384]</code></td>
+                    <td>Take the first token's hidden state — it has aggregated information from the entire sequence.</td>
+                </tr>
+                <tr>
+                    <td>6</td>
+                    <td>Linear projection</td>
+                    <td><code>[1, 1]</code></td>
+                    <td><code>logit = W × h_[CLS] + b</code> where W ∈ ℝ^(384×1). Single scalar output.</td>
+                </tr>
+                <tr>
+                    <td>7</td>
+                    <td><strong>No activation</strong></td>
+                    <td><code>[1, 1]</code></td>
+                    <td>The logit is returned directly — NO sigmoid, NO softmax. Unbounded real number.</td>
+                </tr>
+            </table>
+        </div>
+        <br>
+
+        <h4>4.2.4 Training Objective (Pairwise Ranking Loss)</h4>
+        <div class="card">
+            <p>The model is fine-tuned on MS MARCO (Microsoft MAchine Reading COmprehension), a dataset of ~400k real Bing queries with human-judged relevance labels.</p>
+            <div class="code" style="margin:10px 0;">
+Given: query q, relevant chunk d⁺, irrelevant chunk d⁻
+
+  s⁺ = cross_encoder(q, d⁺)    ← logit for positive pair
+  s⁻ = cross_encoder(q, d⁻)    ← logit for negative pair
+
+  loss = -log( σ(s⁺ - s⁻) )
+
+  where σ(x) = 1 / (1 + e^(-x))  ← sigmoid function
+
+Intuition:
+  If s⁺ &gt;&gt; s⁻  →  s⁺ - s⁻ is large positive  →  σ ≈ 1.0  →  loss ≈ 0
+  If s⁺ &lt;&lt; s⁻  →  s⁺ - s⁻ is large negative  →  σ ≈ 0.0  →  loss ≈ ∞
+  If s⁺ ≈ s⁻   →  σ ≈ 0.5                   →  loss ≈ 0.69
+
+The model learns to make relevant scores HIGHER than irrelevant scores.
+It never learns "this chunk is 0.8 relevant" — only "this chunk should be
+ranked above that chunk."
+            </div>
+            <p><strong>Implication for our system:</strong> The absolute logit values are meaningless. A score of -5.5 doesn't mean "barely relevant" — it's just a relative indicator. We only sort descending and pick top_k.</p>
+        </div>
+        <br>
+
+        <h4>4.2.5 Score Interpretation</h4>
+        <div class="card">
+            <table>
+                <tr><th>Property</th><th>Value</th></tr>
+                <tr><td>Output range</td><td>(-∞, +∞) — unbounded raw logit</td></tr>
+                <tr><td>Scale meaning</td><td>Only relative order matters, not absolute value</td></tr>
+                <tr><td>Typical values</td><td>-15 to +5 (MS MARCO model outputs mostly negative logits)</td></tr>
+                <tr><td>Zero meaning</td><td>logit = 0 is the decision boundary: σ(0) = 0.5 probability of relevance</td></tr>
+                <tr><td>logit &gt; 0</td><td>Model predicts "relevant" (above 50% confidence)</td></tr>
+                <tr><td>logit &lt; 0</td><td>Model predicts "not relevant" (below 50% confidence)</td></tr>
+                <tr><td>Difference matters</td><td>logits +5 vs +2 means the +5 chunk is much more relevant than the +2 chunk</td></tr>
+            </table>
+            <br>
+            <div class="tip">
+                <strong>Common misconception:</strong> If all top-12 logits are negative (e.g., -5.5, -6.2, -11.3), it does NOT mean all chunks are irrelevant. The model was trained to separate relevant from irrelevant — the <em>order</em> still reliably ranks relevance. The highest (least negative) chunk is genuinely the most relevant.
+            </div>
+        </div>
+        <br>
+
+        <h4>4.2.6 Worked Example</h4>
+        <div class="card">
+            <p>Given query "What is the salary range for a senior developer?" and 12 candidate chunks from vector search, the cross-encoder scores each pair:</p>
+            <table>
+                <tr><th>#</th><th>Chunk Excerpt</th><th>Raw Logit</th><th>Rank</th><th>Why This Score</th></tr>
+                <tr>
+                    <td>1</td>
+                    <td>"Senior Developer: $130,000 - $170,000 per year"</td>
+                    <td><strong>-5.5</strong></td>
+                    <td>1</td>
+                    <td>Direct match: query terms "salary", "senior", "developer" all present in chunk</td>
+                </tr>
+                <tr>
+                    <td>2</td>
+                    <td>"Junior developers earn between $70k and $90k"</td>
+                    <td>-6.2</td>
+                    <td>2</td>
+                    <td>Relevant topic (salary) but wrong level — "Junior" vs "senior" mismatch lowers score</td>
+                </tr>
+                <tr>
+                    <td>3</td>
+                    <td>"Salary ranges are reviewed annually in Q1"</td>
+                    <td>-8.1</td>
+                    <td>3</td>
+                    <td>On topic (salary) but no specific numbers — the model prefers chunks with concrete data</td>
+                </tr>
+                <tr>
+                    <td>4</td>
+                    <td>"Office locations: San Francisco, New York, Austin"</td>
+                    <td>-11.3</td>
+                    <td>4</td>
+                    <td>Off-topic — mentions nothing about salary or developers</td>
+                </tr>
+                <tr>
+                    <td colspan="5" style="text-align:center; font-style:italic;">... remaining 8 chunks scored similarly ...</td>
+                </tr>
+            </table>
+            <br>
+            <p><strong>Selection:</strong> Sort descending → -5.5 &gt; -6.2 &gt; -8.1 → top 3 chunks passed to LLM.</p>
+            <br>
+            <p><strong>What the vector search returned initially (for comparison):</strong></p>
+            <table>
+                <tr><th>Vector Search Rank</th><th>Chunk</th><th>Cross-Encoder Rank</th><th>Δ</th></tr>
+                <tr><td>1</td><td>"Salary ranges are reviewed annually in Q1"</td><td>3</td><td>↓2</td></tr>
+                <tr><td>2</td><td>"Senior Developer: $130k-$170k"</td><td>1</td><td>↑1</td></tr>
+                <tr><td>3</td><td>"Junior developers earn $70k-$90k"</td><td>2</td><td>↑1</td></tr>
+                <tr><td>4</td><td>"Office locations: SF, NYC, Austin"</td><td>4</td><td>—</td></tr>
+            </table>
+            <br>
+            <p><strong>Observation:</strong> The vector search ranked "Salary reviewed annually" first because it uses the word "salary" and has similar embedding. But the cross-encoder correctly demoted it because it lacks actual salary figures — it's a <strong>false positive</strong> caught by the reranker.</p>
+        </div>
+        <br>
+
+        <h4>4.2.7 Cross-Encoder vs Bi-Encoder</h4>
+        <div class="card">
+            <table>
+                <tr><th>Property</th><th>Bi-Encoder</th><th>Cross-Encoder</th></tr>
+                <tr><td>Input</td><td>Q and C encoded separately</td><td>[Q + C] encoded together</td></tr>
+                <tr><td>Output</td><td>Fixed vector (e.g., 384-dim)</td><td>Single scalar logit</td></tr>
+                <tr><td>Scoring</td><td>Cosine similarity of two vectors</td><td>Linear projection of [CLS]</td></tr>
+                <tr><td>Complexity</td><td>O(n + m) — linear in token count</td><td>O(n × m) — quadratic in attention</td></tr>
+                <tr><td>Speed</td><td>~1ms per pair (GPU)</td><td>~15ms per pair (GPU)</td></tr>
+                <tr><td>Precision</td><td>Good (captures semantics)</td><td>Better (captures token interactions)</td></tr>
+                <tr><td>Pre-computable</td><td>Yes (chunk vectors cached)</td><td>No (must compute per query)</td></tr>
+                <tr><td>Role</td><td>First-pass retrieval (recall)</td><td>Second-pass reranking (precision)</td></tr>
+                <tr><td>Our model</td><td>all-MiniLM-L6-v2</td><td>ms-marco-MiniLM-L6-v2</td></tr>
+            </table>
+            <br>
+            <p><strong>Why both are needed:</strong> Bi-encoders scale to millions of chunks (vectors pre-computed, ANN search). Cross-encoders only handle ~100 candidates. The two-stage design gets the best of both: fast recall from the bi-encoder, then precise ranking from the cross-encoder.</p>
+        </div>
+        <br>
+
+        <h4>4.2.8 Why It Beats Cosine Similarity for Reranking</h4>
+        <div class="card">
+            <table>
+                <tr><th>Situation</th><th>Cosine Similarity</th><th>Cross-Encoder</th></tr>
+                <tr>
+                    <td><strong>Negation:</strong> Q: "Who is NOT eligible?"<br>C: "Eligibility requires 2+ years experience"</td>
+                    <td class="warning">HIGH score because both discuss "eligibility" — misses the negation entirely</td>
+                    <td class="tip">LOW score because attention sees "NOT" and "requires" interact; the model learned negated queries need negated chunks</td>
+                </tr>
+                <tr>
+                    <td><strong>Entity match:</strong> Q: "What does the CEO earn?"<br>C: "CEO compensation: $2M base + stock"</td>
+                    <td class="tip">Good score because "CEO" appears in both</td>
+                    <td class="tip">HIGH score because "CEO" → "CEO" is a direct entity link (position titles are strong relevance signals in MS MARCO)</td>
+                </tr>
+                <tr>
+                    <td><strong>Synonym mismatch:</strong> Q: "What is the remuneration?"<br>C: "Salary: $130k-$170k"</td>
+                    <td class="warning">LOW-MED score because "remuneration" and "salary" have different embeddings (semantically close but not identical vectors)</td>
+                    <td class="tip">HIGH score because the model was trained on MS MARCO queries containing both "remuneration" and "salary" and learned they're interchangeable in context</td>
+                </tr>
+                <tr>
+                    <td><strong>False positive:</strong> Q: "What is the annual bonus?"<br>C: "Bonus structure: sign-on only"</td>
+                    <td class="warning">HIGH score because "bonus" in both — but user asked "annual" not "sign-on"</td>
+                    <td class="tip">LOWER score because attention sees "annual" has no match in chunk; model penalizes missing modifiers</td>
+                </tr>
+            </table>
+            <br>
+            <p><strong>Root cause:</strong> Cosine similarity is a function of two <em>independent</em> vectors. It cannot detect interactions between specific words in Q and C. The cross-encoder's self-attention allows every word pair (qᵢ, cⱼ) to interact through all 6 layers, capturing negation, entity alignment, modifier matching, and contextual nuance.</p>
+        </div>
+        <br>
+
+        <h4>4.2.9 Internal Computation — How Encoding Produces a Ranking</h4>
+        <div class="card">
+            <p>This section explains the <em>actual matrix operations</em> inside the transformer that turn a (query, chunk) pair into a score and ultimately into a ranking across candidates.</p>
+            <br>
+
+            <h4>A. Tokenization &amp; Embedding</h4>
+            <div class="code" style="margin:10px 0;">
+Given: query = "What is salary", chunk = "Senior $130k"
+
+Step 1 — WordPiece tokenization (subword splitting):
+  "What"     → token_id 2054
+  "is"       → token_id 2003
+  "salary"   → token_id 6911
+  "Senior"   → token_id 4762
+  "$"        → token_id 810
+  "130"      → token_id 13923
+  "k"        → token_id 1037
+  [CLS]      → token_id 101   (prepended)
+  [SEP]      → token_id 102   (inserted between Q and C, and at end)
+
+  input_ids = [101, 2054, 2003, 6911, 102, 4762, 810, 13923, 1037, 102]
+               ↑CLS   ↑──── Q ────↑  ↑SEP  ↑────────── C ──────────↑  ↑SEP
+
+Step 2 — Embedding lookup:
+  Each token_id → 384-dim vector from learned embedding matrix E ∈ ℝ^(30522 × 384)
+  X_embed = E[input_ids]    → shape [1, 10, 384]
+
+Step 3 — Positional encoding:
+  Sinusoidal position vectors P[pos] = [sin(pos/10000^(2i/d)), cos(pos/10000^(2i/d))]
+  Added to embeddings:
+  X₀ = X_embed + P          → shape [1, 10, 384]
+  Now X₀[0] = [CLS] at position 0, X₀[4] = [SEP] at position 4, etc.
+            </div>
+            <br>
+
+            <h4>B. Self-Attention (the core operation)</h4>
+            <p>Each of the 6 MiniLM layers computes multi-head self-attention. Here's what happens in <em>one</em> head of <em>one</em> layer:</p>
+            <div class="code" style="margin:10px 0;">
+Let X = input to this layer   (shape [1, 10, 384])
+    d_k = 384 / 12 = 32       (384 hidden dim ÷ 12 heads)
+
+Step 4 — Linear projections:
+  Q = X × W_Q      W_Q ∈ ℝ^(384 × 32)   → Q ∈ [1, 10, 32]
+  K = X × W_K      W_K ∈ ℝ^(384 × 32)   → K ∈ [1, 10, 32]
+  V = X × W_V      W_V ∈ ℝ^(384 × 32)   → V ∈ [1, 10, 32]
+
+  Each row of Q is a "question" vector for that position.
+  Each row of K is a "key" vector for that position.
+  Each row of V is a "value" vector for that position.
+
+Step 5 — Attention scores:
+  scores = Q × K^T / √d_k
+         = Q × K^T / √32
+         = Q × K^T / 5.657
+
+  For a sentence of 10 tokens, this is a [1, 10, 10] matrix.
+
+  scores[i][j] = how much token i should "attend to" token j
+  Example entry: scores[1][5] = attention from "What" (pos 1) to "Senior" (pos 5)
+
+  Since Q and K come from the SAME combined sequence, cross-attention happens
+  naturally: pos 1 (query word "What") attends to pos 5 (chunk word "Senior")
+  through this single matrix multiply — there is no masking.
+
+Step 6 — Softmax normalization:
+  weights[i][j] = exp(scores[i][j]) / Σₖ exp(scores[i][k])
+  Each row sums to 1.0. This converts raw scores into a probability distribution.
+
+Step 7 — Weighted sum of values:
+  output[i] = Σⱼ weights[i][j] × V[j]
+
+  For token "What" (pos 1):
+    output[1] = w₁·V[CLS] + w₂·V[What] + w₃·V[is] + w₄·V[salary] + w₅·V[SEP]
+              + w₆·V[Senior] + w₇·V[$] + w₈·V[130] + w₉·V[k] + w₁₀·V[SEP]
+
+  If the model learned that "What" and "salary" are related, w₄ (weight to "salary")
+  will be large. If "What" and "$" are unrelated, w₇ will be small.
+
+  The output shape is [1, 10, 32] — each token now has a context-aware vector
+  that incorporates information from all other tokens (both query and chunk).
+            </div>
+            <br>
+
+            <h4>C. Multi-Head Attention (all 12 heads)</h4>
+            <div class="code" style="margin:10px 0;">
+Steps 4-7 are repeated 12 times in parallel, each with DIFFERENT W_Q, W_K, W_V:
+
+  Head 1: Q₁ = XW_Q₁, K₁ = XW_K₁, V₁ = XW_V₁ → output₁ ∈ [1, 10, 32]  (syntax focus)
+  Head 2: Q₂ = XW_Q₂, K₂ = XW_K₂, V₂ = XW_V₂ → output₂ ∈ [1, 10, 32]  (semantic focus)
+  Head 3: Q₃ = XW_Q₃, K₃ = XW_K₃, V₃ = XW_V₃ → output₃ ∈ [1, 10, 32]  (entity focus)
+  ...
+  Head 12: ...                                    output₁₂ ∈ [1, 10, 32]
+
+Step 8 — Concatenate heads:
+  MHA_output = Concat(output₁, output₂, ..., output₁₂)  → [1, 10, 384]
+
+Step 9 — Output projection:
+  MHA_output = MHA_output × W_O    W_O ∈ ℝ^(384 × 384)
+  (Each head's 32-dim output is concatenated and linearly projected back to 384-dim)
+
+Step 10 — Residual connection + LayerNorm:
+  X_attended = LayerNorm(X + MHA_output)
+  (The original input X is added back — this prevents vanishing gradients and
+  lets information flow directly through layers)
+            </div>
+            <br>
+
+            <h4>D. Feed-Forward Network (per token, same weights)</h4>
+            <div class="code" style="margin:10px 0;">
+After attention, each token goes through the same 2-layer FFN independently:
+
+  FFN(x) = max(0, x × W₁ + b₁) × W₂ + b₂
+
+  Where:
+    W₁ ∈ ℝ^(384 × 1536)   (expand 4×)
+    W₂ ∈ ℝ^(1536 × 384)   (compress back)
+    max(0, ...) = ReLU activation (GELU in MiniLM)
+
+  X_ffn = FFN(X_attended)  → [1, 10, 384]
+
+  Residual + LayerNorm again:
+  X₁ = LayerNorm(X_attended + X_ffn)  → this is the output of Layer 1
+            </div>
+            <br>
+
+            <h4>E. Layer Stacking (layers 2 through 6)</h4>
+            <div class="code" style="margin:10px 0;">
+The same process (B → C → D) repeats 5 more times, but with DIFFERENT learned weights:
+
+  X₁ → Layer 2 (W_Q₂, W_K₂, W_V₂, W_O₂, W₁₂, W₂₂) → X₂
+  X₂ → Layer 3 (W_Q₃, W_K₃, W_V₃, W_O₃, W₁₃, W₂₃) → X₃
+  ...
+  X₅ → Layer 6 (W_Q₆, W_K₆, W_V₆, W_O₆, W₁₆, W₂₆) → X₆
+
+Key insight: Representations become MORE query-aware with each layer.
+  - Layer 1: [CLS] knows what position 0 is, has some context from nearby words
+  - Layer 3: [CLS] can distinguish query tokens from chunk tokens
+  - Layer 6: [CLS] has attended to ALL tokens through ALL layers — it encodes
+    the full (query, chunk) interaction
+
+This is why the cross-encoder beats cosine similarity:
+  Cosine: Q_emb has NO information about C, C_emb has NO info about Q
+  Cross-encoder Layer 6: Every token representation is conditioned on both Q and C
+            </div>
+            <br>
+
+            <h4>F. Score Computation (the number assigned to this pair)</h4>
+            <div class="code" style="margin:10px 0;">
+After all 6 layers, we extract the [CLS] token (first position) from X₆:
+
+  h_CLS = X₆[0]    → shape [1, 384]
+
+This vector now contains the aggregated representation of the full (query, chunk) pair.
+
+Step 11 — Linear classification head:
+  logit = h_CLS × w + b
+
+  Where:
+    w ∈ ℝ^(384 × 1)  (weight vector learned during MS MARCO training)
+    b ∈ ℝ^1           (bias scalar)
+
+  This is a simple dot product: w₁×h₁ + w₂×h₂ + ... + w₃₈₄×h₃₈₄ + b
+
+  The 384 dimensions of h_CLS each represent some learned aspect of relevance
+  (e.g., dim 12 = "is the entity type matching?", dim 87 = "are numbers present?")
+  The weight w tells the model which dimensions matter most for relevance.
+
+  h_CLS × w = Σᵢ wᵢ × h_CLS[i]   (weighted sum of all 384 features)
+
+Step 12 — No activation:
+  The logit is returned directly. NO sigmoid, NO softmax, NO tanh.
+            </div>
+            <br>
+
+            <h4>G. Ranking (comparing scores across pairs)</h4>
+            <div class="code" style="margin:10px 0;">
+Given 12 candidate chunks {C₁, C₂, ..., C₁₂}:
+
+  For i in 1..12:
+    score[i] = cross_encoder(query, C_i)
+             = Logit( Layer6( Attn( Embed( [CLS] Q [SEP] C_i [SEP] ) ) ) )
+
+  scores = [-5.5, -6.2, -8.1, -11.3, -9.2, -7.8, -12.1, -10.0, -8.9, -6.7, -9.5, -7.1]
+
+  Step 13 — Sort descending:
+    index 0: -5.5  → chunk "Senior: $130k-$170k"           ← most relevant
+    index 1: -6.2  → chunk "Junior: $70k-$90k"
+    index 2: -6.7  → chunk "Mid-level: $100k-$130k"
+    index 3: -7.1  → chunk ...
+    ...
+    index 11: -12.1 → chunk "Office hours: 9-5"
+
+  Step 14 — Select top_k (default 3):
+    top_3 = [chunk₀, chunk₁, chunk₂]
+
+The ranking works because the MS MARCO training objective (pairwise ranking loss,
+§4.2.4) explicitly teaches the model to assign HIGHER logits to relevant chunks
+and LOWER logits to irrelevant chunks. The exact values don't have meaning —
+the ORDER is what matters.
+            </div>
+            <br>
+
+            <h4>H. Complete Computation Trace (from tokens to logit)</h4>
+            <div class="code" style="margin:10px 0;">
+input_ids: [101, 2054, 2003, 6911, 102, 4762, 810, 13923, 1037, 102]
+            CLS   What   is  salary  SEP  Senior   $   130    k   SEP
+
+  ↓ Embed + Pos (learned matrix E + sinusoidal P)
+
+X₀: [1, 10, 384]  (embeddings + positional info)
+
+  ↓ Layer 1: Self-Attention(12 heads) + FFN
+
+X₁: [1, 10, 384]  (each token knows about nearby tokens)
+  (e.g., "what" → "What", "is", "salary";  "Senior" → "Senior", "$", "130")
+
+  ↓ Layer 2: Self-Attention(12 heads) + FFN
+
+X₂: [1, 10, 384]  (token interactions across [SEP] boundary)
+  (e.g., "What" starts attending to "Senior" and "$130k")
+
+  ↓ Layers 3-5: ...
+
+X₅: [1, 10, 384]  (query-chunk alignment forming)
+  (e.g., "salary" strongly attends to "$130k"; "What" attends to "Senior")
+
+  ↓ Layer 6: Self-Attention(12 heads) + FFN
+
+X₆: [1, 10, 384]  (full cross-attention complete)
+
+  ↓ Extract [CLS] (position 0)
+
+h_CLS: [1, 384]    (aggregated relevance representation)
+
+  ↓ Linear(384 → 1)
+
+logit: -5.5         (raw score for this pair)
+
+  ↓ Compare across 12 pairs → sort descending → pick top 3
+
+Final ranking: C₃ (-5.5) &gt; C₇ (-6.2) &gt; C₁ (-6.7) &gt; ... &gt; C₉ (-12.1)
+            </div>
+
+            <div class="tip">
+                <strong>Key takeaway:</strong> The entire computation from token IDs to logit is a single forward pass through the transformer — no loops, no per-token processing. The ranking emerges naturally because the model was trained to assign higher logits to relevant (query, chunk) pairs. By computing 12 forward passes (one per candidate chunk) and sorting, we get a principled relevance ranking.
+            </div>
+            <br>
+            <div class="warning">
+                <strong>Why 12 forward passes is fast enough:</strong> Each pass processes ~10-30 tokens. On a modern GPU, a single MiniLM forward pass takes ~1ms. 12 passes = ~12-15ms total. This is acceptable for a user-facing chat application where the LLM call takes 2-5 seconds. For production at scale, you'd batch all 12 pairs into a single forward pass (batch_size=12) which the GPU handles almost as fast as a single pass.
+            </div>
         </div>
         <br>
 
@@ -350,25 +776,17 @@ After 10 questions:<br>
 
         <div class="qa">
             <strong>Q: What is a Cross-Encoder and how is it calculated?</strong>
-            <p>A model that reads query AND document together, then outputs a relevance logit. Architecture:</p>
-            <div class="code" style="margin:10px 0; font-size:0.85em">
-Input:  [CLS] query_tokens [SEP] chunk_tokens [SEP]
-          ↑ self-attention across ALL positions ↑
-          ↓       6 transformer layers          ↓
-Output: [CLS] → Linear(384 → 1) → raw logit (unbounded)
-
-The logit is NOT sigmoid-ed. It's a raw score used for ranking.
-MS MARCO models are trained with pairwise ranking loss:
-  loss = -log( sigmoid(logit_relevant - logit_irrelevant) )
-This teaches the model to distinguish "more relevant" vs "less relevant"
-rather than predict an absolute relevance score.
-
-Bi-encoder vs Cross-encoder:
-  Bi-encoder: Q → vector, C → vector, compare at END (cosine)
-              O(n+m) complexity, fast, good for first-pass retrieval
-  Cross-encoder: [Q + C] → single forward pass → logit
-              O(n×m) attention, slow but accurate, good for reranking
-            </div>
+            <p>A cross-encoder processes query and chunk as a single sequence through a transformer. See <strong>§4.2</strong> for the full treatment:</p>
+            <ul>
+                <li><strong>§4.2.2</strong> Architecture diagram with input construction</li>
+                <li><strong>§4.2.3</strong> Forward pass — all 7 steps from tokenize to logit</li>
+                <li><strong>§4.2.4</strong> Training objective — pairwise ranking loss formula</li>
+                <li><strong>§4.2.5</strong> Score interpretation — what logit values mean</li>
+                <li><strong>§4.2.6</strong> Worked example with real scores and ranking changes</li>
+                <li><strong>§4.2.7</strong> Cross-encoder vs bi-encoder comparison table</li>
+                <li><strong>§4.2.8</strong> Why it beats cosine similarity (negation, entity, synonym, false positive)</li>
+                <li><strong>§4.2.9</strong> Internal computation — full attention math from token IDs to ranking</li>
+            </ul>
         </div>
 
         <div class="qa">
@@ -736,21 +1154,12 @@ AskDocs-/<br>
 
         <div class="qa">
             <strong>Q: Why reranking after vector retrieval?</strong>
-            <p>Vector search uses cosine similarity which scores Q and C independently — it compares two fixed vectors. The cross-encoder processes Q and C together through 6 attention layers, letting every query token attend to every chunk token. This catches subtle relevance signals a bi-encoder misses.</p>
-            <br>
-            <p><strong>Formula comparison:</strong></p>
-            <div class="code" style="margin:10px 0; font-size:0.85em">
-Vector (bi-encoder):
-  Q_emb = encode(query)    ← no chunk info yet
-  C_emb = encode(chunk)    ← no query info yet
-  score = cos(Q_emb, C_emb) ← compare after encoding
-
-Cross-encoder:
-  score = model([CLS] query [SEP] chunk [SEP])
-        = W × [CLS] + b
-  where [CLS] captures attention between ALL query-chunk token pairs
-  Entire computation is conditioned on both sequences
-            </div>
+            <p>Vector search (bi-encoder) scores Q and C independently via cosine similarity — no word-level interaction. The cross-encoder processes Q and C as a single sequence <code>[CLS] Q [SEP] C [SEP]</code> through 6 transformer layers where every query token attends to every chunk token at every layer. For the complete breakdown of how this produces a better rank, see <strong>§4.2</strong>:</p>
+            <ul>
+                <li><strong>§4.2.2</strong> — Architecture (how input is constructed)</li>
+                <li><strong>§4.2.8</strong> — Why it beats cosine similarity (4 concrete scenarios)</li>
+                <li><strong>§4.2.9</strong> — Internal computation: attention math, how logits emerge from matrix operations, and how 12 forward passes produce a ranking</li>
+            </ul>
         </div>
 
         <div class="qa">
