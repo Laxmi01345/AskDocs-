@@ -68,6 +68,7 @@
         <li><a href="#validation">Validation</a></li>
         <li><a href="#files">File Structure</a></li>
         <li><a href="#interview">Interview Q&A</a></li>
+        <li><a href="#formulas">Formula Reference</a></li>
     </ul>
 </nav>
 
@@ -1271,6 +1272,449 @@ curl -X POST http://127.0.0.1:8000/upload -F "file=@demo.txt"
             <tr><td>FAIR</td><td>avg_rel &gt; 0.3</td><td>overall_score &gt;= 0.4</td></tr>
             <tr><td>POOR / NEEDS_REVIEW</td><td>otherwise</td><td>otherwise</td></tr>
         </table>
+    </section>
+
+    <!-- COMPLETE FORMULA REFERENCE -->
+    <section id="formulas">
+        <h2>11. Complete Formula Reference for Interviews</h2>
+        <p>Every step of the AskDocs pipeline with the exact formula, definition, and what interviewers want to hear.</p>
+        <br>
+
+        <h3>11.1 Document Processing</h3>
+        <div class="card">
+            <table>
+                <tr><th>Step</th><th>Input</th><th>Output</th><th>Detail</th></tr>
+                <tr><td>Parse</td><td>PDF / DOCX / TXT</td><td>Raw text</td><td>LangChain loaders: PyPDF, Docx2txt, TextLoader</td></tr>
+                <tr><td>Chunk</td><td>Raw text</td><td>Chunks</td><td>RecursiveCharacterTextSplitter</td></tr>
+            </table>
+            <br>
+            <div class="code" style="margin:10px 0;">
+Chunking Parameters:
+  chunk_size  = 1000 characters
+  chunk_overlap = 200 characters
+  separators  = ["\n\n", "\n", " ", ""]
+
+Why overlap?  A sentence split across two chunks still has context in both.
+Example:      "The salary is $130k." at end of chunk 1 → overlaps into chunk 2
+              so chunk 2 also contains "...salary is $130k. The benefits include..."
+
+Total chunks = len(text) / (chunk_size - chunk_overlap)
+             = len(text) / 800
+            </div>
+        </div>
+        <br>
+
+        <h3>11.2 Embedding (Vector Representation)</h3>
+        <div class="card">
+            <p>Each chunk and the user query are converted to a 384-dimensional vector.</p>
+            <div class="code" style="margin:10px 0;">
+Model: sentence-transformers/all-MiniLM-L6-v2
+
+  text → Tokenizer → Token IDs → Transformer → [CLS] pooling → 384-dim vector
+
+  embedding = model.encode(text)    → ℝ^384
+
+  Properties:
+    - Semantic: "happy" ≈ "joyful" (close vectors)
+    - Captures meaning, not exact words
+    - Dimension: 384 (fixed for this model)
+    - Magnitude: vectors are normalized (unit length)
+            </div>
+            <p><strong>Interview point:</strong> "Embeddings map semantic meaning to geometric space. Similar texts cluster together, allowing cosine similarity to measure relevance."</p>
+        </div>
+        <br>
+
+        <h3>11.3 Vector Search (Cosine Similarity)</h3>
+        <div class="card">
+            <p>Finds the most similar chunks to the query using embedding distance.</p>
+            <div class="code" style="margin:10px 0;">
+Formula:
+         Q · C         Σ(qi × ci)
+sim = ----------- = ---------------
+      ||Q|| × ||C||   √(Σqi²) × √(Σci²)
+
+Where:
+  Q = query embedding vector   ∈ ℝ^384
+  C = chunk embedding vector   ∈ ℝ^384
+  qi, ci = i-th dimension of Q and C
+  Q · C = dot product = q₁c₁ + q₂c₂ + ... + q₃₈₄c₃₈₄
+  ||Q|| = L2 norm = √(q₁² + q₂² + ... + q₃₈₄²)
+
+Range: -1.0 (opposite) to 1.0 (identical)
+Typical text values: 0.1 to 0.95
+Relevance threshold: 0.35 (below this = noise)
+
+Pipeline:
+  1. Embed query → Q ∈ ℝ^384
+  2. For each chunk Cᵢ in ChromaDB: compute sim(Q, Cᵢ)
+  3. Sort by sim descending
+  4. Return top 12 candidates (top_k × 4)
+
+Example:
+  Q = "What is the salary?"
+  C₁ = "Senior Developer: $130k-$170k"   → sim = 0.87
+  C₂ = "Office locations: SF, NYC"       → sim = 0.31
+  C₃ = "Salary ranges: Junior $70k..."   → sim = 0.81
+
+  Sorted: 0.87 > 0.81 > 0.31 → C₁, C₃, C₂
+            </div>
+            <p><strong>Interview point:</strong> "Cosine similarity measures the angle between vectors, not magnitude. Two vectors pointing in the same direction have sim ≈ 1.0 regardless of length."</p>
+        </div>
+        <br>
+
+        <h3>11.4 Reranking (Cross-Encoder)</h3>
+        <div class="card">
+            <p>Re-scores the 12 candidates to pick the top 3. See <strong>§4.2</strong> for full internal details.</p>
+            <div class="code" style="margin:10px 0;">
+Model: cross-encoder/ms-marco-MiniLM-L6-v2
+
+Input format:
+  [CLS] query_tokens [SEP] chunk_tokens [SEP]
+  (query and chunk concatenated as ONE sequence)
+
+Forward pass:
+  6 transformer layers with self-attention across ALL tokens
+  [CLS] hidden state → Linear(384 → 1) → raw logit
+
+Output: raw logit (unbounded real number)
+  Higher logit = more relevant
+
+For 12 candidates:
+  For i in 1..12:
+    score[i] = cross_encoder(query, chunk_i)
+
+  Sort descending → pick top 3
+
+Training objective (what the model learned):
+  loss = -log( σ(s⁺ - s⁻) )
+
+  s⁺ = score for (query, relevant_chunk)
+  s⁻ = score for (query, irrelevant_chunk)
+  σ(x) = 1 / (1 + e^(-x))
+
+  This teaches: "relevant chunks should score HIGHER than irrelevant chunks"
+
+Why not just use cosine similarity?
+  - Cosine: encodes Q and C INDEPENDENTLY, compares at end
+  - Cross-encoder: encodes Q and C TOGETHER, token-by-token attention
+  - Cross-encoder catches: negation, entity matches, synonym resolution, false positives
+  - Adds ~15ms but improves precision 15-25%
+            </div>
+            <p><strong>Interview point:</strong> "The cross-encoder is a pairwise ranker trained on MS MARCO. It learns relative ordering, not absolute relevance. That's why the raw logits are negative — only the ORDER matters."</p>
+        </div>
+        <br>
+
+        <h3>11.5 LLM Generation</h3>
+        <div class="card">
+            <p>Top 3 chunks + query + session history → LLM → grounded answer.</p>
+            <div class="code" style="margin:10px 0;">
+Context assembly:
+  system_prompt + document_context + summary + last_5_turns + current_question
+
+Token estimation:
+  estimated_tokens = len(text) // 4
+
+  (English text averages ~4 chars per token)
+
+Context window limits:
+  MAX_CONTEXT_TOKENS = 6000
+  Summary trigger     = 3000 tokens (when exceeded → LLM summarizes old turns)
+
+Prompt instruction:
+  "Answer ONLY from the provided context. If the answer is not in the context,
+   say 'I don't know'."
+            </div>
+            <p><strong>Interview point:</strong> "The prompt constrains the LLM to answer only from retrieved context, reducing hallucination. We instruct it to say 'I don't know' when the answer isn't present."</p>
+        </div>
+        <br>
+
+        <h3>11.6 Retrieval Validation Metrics</h3>
+        <div class="card">
+            <p>Measures whether the right chunks were retrieved.</p>
+
+            <h4>1. Cosine Similarity (per chunk)</h4>
+            <div class="code" style="margin:10px 0;">
+  sim(Q, Cᵢ) = (Q · Cᵢ) / (||Q|| × ||Cᵢ||)
+
+  Range: -1.0 to 1.0
+  Threshold: 0.35 (below = noise)
+            </div>
+
+            <h4>2. Average Relevance</h4>
+            <div class="code" style="margin:10px 0;">
+  avg_relevance = (1/k) × Σᵢ₌₁ᵏ sim(Q, Cᵢ)
+
+  Example: sims = [0.87, 0.81, 0.72]
+  avg = (0.87 + 0.81 + 0.72) / 3 = 0.80
+
+  Interpretation:
+    > 0.6 → chunks are generally on-topic
+            </div>
+
+            <h4>3. Diversity</h4>
+            <div class="code" style="margin:10px 0;">
+Goal: Are the chunks different from each other?
+      (Avoid retrieving 3 copies of the same paragraph)
+
+Steps:
+  1. Embed all k chunks → matrix E of shape (k × 384)
+  2. Compute pairwise cosine similarity matrix S
+  3. Extract upper triangle (i ≠ j): all unique pairs
+  4. avg_sim = mean(upper_triangle)
+  5. diversity = 1 - avg_sim
+
+Example:
+  Upper triangle sims = [0.72, 0.31, 0.28]
+  avg_sim = (0.72 + 0.31 + 0.28) / 3 = 0.437
+  diversity = 1 - 0.437 = 0.563
+
+  Interpretation:
+    diversity > 0.5 → chunks cover different topics (good)
+    diversity < 0.2 → chunks are near-identical (bad)
+            </div>
+
+            <h4>4. Hit Rate</h4>
+            <div class="code" style="margin:10px 0;">
+  threshold = 0.35
+  hits = count(sim(Q, Cᵢ) > threshold)
+  hit_rate = hits / k
+
+  Example: sims = [0.87, 0.81, 0.72, 0.31]
+  hits = 3 (three above 0.35)
+  hit_rate = 3 / 4 = 0.75
+
+  Interpretation:
+    hit_rate = 1.0 → every chunk is useful
+    hit_rate < 0.5 → most chunks are noise
+            </div>
+
+            <h4>5. Precision, Recall, F1</h4>
+            <div class="code" style="margin:10px 0;">
+Only computed when ground_truth_chunks are provided.
+
+Definitions:
+  TP = chunks BOTH retrieved AND in ground truth
+  FP = chunks retrieved BUT NOT in ground truth
+  FN = chunks in ground truth BUT NOT retrieved
+
+Formulas:
+        TP                  TP                 2 × P × R
+  P = -------        R = ---------         F1 = ---------
+      TP + FP            TP + FN               P + R
+
+Example:
+  retrieved = {chunk_41, chunk_40, chunk_42}
+  truth     = {chunk_41, chunk_40, chunk_39}
+
+  TP = {41, 40} → 2
+  FP = {42}     → 1
+  FN = {39}     → 1
+
+  P = 2/(2+1) = 0.667    R = 2/(2+1) = 0.667
+  F1 = 2×0.667×0.667 / (0.667+0.667) = 0.667
+
+  Precision = "of what I retrieved, how much was correct"
+  Recall    = "of what was correct, how much did I retrieve"
+  F1        = harmonic mean (balanced score)
+            </div>
+
+            <h4>6. Retrieval Verdict</h4>
+            <div class="code" style="margin:10px 0;">
+Decision rules:
+  avg_relevance > 0.6  AND  diversity > 0.3  →  EXCELLENT
+  avg_relevance > 0.4  AND  diversity > 0.2  →  GOOD
+  avg_relevance > 0.3                        →  FAIR
+  else                                        →  POOR
+            </div>
+        </div>
+        <br>
+
+        <h3>11.7 Generation Validation Metrics</h3>
+        <div class="card">
+            <p>Measures whether the LLM answer is good. All use <strong>LLM-as-judge</strong> (Cerebras AI evaluates).</p>
+
+            <h4>1. Faithfulness</h4>
+            <div class="code" style="margin:10px 0;">
+Question: "Is every claim in the answer supported by the context?"
+
+Method: LLM reads (context, answer) and produces:
+  {
+    "score": <0.0 to 1.0>,
+    "supported_claims": ["claim1", "claim2"],
+    "unsupported_claims": ["claim3"]
+  }
+
+Definition: faithful if every factual claim in the answer
+  can be verified in the provided context.
+
+Example:
+  Context: "Senior Developer: $130k-$170k"
+  Answer: "The salary range for a senior developer is $130k-$170k."
+  → score = 0.95 (all claims supported)
+
+  Answer: "Senior developers earn $130k-$170k plus stock options."
+  → score = 0.60 ("stock options" not in context)
+            </div>
+
+            <h4>2. Answer Relevancy</h4>
+            <div class="code" style="margin:10px 0;">
+Question: "Does the answer directly address what was asked?"
+
+Method: LLM reads (question, answer) and produces:
+  {
+    "score": <0.0 to 1.0>,
+    "reason": "explanation"
+  }
+
+Example:
+  Q: "What is the salary range for a senior developer?"
+  A: "$130,000 - $170,000."
+  → score = 1.0 (directly answers)
+
+  Q: "What is the salary range?"
+  A: "The office is in San Francisco."
+  → score = 0.1 (discusses location, not salary)
+            </div>
+
+            <h4>3. Hallucination Score</h4>
+            <div class="code" style="margin:10px 0;">
+Question: "Did the LLM invent facts not in the context?"
+
+Method: LLM reads (context, answer) and produces:
+  {
+    "hallucination_score": <0.0 to 1.0>,
+    "hallucinated_facts": ["fact1", "fact2"]
+  }
+
+Note: 0.0 = NO hallucination (perfect)
+      1.0 = FULLY hallucinated (worst)
+
+Example:
+  Context: "Senior Developer: $130k-$170k"
+  Answer: "Senior developers earn $130k-$170k."
+  → score = 0.0 (no hallucination)
+
+  Answer: "Senior developers earn $200k-$250k."
+  → score = 0.9 ("$200k-$250k" invented)
+            </div>
+
+            <h4>4. Overall Score</h4>
+            <div class="code" style="margin:10px 0;">
+Formula:
+  scores = [faithfulness, answer_relevancy, (1 - hallucination_score)]
+  overall_score = mean(scores)
+
+  Note: hallucination_score INVERTED because low = good
+  (1 - 0.0) = 1.0 → perfect
+  (1 - 0.9) = 0.1 → terrible
+
+Example (good):
+  faithfulness      = 0.95
+  answer_relevancy  = 1.0
+  hallucination     = 0.0  →  1 - 0.0 = 1.0
+
+  overall = (0.95 + 1.0 + 1.0) / 3 = 0.983
+
+Example (bad):
+  faithfulness      = 0.6
+  answer_relevancy  = 0.9
+  hallucination     = 0.3  →  1 - 0.3 = 0.7
+
+  overall = (0.6 + 0.9 + 0.7) / 3 = 0.733
+            </div>
+
+            <h4>5. Generation Verdict</h4>
+            <div class="code" style="margin:10px 0;">
+Decision rules:
+  overall_score >= 0.8  →  EXCELLENT
+  overall_score >= 0.6  →  GOOD
+  overall_score >= 0.4  →  FAIR
+  else                   →  NEEDS_REVIEW
+            </div>
+        </div>
+        <br>
+
+        <h3>11.8 Interview Quick Reference</h3>
+        <div class="card">
+            <table>
+                <tr><th>Term</th><th>Formula</th><th>Interview Answer (one-liner)</th></tr>
+                <tr>
+                    <td>Chunk Size</td>
+                    <td>1000 chars</td>
+                    <td>"Documents split into 1000-char chunks with 200-char overlap to preserve context across boundaries."</td>
+                </tr>
+                <tr>
+                    <td>Embedding</td>
+                    <td>text → ℝ^384</td>
+                    <td>"Text converted to 384-dim vector using all-MiniLM-L6-v2. Similar meanings map to similar vectors."</td>
+                </tr>
+                <tr>
+                    <td>Cosine Similarity</td>
+                    <td>(Q·C) / (||Q||×||C||)</td>
+                    <td>"Measures angle between vectors. Range -1 to 1. Above 0.35 = relevant chunk."</td>
+                </tr>
+                <tr>
+                    <td>Cross-Encoder</td>
+                    <td>[CLS] Q [SEP] C [SEP] → logit</td>
+                    <td>"Reads query and chunk together through 6 transformer layers. Outputs raw logit for ranking."</td>
+                </tr>
+                <tr>
+                    <td>Pairwise Loss</td>
+                    <td>-log(σ(s⁺ - s⁻))</td>
+                    <td>"Trains model to rank relevant chunks higher than irrelevant ones."</td>
+                </tr>
+                <tr>
+                    <td>Diversity</td>
+                    <td>1 - mean(upper_tri(sim_matrix))</td>
+                    <td>"Measures chunk variety. 1.0 = all different, 0.0 = all identical."</td>
+                </tr>
+                <tr>
+                    <td>Hit Rate</td>
+                    <td>count(sim > 0.35) / k</td>
+                    <td>"Fraction of retrieved chunks that are above the relevance threshold."</td>
+                </tr>
+                <tr>
+                    <td>Precision</td>
+                    <td>TP / (TP + FP)</td>
+                    <td>"Of what I retrieved, how much was correct."</td>
+                </tr>
+                <tr>
+                    <td>Recall</td>
+                    <td>TP / (TP + FN)</td>
+                    <td>"Of what was correct, how much did I retrieve."</td>
+                </tr>
+                <tr>
+                    <td>F1</td>
+                    <td>2PR / (P + R)</td>
+                    <td>"Harmonic mean of precision and recall — balanced score."</td>
+                </tr>
+                <tr>
+                    <td>Faithfulness</td>
+                    <td>LLM-as-judge (0-1)</td>
+                    <td>"Are all claims in the answer supported by the retrieved context?"</td>
+                </tr>
+                <tr>
+                    <td>Answer Relevancy</td>
+                    <td>LLM-as-judge (0-1)</td>
+                    <td>"Does the answer directly address what the user asked?"</td>
+                </tr>
+                <tr>
+                    <td>Hallucination</td>
+                    <td>LLM-as-judge (0-1, 0=good)</td>
+                    <td>"Did the LLM invent facts not present in the context?"</td>
+                </tr>
+                <tr>
+                    <td>Overall Score</td>
+                    <td>mean(F, R, 1-H)</td>
+                    <td>"Composite quality score. >= 0.8 EXCELLENT, >= 0.6 GOOD, >= 0.4 FAIR."</td>
+                </tr>
+                <tr>
+                    <td>Token Estimation</td>
+                    <td>len(text) // 4</td>
+                    <td>"English averages ~4 chars per token. Used to trigger summarization at 3000 tokens."</td>
+                </tr>
+            </table>
+        </div>
     </section>
 
 </div>
