@@ -4,7 +4,7 @@ AskDocs is a Retrieval-Augmented Generation (RAG) based Document Question Answer
 
 It allows users to upload documents (PDF, DOCX, TXT), generate semantic embeddings, retrieve relevant context using vector search + cross-encoder reranking, and generate grounded answers using Cerebras AI.
 
-**Live Demo:** [https://askdocs-1.onrender.com](https://askdocs-1.onrender.com)
+**Live Demo:** [https://askdocs-1.onrender.com](https://askdocs-2.onrender.com/)
 
 ---
 
