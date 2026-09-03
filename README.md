@@ -159,17 +159,17 @@ python validate.py --doc-id YOUR_DOC_ID --compare
 
 | Method | Recall@5 | MRR | Correctness | Faithfulness |
 |--------|----------|-----|-------------|--------------|
-| Simple | 90.0% | 0.90 | 83.8% | — |
-| Semantic | **100.0%** | **1.00** | **89.3%** | — |
-| Hybrid | 90.0% | 0.90 | 69.8% | — |
-| Reranked | **100.0%** | **1.00** | **89.5%** | — |
+| Simple | 90.0% | 0.90 | 83.8% | 79.0% |
+| Semantic | **100.0%** | **1.00** | **89.3%** | **95.0%** |
+| Hybrid | 90.0% | 0.90 | 69.8% | 52.0% |
+| Reranked | **100.0%** | **1.00** | **89.5%** | **93.5%** |
 
 **Improvement progression:**
-- Simple → Semantic: +11.1% Recall, +11.1% MRR, +6.6% Correctness
-- Semantic → Hybrid: -10% Recall, -10% MRR, -19.5% Correctness
-- Hybrid → Reranked: +11.1% Recall, +11.1% MRR, +28.2% Correctness
+- Simple → Semantic: +11.1% Recall, +11.1% MRR, +6.6% Correctness, +16% Faithfulness
+- Semantic → Hybrid: -10% Recall, -10% MRR, -19.5% Correctness, -43% Faithfulness
+- Hybrid → Reranked: +11.1% Recall, +11.1% MRR, +28.2% Correctness, +41.5% Faithfulness
 
-**Best method:** Reranked (Semantic chunks + Cross-encoder reranking) achieves highest correctness at 89.5%
+**Best method:** Reranked (Semantic chunks + Cross-encoder reranking) achieves 89.5% correctness and 93.5% faithfulness
 
 ---
 

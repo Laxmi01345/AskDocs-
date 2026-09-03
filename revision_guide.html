@@ -1106,16 +1106,16 @@ python validate.py --doc-id YOUR_DOC_ID --method simple<br><br>
 # Compare all 4 methods<br>
 python validate.py --doc-id YOUR_DOC_ID --compare<br><br>
 # Output comparison table:<br>
-# Configuration          Recall@5   MRR    Correctness<br>
-# Simple Chunking        90.0%      0.90   83.8%<br>
-# Semantic Chunking      100.0%     1.00   89.3%<br>
-# Hybrid (BM25+Vec+RRF)  90.0%      0.90   69.8%<br>
-# Reranked               100.0%     1.00   89.5%<br><br>
+# Configuration          Recall@5   MRR    Correctness  Faithfulness<br>
+# Simple Chunking        90.0%      0.90   83.8%        79.0%<br>
+# Semantic Chunking      100.0%     1.00   89.3%        95.0%<br>
+# Hybrid (BM25+Vec+RRF)  90.0%      0.90   69.8%        52.0%<br>
+# Reranked               100.0%     1.00   89.5%        93.5%<br><br>
 # IMPROVEMENT PROGRESSION:<br>
-# Simple → Semantic:  +11.1% Recall, +11.1% MRR, +6.6% Correctness<br>
-# Semantic → Hybrid:  -10% Recall, -10% MRR, -19.5% Correctness<br>
-# Hybrid → Reranked:  +11.1% Recall, +11.1% MRR, +28.2% Correctness<br><br>
-# BEST METHOD: Reranked (Semantic + Cross-encoder) = 89.5% Correctness
+# Simple → Semantic:  +11.1% Recall, +11.1% MRR, +6.6% Correctness, +16% Faithfulness<br>
+# Semantic → Hybrid:  -10% Recall, -10% MRR, -19.5% Correctness, -43% Faithfulness<br>
+# Hybrid → Reranked:  +11.1% Recall, +11.1% MRR, +28.2% Correctness, +41.5% Faithfulness<br><br>
+# BEST METHOD: Reranked (Semantic + Cross-encoder) = 89.5% Correctness, 93.5% Faithfulness
         </div>
         <br>
         <div class="tip">
