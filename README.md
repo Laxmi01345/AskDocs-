@@ -95,7 +95,7 @@ AskDocs-
 │   │       ├── retrieval_validation.py
 │   │       └── generation_validation.py
 │   ├── validate.py              # Comparative evaluation CLI
-│   ├── employee_eval.json       # Evaluation dataset (15 Q&A)
+│   ├── employee_eval.json       # Evaluation dataset (10 Q&A)
 │   ├── requirements.txt
 │   └── .env
 ├── frontend/
@@ -159,10 +159,10 @@ python validate.py --doc-id YOUR_DOC_ID --compare
 
 | Method | Recall@5 | MRR | Correctness | Faithfulness |
 |--------|----------|-----|-------------|--------------|
-| Simple | 100% | 1.00 | 77.7% | 32.0% |
-| Semantic | 100% | 1.00 | 70.4% | 62.0% |
-| Hybrid | 100% | 1.00 | 76.3% | 33.3% |
-| Reranked | 100% | 1.00 | 78.7% | 46.7% |
+| Simple | 90.0% | 0.83 | 80.8% | 76.0% |
+| Semantic | 90.0% | 0.83 | 74.8% | 66.0% |
+| Hybrid | **100.0%** | **0.90** | 75.8% | 70.0% |
+| Reranked | 90.0% | 0.83 | **82.7%** | 68.0% |
 
 ---
 
