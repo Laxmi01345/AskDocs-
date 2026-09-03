@@ -1,60 +1,63 @@
-# AskDocs – RAG-based Document Q&A System
+# AskDocs v2 – Multi-Method RAG Document Q&A
 
-AskDocs is a Retrieval-Augmented Generation (RAG) based Document Question Answering system.
+AskDocs v2 is a Retrieval-Augmented Generation (RAG) system with 4 retrieval methods and comparative evaluation.
 
-It allows users to upload documents (PDF, DOCX, TXT), generate semantic embeddings, retrieve relevant context using vector search + cross-encoder reranking, and generate grounded answers using Cerebras AI.
+Upload documents, ask questions, and compare retrieval strategies: Simple Chunking, Semantic Chunking, Hybrid (BM25+Vector+RRF), and Reranking.
 
 **Live Demo:** [https://askdocs-1.onrender.com](https://askdocs-2.onrender.com/)
 
 ---
 
-## 🚀 Features
+## Features
 
-- 📄 **Document Upload** – Supports PDF, DOCX, and TXT files
-- 🧠 **Vector Retrieval** – Embedding similarity search + cross-encoder reranking for precision
-- 🔎 **Semantic Search** – ChromaDB with ONNX-based embeddings (all-MiniLM-L6-v2)
-- 🤖 **Context-Aware Answers** – Cerebras AI LLM with RAG prompt assembly
-- 💬 **Conversational Memory** – Multi-turn sessions with automatic summarization and sliding window
-- ✅ **Validation Layer** – Retrieval validation + generation validation for answer quality
-- 🎯 **Cross-Encoder Reranking** – Re-ranks top candidates for improved precision
-- 💻 **Modern Frontend** – React + Vite + Tailwind CSS with markdown rendering
+- **4 Retrieval Methods** – Simple, Semantic, Hybrid, Reranked
+- **Document Upload** – Supports PDF, DOCX, and TXT files
+- **Vector Retrieval** – Embedding similarity search with ChromaDB
+- **BM25 Retrieval** – Keyword-based search for exact term matching
+- **Hybrid Fusion** – Reciprocal Rank Fusion (RRF) combining BM25 + Vector
+- **Cross-Encoder Reranking** – Re-ranks candidates for precision
+- **Semantic Chunking** – Topic-aware splitting using embedding similarity
+- **Conversational Memory** – Multi-turn sessions with summarization
+- **Comparative Evaluation** – Recall@5, MRR, Correctness, Faithfulness
 
 ---
 
-## 🏗️ Architecture
+## Architecture
 
 ```
 Upload → Parse → Chunk → Embed → Store
                                      ↓
-Question → Vector Search → Cross-Encoder Reranker → Context Assembly → Cerebras LLM → Answer
+Question → [Simple | Semantic | Hybrid | Reranked] → Context Assembly → LLM → Answer
 ```
 
-### Pipeline Steps
+### Retrieval Methods
 
-1. **Parse** – Extract text from PDF/DOCX/TXT using LangChain document loaders
-2. **Chunk** – Split into overlapping chunks using `RecursiveCharacterTextSplitter`
-3. **Embed** – Generate embeddings with ChromaDB ONNX embeddings (all-MiniLM-L6-v2)
-4. **Store** – Persist in ChromaDB vector store
-5. **Retrieve** – Vector similarity search returns top-k × 4 candidates
-6. **Rerank** – Cross-encoder re-scores each (query, chunk) pair, returns top-k
-7. **Generate** – Assemble RAG prompt with conversation history and send to Cerebras AI
+| Method | Strategy | How It Works |
+|--------|----------|--------------|
+| **Simple** | Vector only | Embed query, cosine similarity, top-k chunks |
+| **Semantic** | Topic-aware chunks | Split at topic boundaries, then vector search |
+| **Hybrid** | BM25 + Vector + RRF | Combine keyword + semantic results with fusion |
+| **Reranked** | Vector + Cross-Encoder | Vector search → cross-encoder re-scores → top-k |
 
 ---
 
-## 🛠️ Tech Stack
+## Tech Stack
 
 ### Backend
+
 | Component | Technology |
 |-----------|-----------|
 | Framework | FastAPI |
-| LLM | Cerebras AI |
+| LLM | Groq (gpt-oss-20b) + Cerebras fallback |
 | Embeddings | ChromaDB ONNX (all-MiniLM-L6-v2) |
 | Vector Store | ChromaDB |
+| BM25 | rank-bm25 (Okapi BM25) |
 | Reranker | cross-encoder/ms-marco-MiniLM-L6-v2 |
-| Text Splitting | LangChain RecursiveCharacterTextSplitter |
+| Text Splitting | RecursiveCharacterTextSplitter + Semantic |
 | Document Parsing | PyPDF, python-docx, Docx2txt |
 
 ### Frontend
+
 | Component | Technology |
 |-----------|-----------|
 | Framework | React 19 + Vite |
@@ -62,6 +65,7 @@ Question → Vector Search → Cross-Encoder Reranker → Context Assembly → C
 | Markdown | react-markdown + @tailwindcss/typography |
 
 ### Deployment
+
 | Component | Technology |
 |-----------|-----------|
 | Backend | Render (Docker) |
@@ -70,99 +74,99 @@ Question → Vector Search → Cross-Encoder Reranker → Context Assembly → C
 
 ---
 
-## 📁 Project Structure
+## Project Structure
 
 ```
 AskDocs-
 ├── backend/
-│   ├── main.py                  # FastAPI routes + CORS + startup
+│   ├── main.py                  # FastAPI routes + CORS
 │   ├── app/
 │   │   ├── embeddings.py        # ChromaDB ONNX embeddings
-│   │   ├── database.py          # ChromaDB vector store + chunk persistence
-│   │   ├── retrieval.py         # Vector retrieval + cross-encoder reranking
-│   │   ├── reranker.py          # Cross-encoder reranker singleton
-│   │   ├── chunking.py          # Text chunking
-│   │   ├── parsing.py           # Document parsing (PDF/DOCX/TXT)
-│   │   ├── llm.py               # Cerebras LLM wrapper
-│   │   ├── session.py           # Session manager (TTL, LRU eviction)
-│   │   ├── context_builder.py   # RAG prompt assembly with history
-│   │   └── validation/          # Retrieval + generation validation
-│   ├── Dockerfile               # Docker build config
-│   ├── requirements.txt         # Python dependencies
-│   ├── demo.txt                 # Sample document
-│   ├── employee_eval.json       # Evaluation dataset
-│   └── validate.py              # Validation script
+│   │   ├── database.py          # ChromaDB vector store
+│   │   ├── retrieval.py         # 4 retrieval methods
+│   │   ├── bm25_store.py        # BM25 index build/save/load
+│   │   ├── chunking.py          # Text + semantic chunking
+│   │   ├── parsing.py           # Document parsing
+│   │   ├── llm.py               # Groq LLM + Cerebras fallback
+│   │   ├── reranker.py          # Cross-encoder reranker
+│   │   ├── session.py           # Session manager
+│   │   ├── context_builder.py   # RAG prompt assembly
+│   │   └── validation/
+│   │       ├── retrieval_validation.py
+│   │       └── generation_validation.py
+│   ├── validate.py              # Comparative evaluation CLI
+│   ├── employee_eval.json       # Evaluation dataset (15 Q&A)
+│   ├── requirements.txt
+│   └── .env
 ├── frontend/
 │   ├── src/
-│   │   ├── App.jsx              # Main app (Upload → Chat flow)
-│   │   ├── api.js               # API base URL config
+│   │   ├── App.jsx
+│   │   ├── api.js
 │   │   └── components/
-│   │       ├── Upload.jsx       # File upload
-│   │       └── Chat.jsx         # Chat with sessions + markdown
-│   ├── package.json
-│   └── vite.config.js
-└── render.yaml                  # Render Blueprint config
+│   │       ├── Upload.jsx
+│   │       └── Chat.jsx
+│   └── package.json
+└── render.yaml
 ```
 
 ---
 
-## 🧪 API Endpoints
+## API Endpoints
 
 | Method | Endpoint | Description |
 |--------|----------|-------------|
 | `GET` | `/` | Health check |
 | `GET` | `/documents` | List all uploaded documents |
 | `POST` | `/upload` | Upload a document (PDF/DOCX/TXT) |
-| `POST` | `/ask` | Ask a question about a document |
+| `POST` | `/ask` | Ask a question (with `method` param) |
 
-### Example: Upload
-
-```bash
-curl -X POST https://askdocs-1.onrender.com/upload -F "file=@demo.txt"
-```
-
-Response:
-```json
-{
-  "doc_id": "3da0ad63-71b9-47e9-b4a0-b0ef995839cc",
-  "filename": "demo.txt",
-  "chunks": 5
-}
-```
-
-### Example: Ask
+### Example: Ask with Method Selection
 
 ```bash
 curl -X POST https://askdocs-1.onrender.com/ask \
   -H "Content-Type: application/json" \
-  -d '{"doc_id":"3da0ad63-71b9-47e9-b4a0-b0ef995839cc","question":"What is the leave policy?"}'
+  -d '{"doc_id":"YOUR_DOC_ID","question":"What is the leave policy?","method":"hybrid"}'
 ```
 
-Response:
-```json
-{
-  "doc_id": "3da0ad63-71b9-47e9-b4a0-b0ef995839cc",
-  "question": "What is the leave policy?",
-  "answer": "The leave policy provides: PTO – 20 days per year...",
-  "retrieved_chunks": [...],
-  "session_id": "792ccec4-55a4-418f-ab1d-583221868b08"
-}
-```
+Methods: `simple`, `semantic`, `hybrid`, `reranked`
 
 ---
 
-## 📊 Evaluation
+## Evaluation
 
-AskDocs includes a validation layer for retrieval and generation quality.
+### Running Validation
 
-- **Dataset:** `backend/employee_eval.json` (15 Q&A pairs)
-- **CLI:** `python validate.py` from the `backend/` folder
+```bash
+cd backend
 
-The validation scores retrieved chunks and generated answers against ground truth.
+# Single method
+python validate.py --doc-id YOUR_DOC_ID --method simple
+
+# Compare all methods
+python validate.py --doc-id YOUR_DOC_ID --compare
+```
+
+### Metrics
+
+| Metric | Description |
+|--------|-------------|
+| **Recall@5** | % of ground truth chunks found in retrieved results |
+| **MRR** | Mean Reciprocal Rank (position of first relevant result) |
+| **Correctness** | LLM-as-judge score for answer accuracy |
+| **Faithfulness** | % of answer claims supported by context |
+
+### Sample Results
+
+| Method | Recall@5 | MRR | Correctness | Faithfulness |
+|--------|----------|-----|-------------|--------------|
+| Simple | 100% | 1.00 | 77.7% | 32.0% |
+| Semantic | 100% | 1.00 | 70.4% | 62.0% |
+| Hybrid | 100% | 1.00 | 76.3% | 33.3% |
+| Reranked | 100% | 1.00 | 78.7% | 46.7% |
 
 ---
 
-## 🚀 Local Development
+## Local Development
 
 ### Backend
 
@@ -183,11 +187,9 @@ npm install
 npm run dev
 ```
 
-Frontend runs on `http://localhost:5173` and connects to backend at `http://localhost:8000`.
-
 ---
 
-## 🚢 Deployment
+## Deployment
 
 ### Backend (Render – Docker)
 
@@ -195,7 +197,7 @@ Frontend runs on `http://localhost:5173` and connects to backend at `http://loca
 2. Render → New → Web Service
 3. Connect repo, select `backend/` as root directory
 4. Runtime: Docker
-5. Add env var: `CEREBRAS_API_KEY`
+5. Add env vars: `GROQ_API_KEY`, `CEREBRAS_API_KEY`
 6. Deploy
 
 ### Frontend (Render – Static Site)
@@ -207,9 +209,7 @@ Frontend runs on `http://localhost:5173` and connects to backend at `http://loca
 5. Add env var: `VITE_API_URL=https://askdocs-1.onrender.com`
 6. Deploy
 
-Or use the `render.yaml` Blueprint to deploy both services at once.
-
 ---
 
-## 🎥 Demo
+## Demo
 https://github.com/user-attachments/assets/3e2d3ca6-abd3-4b1e-a1d2-4f08ee27dcba

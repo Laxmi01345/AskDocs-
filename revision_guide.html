@@ -45,15 +45,15 @@
 <body>
 
 <header>
-    <h1>AskDocs</h1>
-    <p>RAG-based Document Q&A System - Complete Revision Guide</p>
+    <h1>AskDocs v2</h1>
+    <p>Multi-Method RAG Document Q&A System - Complete Revision Guide</p>
     <div>
         <span class="badge">FastAPI</span>
         <span class="badge">ChromaDB</span>
-        <span class="badge">Cerebras AI</span>
+        <span class="badge">Groq + Cerebras</span>
         <span class="badge">React</span>
-        <span class="badge">Vector Search</span>
-        <span class="badge">RAG</span>
+        <span class="badge">4 Retrieval Methods</span>
+        <span class="badge">BM25 + Vector + RRF</span>
     </div>
 </header>
 
@@ -77,7 +77,7 @@
     <!-- OVERVIEW -->
     <section id="overview">
         <h2>1. Project Overview</h2>
-        <p><strong>AskDocs</strong> is a Retrieval-Augmented Generation (RAG) system that lets users upload documents and ask questions about them. It uses vector search (embedding similarity) to retrieve relevant chunks, reranks them with a cross-encoder, and generates grounded answers using Cerebras AI.</p>
+        <p><strong>AskDocs v2</strong> is a Retrieval-Augmented Generation (RAG) system with <strong>4 retrieval methods</strong> and comparative evaluation. It lets users upload documents and ask questions, comparing Simple Chunking, Semantic Chunking, Hybrid (BM25+Vector+RRF), and Reranking strategies.</p>
         <br>
         <h3>Problem It Solves</h3>
         <ul>
@@ -85,14 +85,17 @@
             <li>Keyword search misses conceptual queries</li>
             <li>Semantic search misses exact terms (names, dates, codes)</li>
             <li>LLMs hallucinate without grounded context</li>
+            <li>No way to compare retrieval strategies objectively</li>
         </ul>
         <br>
         <h3>Our Solution</h3>
         <ul>
-            <li><strong>Vector Retrieval</strong> - Embedding search + cross-encoder reranker</li>
-            <li><strong>Reranking</strong> - Cross-encoder re-scores for precision</li>
+            <li><strong>4 Retrieval Methods</strong> - Simple, Semantic, Hybrid, Reranked</li>
+            <li><strong>BM25 + Vector Fusion</strong> - Best of keyword + semantic search</li>
+            <li><strong>Cross-Encoder Reranking</strong> - Precision re-scoring</li>
             <li><strong>Conversational Memory</strong> - Multi-turn chat with session tracking</li>
             <li><strong>Grounded Generation</strong> - LLM answers ONLY from retrieved context</li>
+            <li><strong>Comparative Evaluation</strong> - Recall@5, MRR, Correctness, Faithfulness</li>
         </ul>
     </section>
 
@@ -160,7 +163,8 @@ sim range: -1.0 (opposite) to 1.0 (identical)
             <tr><td>Vector Database</td><td>ChromaDB</td><td>Local, lightweight, LangChain integration</td></tr>
             <tr><td>Embeddings</td><td>sentence-transformers/all-MiniLM-L6-v2</td><td>Fast, 80MB, good accuracy</td></tr>
             <tr><td>Reranker</td><td>cross-encoder/ms-marco-MiniLM-L6-v2</td><td>High accuracy, lightweight</td></tr>
-            <tr><td>LLM</td><td>Cerebras AI (gpt-oss-120b)</td><td>Fast inference, good quality</td></tr>
+            <tr><td>LLM</td><td>Groq (gpt-oss-20b) + Cerebras fallback</td><td>Free tier, fast inference, model rotation</td></tr>
+            <tr><td>BM25</td><td>rank-bm25 (Okapi BM25)</td><td>Keyword search for hybrid retrieval</td></tr>
             <tr><td>Document Parsing</td><td>LangChain loaders (PyPDF, Docx2txt, TextLoader)</td><td>Multi-format support</td></tr>
             <tr><td>Chunking</td><td>RecursiveCharacterTextSplitter</td><td>Respects document structure</td></tr>
             <tr><td>Frontend</td><td>React + Vite + Tailwind CSS</td><td>Modern, fast dev experience</td></tr>
@@ -1097,13 +1101,16 @@ Example:
 
         <h3>7.3 Running Validation</h3>
         <div class="code">
-# Upload document first, get doc_id<br>
-python validate.py --doc-id YOUR_DOC_ID<br><br>
-# Output:<br>
-# Avg Retrieval Relevance: 0.74<br>
-# Avg Generation Score: 0.86<br>
-# Excellent Retrieval: 80%<br>
-# Excellent Generation: 87%
+# Single method<br>
+python validate.py --doc-id YOUR_DOC_ID --method simple<br><br>
+# Compare all 4 methods<br>
+python validate.py --doc-id YOUR_DOC_ID --compare<br><br>
+# Output comparison table:<br>
+# Configuration          Recall@5   MRR    Correctness  Faithfulness<br>
+# Simple Chunking        100%       1.00   77.7%        32.0%<br>
+# Semantic Chunking      100%       1.00   70.4%        62.0%<br>
+# Hybrid (BM25+Vec+RRF)  100%       1.00   76.3%        33.3%<br>
+# Reranked               100%       1.00   78.7%        46.7%
         </div>
     </section>
 
@@ -1115,12 +1122,13 @@ AskDocs-/<br>
 &ensp;backend/<br>
 &ensp;&ensp;app/<br>
 &ensp;&ensp;&ensp;api.py              &ensp;&ensp;&ensp;&ensp;&ensp;&ensp;# FastAPI endpoints (/upload, /ask, /documents)<br>
-&ensp;&ensp;&ensp;retrieval.py        &ensp;&ensp;&ensp;&ensp;# Vector retrieval + reranking pipeline<br>
+&ensp;&ensp;&ensp;retrieval.py        &ensp;&ensp;&ensp;&ensp;# 4 retrieval methods (simple/semantic/hybrid/reranked)<br>
+&ensp;&ensp;&ensp;bm25_store.py       &ensp;&ensp;&ensp;&ensp;# BM25 index build/save/load<br>
 &ensp;&ensp;&ensp;database.py         &ensp;&ensp;&ensp;&ensp;# ChromaDB + chunk persistence<br>
 &ensp;&ensp;&ensp;embeddings.py       &ensp;&ensp;&ensp;&ensp;# HuggingFace embeddings singleton<br>
 &ensp;&ensp;&ensp;chunking.py         &ensp;&ensp;&ensp;&ensp;# RecursiveCharacterTextSplitter<br>
 &ensp;&ensp;&ensp;parsing.py          &ensp;&ensp;&ensp;&ensp;&ensp;# PDF/DOCX/TXT loaders<br>
-&ensp;&ensp;&ensp;llm.py              &ensp;&ensp;&ensp;&ensp;&ensp;&ensp;# Cerebras AI wrapper<br>
+&ensp;&ensp;&ensp;llm.py              &ensp;&ensp;&ensp;&ensp;&ensp;&ensp;# Groq LLM + Cerebras fallback<br>
 &ensp;&ensp;&ensp;reranker.py         &ensp;&ensp;&ensp;&ensp;&ensp;# Cross-encoder singleton<br>
 &ensp;&ensp;&ensp;session.py          &ensp;&ensp;&ensp;&ensp;&ensp;&ensp;# Session manager (TTL, LRU)<br>
 &ensp;&ensp;&ensp;context_builder.py  &ensp;&ensp;# Prompt assembly with history<br>
@@ -1149,8 +1157,13 @@ AskDocs-/<br>
         <h2>9. Interview Q&A</h2>
 
         <div class="qa">
-            <strong>Q: Why vector search + reranker instead of hybrid search?</strong>
-            <p>For a RAG system, semantic retrieval is the primary need. Vector search handles synonyms and concepts well. The cross-encoder reranker fine-tunes relevance, making BM25 redundant. This simplifies the architecture (one retriever instead of two) while maintaining accuracy.</p>
+            <strong>Q: Why implement 4 retrieval methods?</strong>
+            <p>Different methods excel in different scenarios. Vector search handles synonyms well but misses exact terms. BM25 catches exact matches but misses concepts. Hybrid combines both with Reciprocal Rank Fusion. Reranking adds precision on top. Comparing them shows which works best for each use case.</p>
+        </div>
+
+        <div class="qa">
+            <strong>Q: What is Reciprocal Rank Fusion (RRF)?</strong>
+            <p>RRF combines results from multiple retrieval methods. Score = 1/(k + rank_dense) + 1/(k + rank_sparse) where k=60. It normalizes rankings from different methods into a single fused score, giving the best of both keyword and semantic search.</p>
         </div>
 
         <div class="qa">
@@ -1218,8 +1231,8 @@ AskDocs-/<br>
         </div>
 
         <div class="qa">
-            <strong>Q: Why Cerebras AI?</strong>
-            <p>Fast inference speed, competitive quality, good for real-time chat. Alternative: OpenAI GPT-4, Claude, or local models via Ollama.</p>
+            <strong>Q: Why Groq + Cerebras?</strong>
+            <p>Groq provides free tier with 1000 requests/day. The LLM auto-rotates through 4 models when one hits rate limits, maximizing daily quota. Cerebras serves as fallback. This gives 4x the daily capacity compared to single-provider setup.</p>
         </div>
 
         <div class="qa">
@@ -1239,8 +1252,10 @@ cd backend && uvicorn main:app --reload<br><br>
 cd frontend && npm run dev<br><br>
 # List documents<br>
 curl http://127.0.0.1:8000/documents<br><br>
-# Run validation<br>
-python validate.py --doc-id YOUR_DOC_ID<br><br>
+# Run validation (single method)<br>
+python validate.py --doc-id YOUR_DOC_ID --method simple<br><br>
+# Compare all methods<br>
+python validate.py --doc-id YOUR_DOC_ID --compare<br><br>
 # Upload via curl<br>
 curl -X POST http://127.0.0.1:8000/upload -F "file=@demo.txt"
         </div>
@@ -1248,8 +1263,10 @@ curl -X POST http://127.0.0.1:8000/upload -F "file=@demo.txt"
         <h3>Key Numbers to Remember</h3>
         <table>
             <tr><th>Parameter</th><th>Value</th></tr>
-            <tr><td>Chunk size</td><td>1000 characters</td></tr>
-            <tr><td>Chunk overlap</td><td>200 characters</td></tr>
+            <tr><td>Chunk size</td><td>500 characters (12 chunks)</td></tr>
+            <tr><td>Chunk overlap</td><td>100 characters</td></tr>
+            <tr><td>Retrieval methods</td><td>simple, semantic, hybrid, reranked</td></tr>
+            <tr><td>RRF constant (k)</td><td>60</td></tr>
             <tr><td>Initial retrieve count</td><td>top_k x 4 (default 12)</td></tr>
             <tr><td>Rerank to top</td><td>top_k (default 3)</td></tr>
             <tr><td>Session TTL</td><td>1 hour</td></tr>

@@ -1,62 +1,167 @@
 [
   {
-    "question": "What are the working hours?",
-    "ground_truth": "Standard working hours are 9:00 AM to 5:30 PM Pacific Time, Monday through Friday."
+    "id": "Q001",
+    "question": "What are the standard working hours?",
+    "ground_truth": "Standard working hours are 9:00 AM to 5:30 PM Pacific Time, Monday through Friday.",
+    "ground_truth_location": "Section 2.2",
+    "ground_truth_chunks": [
+      "Standard working hours are 9:00 AM to 5:30 PM Pacific Time, Monday through Friday. Employees are expected to work 40 hours per week."
+    ],
+    "question_type": "clear",
+    "category": "working_hours"
   },
   {
-    "question": "How many PTO days do full-time employees get?",
-    "ground_truth": "Full-time employees receive 20 days of PTO per year."
+    "id": "Q002",
+    "question": "What are the core hours employees must be available?",
+    "ground_truth": "Core hours are 10:00 AM to 3:00 PM Pacific Time.",
+    "ground_truth_location": "Section 2.1",
+    "ground_truth_chunks": [
+      "Employees must be available during core hours: 10:00 AM - 3:00 PM Pacific Time."
+    ],
+    "question_type": "clear",
+    "category": "working_hours"
   },
   {
-    "question": "What is the salary range for a senior developer?",
-    "ground_truth": "Senior Developer: $130,000 - $170,000."
+    "id": "Q003",
+    "question": "Which days are employees required to work from the office?",
+    "ground_truth": "Employees are required to work from the office on Tuesdays and Thursdays.",
+    "ground_truth_location": "Section 2.1",
+    "ground_truth_chunks": [
+      "Employees are required to work from the office on Tuesdays and Thursdays."
+    ],
+    "question_type": "clear",
+    "category": "working_hours"
   },
   {
-    "question": "How much is the sign-on bonus?",
-    "ground_truth": "Sign-on bonus: Up to $10,000 for senior positions."
-  },
-  {
-    "question": "What is the 401(k) matching?",
-    "ground_truth": "401(k) matching: 4% of salary."
-  },
-  {
-    "question": "When are performance reviews conducted?",
-    "ground_truth": "Performance reviews are conducted semi-annually, in June and December."
-  },
-  {
-    "question": "What happens if an employee receives Needs Improvement twice?",
-    "ground_truth": "Employees receiving Needs Improvement twice in a row will be placed on a Performance Improvement Plan (PIP)."
-  },
-  {
-    "question": "How much notice is required for voluntary resignation?",
-    "ground_truth": "Employees must provide 2 weeks notice for voluntary resignation. Senior positions require 4 weeks notice."
-  },
-  {
-    "question": "What is the learning stipend?",
-    "ground_truth": "Learning stipend: $2,000 per year."
-  },
-  {
-    "question": "How many employees work at Riverton?",
-    "ground_truth": "As of January 2024, Riverton employs 1,847 people across 5 offices worldwide."
-  },
-  {
-    "question": "What days are employees required to work from the office?",
-    "ground_truth": "Employees are required to work from the office on Tuesdays and Thursdays."
-  },
-  {
+    "id": "Q004",
     "question": "What is the home office setup allowance?",
-    "ground_truth": "Home office setup: $1,500 one-time."
+    "ground_truth": "Home office setup allowance is $1,500 one-time.",
+    "ground_truth_location": "Section 3.3",
+    "ground_truth_chunks": [
+      "Home office setup: $1,500 one-time"
+    ],
+    "question_type": "clear",
+    "category": "benefits"
   },
   {
-    "question": "What percentage of premium does the company cover for health insurance?",
-    "ground_truth": "Health insurance: Company covers 80% of premium."
+    "id": "Q005",
+    "question": "What is the monthly internet stipend for remote workers?",
+    "ground_truth": "Monthly internet stipend is $80 per month.",
+    "ground_truth_location": "Section 3.3",
+    "ground_truth_chunks": [
+      "Internet stipend: $80 per month for remote workers"
+    ],
+    "question_type": "clear",
+    "category": "benefits"
   },
   {
-    "question": "How often must passwords be changed?",
-    "ground_truth": "Passwords must be changed every 90 days."
+    "id": "Q006",
+    "question": "What is the salary range for a Senior Developer?",
+    "ground_truth": "Senior Developer salary range is $130,000 to $170,000 per year.",
+    "ground_truth_location": "Section 3.1",
+    "ground_truth_chunks": [
+      "Senior Developer: $130,000 - $170,000"
+    ],
+    "question_type": "clear",
+    "category": "compensation"
   },
   {
-    "question": "What is the severance for involuntary termination?",
-    "ground_truth": "Severance: 1 month per year of service for involuntary termination."
+    "id": "Q007",
+    "question": "What is the salary range for a Principal Engineer?",
+    "ground_truth": "Principal Engineer salary range is $210,000 to $260,000 per year.",
+    "ground_truth_location": "Section 3.1",
+    "ground_truth_chunks": [
+      "Principal Engineer: $210,000 - $260,000"
+    ],
+    "question_type": "clear",
+    "category": "compensation"
+  },
+  {
+    "id": "Q008",
+    "question": "When are salaries paid?",
+    "ground_truth": "Salaries are paid on the 15th and last day of each month (bi-monthly). Direct deposit is mandatory.",
+    "ground_truth_location": "Section 3.2",
+    "ground_truth_chunks": [
+      "Salaries are paid bi-monthly via direct deposit"
+    ],
+    "question_type": "clear",
+    "category": "compensation"
+  },
+  {
+    "id": "Q009",
+    "question": "What is the sign-on bonus for senior positions?",
+    "ground_truth": "Sign-on bonus is up to $10,000 for senior positions.",
+    "ground_truth_location": "Section 3.2",
+    "ground_truth_chunks": [
+      "Sign-on bonus: Up to $10,000 for senior positions"
+    ],
+    "question_type": "clear",
+    "category": "compensation"
+  },
+  {
+    "id": "Q010",
+    "question": "How much is the employee referral bonus?",
+    "ground_truth": "Referral bonus is $3,000 for successful employee referrals.",
+    "ground_truth_location": "Section 3.2",
+    "ground_truth_chunks": [
+      "Referral bonus: $3,000 for successful referrals"
+    ],
+    "question_type": "clear",
+    "category": "compensation"
+  },
+  {
+    "id": "Q011",
+    "question": "How many PTO days do full-time employees receive per year?",
+    "ground_truth": "Full-time employees receive 20 days of PTO per year.",
+    "ground_truth_location": "Section 2.3",
+    "ground_truth_chunks": [
+      "Full-time employees receive 20 days of PTO per year"
+    ],
+    "question_type": "clear",
+    "category": "leave"
+  },
+  {
+    "id": "Q012",
+    "question": "How many sick leave days are provided annually?",
+    "ground_truth": "Employees receive 10 days of paid sick leave per year.",
+    "ground_truth_location": "Section 2.3",
+    "ground_truth_chunks": [
+      "Sick leave: 10 days per year (no carryover)"
+    ],
+    "question_type": "clear",
+    "category": "leave"
+  },
+  {
+    "id": "Q013",
+    "question": "How many weeks of parental leave does the primary caregiver receive?",
+    "ground_truth": "The primary caregiver receives 16 weeks of fully paid parental leave.",
+    "ground_truth_location": "Section 4.3",
+    "ground_truth_chunks": [
+      "Primary caregiver: 16 weeks fully paid parental leave"
+    ],
+    "question_type": "clear",
+    "category": "leave"
+  },
+  {
+    "id": "Q014",
+    "question": "How many days of bereavement leave is given for an immediate family member?",
+    "ground_truth": "5 days paid bereavement leave for immediate family.",
+    "ground_truth_location": "Section 4.4",
+    "ground_truth_chunks": [
+      "Bereavement leave: 5 days for immediate family"
+    ],
+    "question_type": "clear",
+    "category": "leave"
+  },
+  {
+    "id": "Q015",
+    "question": "What percentage of health insurance premium does the company cover for employees?",
+    "ground_truth": "The company covers 80% of the medical insurance premium for employees.",
+    "ground_truth_location": "Section 3.3",
+    "ground_truth_chunks": [
+      "Health insurance: Company covers 80% of premium"
+    ],
+    "question_type": "clear",
+    "category": "benefits"
   }
 ]

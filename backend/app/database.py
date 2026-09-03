@@ -4,7 +4,7 @@ from typing import List
 from pathlib import Path
 
 from dotenv import load_dotenv
-from langchain_community.vectorstores import Chroma
+from langchain_chroma import Chroma
 
 from app.embeddings import get_embeddings
 
@@ -47,9 +47,12 @@ def store_document(doc_id: str, filename: str, chunks: List[str] | None = None, 
     vectorstore = _vectorstore(doc_id)
     metadatas = [{"chunk_index": i, "filename": filename} for i in range(len(chunks))]
     vectorstore.add_texts(texts=chunks, metadatas=metadatas)
-    vectorstore.persist()
 
     os.makedirs(CHUNKS_DIR, exist_ok=True)
     chunks_path = Path(CHUNKS_DIR) / f"{doc_id}.json"
     with open(chunks_path, "w") as f:
         json.dump({"filename": filename, "chunks": chunks}, f)
+
+    from app.bm25_store import build_bm25_index, save_bm25_index
+    bm25 = build_bm25_index(chunks)
+    save_bm25_index(doc_id, bm25, chunks)

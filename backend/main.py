@@ -21,6 +21,7 @@ class AskRequest(BaseModel):
     question: str
     top_k: int = 3
     session_id: Optional[str] = None
+    method: str = "simple"
 
 
 @app.get("/")
@@ -95,7 +96,7 @@ def ask(req: AskRequest):
     try:
         session = session_manager.get_session(session_id)
         answer, _context, retrieved_chunks = answer_with_rag_with_history(
-            req.doc_id, req.question, req.top_k, session
+            req.doc_id, req.question, req.top_k, session, req.method
         )
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
@@ -108,6 +109,7 @@ def ask(req: AskRequest):
         "answer": answer,
         "retrieved_chunks": retrieved_chunks,
         "session_id": session_id,
+        "method": req.method,
     }
 
 

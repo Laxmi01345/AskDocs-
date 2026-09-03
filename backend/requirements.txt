@@ -5,8 +5,9 @@ langchain
 langchain-community
 langchain-text-splitters
 numpy
-cerebras-cloud-sdk
+groq
 python-multipart
 pypdf
 python-docx
 chromadb
+rank-bm25
