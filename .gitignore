@@ -7,3 +7,4 @@ backend/chroma_db/
 backend/chunks_store/
 *.pyc
 backend/.env
+backend/bm25_cache/
