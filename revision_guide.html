@@ -1110,7 +1110,20 @@ python validate.py --doc-id YOUR_DOC_ID --compare<br><br>
 # Simple Chunking        90.0%      0.83   80.8%        76.0%<br>
 # Semantic Chunking      90.0%      0.83   74.8%        66.0%<br>
 # Hybrid (BM25+Vec+RRF)  100.0%     0.90   75.8%        70.0%<br>
-# Reranked               90.0%      0.83   82.7%        68.0%
+# Reranked               90.0%      0.83   82.7%        68.0%<br><br>
+# IMPROVEMENT OVER PREVIOUS METHOD:<br>
+# Semantic vs Simple:    +0.0%      +0.0%  -7.4%        -13.2%<br>
+# Hybrid vs Semantic:    +11.1%     +8.3%  +1.3%        +6.1%<br>
+# Reranked vs Hybrid:    -11.1%     -7.8%  +9.1%        -2.9%<br><br>
+# BEST METHOD:<br>
+# Highest Recall:   Hybrid (100%)<br>
+# Highest MRR:      Hybrid (0.90)<br>
+# Highest Correctness: Reranked (82.7%)<br>
+# Highest Faithfulness: Simple (76.0%)
+        </div>
+        <br>
+        <div class="tip">
+            <strong>Key Insight:</strong> No single method dominates all metrics. Hybrid excels at retrieval (finding the answer), while Reranked excels at generation (producing the correct answer). Simple wins on faithfulness (least hallucination). The choice depends on your priority: retrieval coverage vs answer accuracy.
         </div>
     </section>
 

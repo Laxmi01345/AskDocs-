@@ -164,6 +164,17 @@ python validate.py --doc-id YOUR_DOC_ID --compare
 | Hybrid | **100.0%** | **0.90** | 75.8% | 70.0% |
 | Reranked | 90.0% | 0.83 | **82.7%** | 68.0% |
 
+**Improvement over previous method:**
+- Semantic vs Simple: +0% Recall, +0% MRR, -7.4% Correctness, -13.2% Faithfulness
+- Hybrid vs Semantic: +11.1% Recall, +8.3% MRR, +1.3% Correctness, +6.1% Faithfulness
+- Reranked vs Hybrid: -11.1% Recall, -7.8% MRR, +9.1% Correctness, -2.9% Faithfulness
+
+**Best method by metric:**
+- Highest Recall: Hybrid (100%)
+- Highest MRR: Hybrid (0.90)
+- Highest Correctness: Reranked (82.7%)
+- Highest Faithfulness: Simple (76.0%)
+
 ---
 
 ## Local Development
