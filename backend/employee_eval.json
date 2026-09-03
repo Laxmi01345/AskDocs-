@@ -45,17 +45,6 @@
   },
   {
     "id": "Q005",
-    "question": "What is the monthly internet stipend for remote workers?",
-    "ground_truth": "Monthly internet stipend is $80 per month.",
-    "ground_truth_location": "Section 3.3",
-    "ground_truth_chunks": [
-      "Internet stipend: $80 per month for remote workers"
-    ],
-    "question_type": "clear",
-    "category": "benefits"
-  },
-  {
-    "id": "Q006",
     "question": "What is the salary range for a Senior Developer?",
     "ground_truth": "Senior Developer salary range is $130,000 to $170,000 per year.",
     "ground_truth_location": "Section 3.1",
@@ -66,29 +55,7 @@
     "category": "compensation"
   },
   {
-    "id": "Q007",
-    "question": "What is the salary range for a Principal Engineer?",
-    "ground_truth": "Principal Engineer salary range is $210,000 to $260,000 per year.",
-    "ground_truth_location": "Section 3.1",
-    "ground_truth_chunks": [
-      "Principal Engineer: $210,000 - $260,000"
-    ],
-    "question_type": "clear",
-    "category": "compensation"
-  },
-  {
-    "id": "Q008",
-    "question": "When are salaries paid?",
-    "ground_truth": "Salaries are paid on the 15th and last day of each month (bi-monthly). Direct deposit is mandatory.",
-    "ground_truth_location": "Section 3.2",
-    "ground_truth_chunks": [
-      "Salaries are paid bi-monthly via direct deposit"
-    ],
-    "question_type": "clear",
-    "category": "compensation"
-  },
-  {
-    "id": "Q009",
+    "id": "Q006",
     "question": "What is the sign-on bonus for senior positions?",
     "ground_truth": "Sign-on bonus is up to $10,000 for senior positions.",
     "ground_truth_location": "Section 3.2",
@@ -99,7 +66,7 @@
     "category": "compensation"
   },
   {
-    "id": "Q010",
+    "id": "Q007",
     "question": "How much is the employee referral bonus?",
     "ground_truth": "Referral bonus is $3,000 for successful employee referrals.",
     "ground_truth_location": "Section 3.2",
@@ -110,7 +77,7 @@
     "category": "compensation"
   },
   {
-    "id": "Q011",
+    "id": "Q008",
     "question": "How many PTO days do full-time employees receive per year?",
     "ground_truth": "Full-time employees receive 20 days of PTO per year.",
     "ground_truth_location": "Section 2.3",
@@ -121,7 +88,7 @@
     "category": "leave"
   },
   {
-    "id": "Q012",
+    "id": "Q009",
     "question": "How many sick leave days are provided annually?",
     "ground_truth": "Employees receive 10 days of paid sick leave per year.",
     "ground_truth_location": "Section 2.3",
@@ -132,29 +99,7 @@
     "category": "leave"
   },
   {
-    "id": "Q013",
-    "question": "How many weeks of parental leave does the primary caregiver receive?",
-    "ground_truth": "The primary caregiver receives 16 weeks of fully paid parental leave.",
-    "ground_truth_location": "Section 4.3",
-    "ground_truth_chunks": [
-      "Primary caregiver: 16 weeks fully paid parental leave"
-    ],
-    "question_type": "clear",
-    "category": "leave"
-  },
-  {
-    "id": "Q014",
-    "question": "How many days of bereavement leave is given for an immediate family member?",
-    "ground_truth": "5 days paid bereavement leave for immediate family.",
-    "ground_truth_location": "Section 4.4",
-    "ground_truth_chunks": [
-      "Bereavement leave: 5 days for immediate family"
-    ],
-    "question_type": "clear",
-    "category": "leave"
-  },
-  {
-    "id": "Q015",
+    "id": "Q010",
     "question": "What percentage of health insurance premium does the company cover for employees?",
     "ground_truth": "The company covers 80% of the medical insurance premium for employees.",
     "ground_truth_location": "Section 3.3",

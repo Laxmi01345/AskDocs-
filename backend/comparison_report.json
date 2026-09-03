@@ -1,0 +1,34 @@
+{
+  "baseline": "simple",
+  "dataset": "employee_eval.json",
+  "methods": {
+    "simple": {
+      "recall_at_5": 0.8667,
+      "mrr": 0.8222,
+      "avg_relevance": 0.3235,
+      "avg_faithfulness": 0.3333,
+      "avg_generation_score": 0.7878
+    },
+    "semantic": {
+      "recall_at_5": 0.8667,
+      "mrr": 0.8222,
+      "avg_relevance": 0.3235,
+      "avg_faithfulness": 0.4,
+      "avg_generation_score": 0.7867
+    },
+    "hybrid": {
+      "recall_at_5": 0.8667,
+      "mrr": 0.8222,
+      "avg_relevance": 0.3235,
+      "avg_faithfulness": 0.3333,
+      "avg_generation_score": 0.7633
+    },
+    "reranked": {
+      "recall_at_5": 0.8667,
+      "mrr": 0.8222,
+      "avg_relevance": 0.3025,
+      "avg_faithfulness": 0.4667,
+      "avg_generation_score": 0.7867
+    }
+  }
+}

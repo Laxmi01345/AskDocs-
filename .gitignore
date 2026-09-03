@@ -6,3 +6,4 @@ dist/
 backend/chroma_db/
 backend/chunks_store/
 *.pyc
+backend/.env

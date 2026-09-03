@@ -55,8 +55,10 @@ def run_validation(doc_id, method="simple", dataset_path="employee_eval.json", t
 
             context = "\n\n".join(chunk_texts)
             prompt = (
-                "Answer the question using ONLY the context below.\n"
-                "If the answer is not present in the context, say \"I don't know\".\n\n"
+                "You are a helpful assistant answering questions about an employee handbook.\n"
+                "Use the context below to answer the question directly and concisely.\n"
+                "If the answer is clearly stated in the context, provide it.\n"
+                "Only say \"I don't know\" if you have carefully checked the entire context and the answer is truly not there.\n\n"
                 f"Context:\n{context}\n\nQuestion:\n{question}\n\nAnswer:"
             )
             from app.llm import CerebrasLLM
@@ -252,7 +254,7 @@ if __name__ == "__main__":
     parser = argparse.ArgumentParser(description="RAG validation")
     parser.add_argument("--doc-id", required=True, help="Document ID to test")
     parser.add_argument("--dataset", default="employee_eval.json", help="Eval dataset")
-    parser.add_argument("--top-k", type=int, default=3, help="Chunks to retrieve")
+    parser.add_argument("--top-k", type=int, default=5, help="Chunks to retrieve")
     parser.add_argument("--method", choices=METHODS, help="Run single method")
     parser.add_argument("--compare", action="store_true", help="Run all methods and compare")
     args = parser.parse_args()

@@ -1,0 +1,571 @@
+{
+  "method": "hybrid",
+  "total": 10,
+  "recall_at_5": 1.0,
+  "mrr": 0.9,
+  "avg_relevance": 0.3847,
+  "avg_faithfulness": 0.7,
+  "avg_answer_relevancy": 0.48,
+  "avg_hallucination": 0.0,
+  "avg_generation_score": 0.7583,
+  "excellent_retrieval": 0,
+  "excellent_generation": 5,
+  "results": [
+    {
+      "question": "What are the standard working hours?",
+      "answer": "The standard working hours are 10:00 AM - 3:00 PM Pacific Time, Monday through Friday. ",
+      "ground_truth": "Standard working hours are 9:00 AM to 5:30 PM Pacific Time, Monday through Friday.",
+      "retrieval": {
+        "num_chunks_retrieved": 5,
+        "metrics": {
+          "diversity": 0.5469,
+          "avg_relevance": 0.4521,
+          "max_relevance": 0.8148,
+          "min_relevance": 0.2163,
+          "hit_rate": 0.6,
+          "hits_above_threshold": 3,
+          "recall_at_5": 1.0,
+          "mrr": 1.0,
+          "precision": 0.3333,
+          "recall": 1.0,
+          "f1": 0.5
+        },
+        "relevance_per_chunk": [
+          0.4417,
+          0.8148,
+          0.3004,
+          0.4871,
+          0.2163
+        ],
+        "verdict": "GOOD"
+      },
+      "generation": {
+        "answer": "The standard working hours are 10:00 AM - 3:00 PM Pacific Time, Monday through Friday. ",
+        "metrics": {
+          "faithfulness": 0.0,
+          "supported_claims": [
+            "Riverton Technology Inc. is a software development company.",
+            "The company was founded in 2015."
+          ],
+          "unsupported_claims": [
+            "The standard working hours are 9:00 AM - 5:30 PM Pacific Time, Monday through Friday.",
+            "Employees receive 10 days of sick leave per year with carryover."
+          ],
+          "answer_relevancy": 1.0,
+          "relevancy_reason": "The answer directly states the standard working hours, fully addressing the question.",
+          "hallucination_score": 0.0,
+          "hallucinated_facts": [],
+          "ground_truth_similarity": 0.5,
+          "key_facts_matched": [
+            "working hours",
+            "Monday through Friday",
+            "Pacific Time"
+          ],
+          "key_facts_missed": [
+            "9:00 AM to 5:30 PM",
+            "start time",
+            "9:00 AM"
+          ],
+          "overall_score": 0.6667
+        },
+        "verdict": "GOOD"
+      }
+    },
+    {
+      "question": "What are the core hours employees must be available?",
+      "answer": "Employees must be available during core hours: 10:00 AM - 3:00 PM Pacific Time. ",
+      "ground_truth": "Core hours are 10:00 AM to 3:00 PM Pacific Time.",
+      "retrieval": {
+        "num_chunks_retrieved": 5,
+        "metrics": {
+          "diversity": 0.5469,
+          "avg_relevance": 0.4708,
+          "max_relevance": 0.5917,
+          "min_relevance": 0.4045,
+          "hit_rate": 1.0,
+          "hits_above_threshold": 5,
+          "recall_at_5": 1.0,
+          "mrr": 1.0,
+          "precision": 0.5,
+          "recall": 1.0,
+          "f1": 0.6667
+        },
+        "relevance_per_chunk": [
+          0.4681,
+          0.5917,
+          0.4331,
+          0.4568,
+          0.4045
+        ],
+        "verdict": "GOOD"
+      },
+      "generation": {
+        "answer": "Employees must be available during core hours: 10:00 AM - 3:00 PM Pacific Time. ",
+        "metrics": {
+          "faithfulness": 0.9,
+          "supported_claims": [
+            "Employees must be available during core hours: 10:00 AM - 3:00 PM Pacific Time.",
+            "Riverton Technology Inc. is a software development company."
+          ],
+          "unsupported_claims": [],
+          "answer_relevancy": 0.5,
+          "relevancy_reason": "The answer provides information about core hours, but the question specifically asks for the availability of employees within those hours. The answer gives the time range for when employees must be available, not when they are required to be present or working.",
+          "hallucination_score": 0.0,
+          "hallucinated_facts": [],
+          "ground_truth_similarity": 1.0,
+          "key_facts_matched": [
+            "core hours",
+            "10:00 AM to 3:00 PM Pacific Time"
+          ],
+          "key_facts_missed": [],
+          "overall_score": 0.8
+        },
+        "verdict": "EXCELLENT"
+      }
+    },
+    {
+      "question": "Which days are employees required to work from the office?",
+      "answer": "Employees are required to work from the office on Tuesdays and Thursdays. ",
+      "ground_truth": "Employees are required to work from the office on Tuesdays and Thursdays.",
+      "retrieval": {
+        "num_chunks_retrieved": 5,
+        "metrics": {
+          "diversity": 0.4831,
+          "avg_relevance": 0.3863,
+          "max_relevance": 0.5554,
+          "min_relevance": 0.2966,
+          "hit_rate": 0.6,
+          "hits_above_threshold": 3,
+          "recall_at_5": 1.0,
+          "mrr": 1.0,
+          "precision": 0.5,
+          "recall": 1.0,
+          "f1": 0.6667
+        },
+        "relevance_per_chunk": [
+          0.4229,
+          0.5554,
+          0.3044,
+          0.3522,
+          0.2966
+        ],
+        "verdict": "FAIR"
+      },
+      "generation": {
+        "answer": "Employees are required to work from the office on Tuesdays and Thursdays. ",
+        "metrics": {
+          "faithfulness": 0.8,
+          "supported_claims": [
+            "Employees are required to work from the office on Tuesdays and Thursdays.",
+            "Riverton Technology Inc. is a software development company."
+          ],
+          "unsupported_claims": [],
+          "answer_relevancy": 0.5,
+          "relevancy_reason": "The answer provides specific days (Tuesdays and Thursdays) when employees must work from the office, addressing the question. However, it would be perfect if the answer also included all days or a clear pattern of in-office requirements.",
+          "hallucination_score": 0.0,
+          "hallucinated_facts": [],
+          "ground_truth_similarity": 1.0,
+          "key_facts_matched": [
+            "Employees are required to work from the office",
+            "on Tuesdays and Thursdays"
+          ],
+          "key_facts_missed": [],
+          "overall_score": 0.7667
+        },
+        "verdict": "GOOD"
+      }
+    },
+    {
+      "question": "What is the home office setup allowance?",
+      "answer": "I don't have enough information to answer your question about the home office setup allowance as it is not mentioned in the provided employee handbook. \n\nIf you have any other questions about Riverton Technology Inc., feel free to ask, and I will do my best to assist you based on the information given in the employee handbook. ",
+      "ground_truth": "Home office setup allowance is $1,500 one-time.",
+      "retrieval": {
+        "num_chunks_retrieved": 5,
+        "metrics": {
+          "diversity": 0.5826,
+          "avg_relevance": 0.345,
+          "max_relevance": 0.4512,
+          "min_relevance": 0.2806,
+          "hit_rate": 0.2,
+          "hits_above_threshold": 1,
+          "recall_at_5": 1.0,
+          "mrr": 0.5,
+          "precision": 0.25,
+          "recall": 1.0,
+          "f1": 0.4
+        },
+        "relevance_per_chunk": [
+          0.3417,
+          0.4512,
+          0.3266,
+          0.2806,
+          0.3248
+        ],
+        "verdict": "FAIR"
+      },
+      "generation": {
+        "answer": "I don't have enough information to answer your question about the home office setup allowance as it is not mentioned in the provided employee handbook. \n\nIf you have any other questions about Riverton Technology Inc., feel free to ask, and I will do my best to assist you based on the information given in the employee handbook. ",
+        "metrics": {
+          "faithfulness": 0.9,
+          "supported_claims": [
+            "Performance reviews are conducted semi-annually, in June and December.",
+            "Employees receive a learning stipend of $2,000 per year.",
+            "Home office setup is not mentioned in the provided employee handbook."
+          ],
+          "unsupported_claims": [],
+          "answer_relevancy": 0.0,
+          "relevancy_reason": "The provided answer does not directly address the question about the home office setup allowance. It only mentions that the answer cannot be given based on the given employee handbook and offers assistance for other Riverton Technology Inc. related questions.",
+          "hallucination_score": 0.0,
+          "hallucinated_facts": [],
+          "ground_truth_similarity": 0.0,
+          "key_facts_matched": [
+            "Home office setup allowance"
+          ],
+          "key_facts_missed": [
+            "$1,500 one-time",
+            "is mentioned in the provided employee handbook"
+          ],
+          "overall_score": 0.6333
+        },
+        "verdict": "GOOD"
+      }
+    },
+    {
+      "question": "What is the salary range for a Senior Developer?",
+      "answer": "The salary range for a Senior Developer is not explicitly mentioned in the provided handbook. \n\nIf you need information about the salary range for a specific job title, I recommend referring to the company's official website or contacting HR directly for accurate information. ",
+      "ground_truth": "Senior Developer salary range is $130,000 to $170,000 per year.",
+      "retrieval": {
+        "num_chunks_retrieved": 5,
+        "metrics": {
+          "diversity": 0.5881,
+          "avg_relevance": 0.4184,
+          "max_relevance": 0.7347,
+          "min_relevance": 0.243,
+          "hit_rate": 0.4,
+          "hits_above_threshold": 2,
+          "recall_at_5": 1.0,
+          "mrr": 1.0,
+          "precision": 0.3333,
+          "recall": 1.0,
+          "f1": 0.5
+        },
+        "relevance_per_chunk": [
+          0.5443,
+          0.7347,
+          0.2718,
+          0.2983,
+          0.243
+        ],
+        "verdict": "GOOD"
+      },
+      "generation": {
+        "answer": "The salary range for a Senior Developer is not explicitly mentioned in the provided handbook. \n\nIf you need information about the salary range for a specific job title, I recommend referring to the company's official website or contacting HR directly for accurate information. ",
+        "metrics": {
+          "faithfulness": 0.9,
+          "supported_claims": [
+            "Full-time employees receive PTO.",
+            "Unused PTO can be carried over to a maximum of 10 days.",
+            "Senior Developers are eligible for bonuses.",
+            "Senior Developers receive a signing bonus of up to $10,000."
+          ],
+          "unsupported_claims": [
+            "The exact salary for a Senior Developer is mentioned in the Employee Handbook"
+          ],
+          "answer_relevancy": null,
+          "hallucination_score": 0.0,
+          "hallucinated_facts": [],
+          "ground_truth_similarity": 0.0,
+          "key_facts_matched": [],
+          "key_facts_missed": [
+            "salary range",
+            "Senior Developer",
+            "130,000 to 170,000 per year"
+          ],
+          "overall_score": 0.95
+        },
+        "verdict": "EXCELLENT"
+      }
+    },
+    {
+      "question": "What is the sign-on bonus for senior positions?",
+      "answer": "I don't know ",
+      "ground_truth": "Sign-on bonus is up to $10,000 for senior positions.",
+      "retrieval": {
+        "num_chunks_retrieved": 5,
+        "metrics": {
+          "diversity": 0.5947,
+          "avg_relevance": 0.2999,
+          "max_relevance": 0.4678,
+          "min_relevance": 0.1019,
+          "hit_rate": 0.4,
+          "hits_above_threshold": 2,
+          "recall_at_5": 1.0,
+          "mrr": 1.0,
+          "precision": 0.3333,
+          "recall": 1.0,
+          "f1": 0.5
+        },
+        "relevance_per_chunk": [
+          0.456,
+          0.4678,
+          0.2462,
+          0.1019,
+          0.2276
+        ],
+        "verdict": "POOR"
+      },
+      "generation": {
+        "answer": "I don't know ",
+        "metrics": {
+          "faithfulness": 0.0,
+          "supported_claims": [],
+          "unsupported_claims": [
+            "I don't know",
+            "Termination Policy (7.1 Voluntary Resignation)"
+          ],
+          "answer_relevancy": 0.0,
+          "relevancy_reason": "The answer provided does not address the question about the sign-on bonus for senior positions. It simply states that the speaker does not know.",
+          "hallucination_score": 0.0,
+          "hallucinated_facts": [],
+          "ground_truth_similarity": 0.0,
+          "key_facts_matched": [],
+          "key_facts_missed": [
+            "sign-on bonus",
+            "up to $10,000",
+            "senior positions"
+          ],
+          "overall_score": 0.3333
+        },
+        "verdict": "NEEDS_REVIEW"
+      }
+    },
+    {
+      "question": "How much is the employee referral bonus?",
+      "answer": "The employee referral bonus is $3,000 for successful referrals. ",
+      "ground_truth": "Referral bonus is $3,000 for successful employee referrals.",
+      "retrieval": {
+        "num_chunks_retrieved": 5,
+        "metrics": {
+          "diversity": 0.5544,
+          "avg_relevance": 0.3692,
+          "max_relevance": 0.5516,
+          "min_relevance": 0.1673,
+          "hit_rate": 0.4,
+          "hits_above_threshold": 2,
+          "recall_at_5": 1.0,
+          "mrr": 1.0,
+          "precision": 0.25,
+          "recall": 1.0,
+          "f1": 0.4
+        },
+        "relevance_per_chunk": [
+          0.5516,
+          0.1673,
+          0.3267,
+          0.5189,
+          0.2815
+        ],
+        "verdict": "FAIR"
+      },
+      "generation": {
+        "answer": "The employee referral bonus is $3,000 for successful referrals. ",
+        "metrics": {
+          "faithfulness": 0.9,
+          "supported_claims": [
+            "Riverton Technology Inc. is a software development company.",
+            "The company specializes in cloud computing solutions and enterprise software.",
+            "As of January 2024, Riverton employs 1,847 people across 5 offices worldwide.",
+            "Employees must provide 2 weeks notice for voluntary resignation."
+          ],
+          "unsupported_claims": [
+            "The employee referral bonus is $3,000 for successful referrals."
+          ],
+          "answer_relevancy": 0.8,
+          "relevancy_reason": "The answer provides specific information about the employee referral bonus amount, addressing the question directly. Although the question could be more precisely worded, the answer still provides relevant information.",
+          "hallucination_score": 0.0,
+          "hallucinated_facts": [],
+          "ground_truth_similarity": 0.9,
+          "key_facts_matched": [
+            "referral bonus",
+            "employee referrals",
+            "successful referrals",
+            "amount $3,000"
+          ],
+          "key_facts_missed": [],
+          "overall_score": 0.9
+        },
+        "verdict": "EXCELLENT"
+      }
+    },
+    {
+      "question": "How many PTO days do full-time employees receive per year?",
+      "answer": "Full-time employees receive 20 days of PTO per year. ",
+      "ground_truth": "Full-time employees receive 20 days of PTO per year.",
+      "retrieval": {
+        "num_chunks_retrieved": 5,
+        "metrics": {
+          "diversity": 0.6219,
+          "avg_relevance": 0.4781,
+          "max_relevance": 0.8018,
+          "min_relevance": 0.236,
+          "hit_rate": 0.6,
+          "hits_above_threshold": 3,
+          "recall_at_5": 1.0,
+          "mrr": 1.0,
+          "precision": 0.3333,
+          "recall": 1.0,
+          "f1": 0.5
+        },
+        "relevance_per_chunk": [
+          0.704,
+          0.8018,
+          0.3623,
+          0.236,
+          0.2861
+        ],
+        "verdict": "GOOD"
+      },
+      "generation": {
+        "answer": "Full-time employees receive 20 days of PTO per year. ",
+        "metrics": {
+          "faithfulness": 0.9,
+          "supported_claims": [
+            "Full-time employees receive 20 days of PTO per year.",
+            "PTO accrues at 1.67 days per month.",
+            "Unused PTO can be carried over to the next year (maximum 10 days)",
+            "Sick leave: 10 days per year (no carryover)"
+          ],
+          "unsupported_claims": [],
+          "answer_relevancy": 1.0,
+          "relevancy_reason": "The answer directly provides the information requested, which is the number of PTO days full-time employees receive per year. This is a perfectly relevant response.",
+          "hallucination_score": 0.0,
+          "hallucinated_facts": [],
+          "ground_truth_similarity": 1.0,
+          "key_facts_matched": [
+            "Full-time employees",
+            "receive 20 days of PTO per year"
+          ],
+          "key_facts_missed": [],
+          "overall_score": 0.9667
+        },
+        "verdict": "EXCELLENT"
+      }
+    },
+    {
+      "question": "How many sick leave days are provided annually?",
+      "answer": "There are 10 days provided annually for sick leave. (10 days mentioned for sick leave under \"Sick Leave\" section in the employee handbook) ",
+      "ground_truth": "Employees receive 10 days of paid sick leave per year.",
+      "retrieval": {
+        "num_chunks_retrieved": 5,
+        "metrics": {
+          "diversity": 0.5714,
+          "avg_relevance": 0.323,
+          "max_relevance": 0.5569,
+          "min_relevance": 0.1667,
+          "hit_rate": 0.2,
+          "hits_above_threshold": 1,
+          "recall_at_5": 1.0,
+          "mrr": 1.0,
+          "precision": 0.25,
+          "recall": 1.0,
+          "f1": 0.4
+        },
+        "relevance_per_chunk": [
+          0.3194,
+          0.5569,
+          0.2503,
+          0.322,
+          0.1667
+        ],
+        "verdict": "FAIR"
+      },
+      "generation": {
+        "answer": "There are 10 days provided annually for sick leave. (10 days mentioned for sick leave under \"Sick Leave\" section in the employee handbook) ",
+        "metrics": {
+          "faithfulness": 0.9,
+          "supported_claims": [
+            "There are 10 days provided annually for sick leave.",
+            "Employees must provide 2 weeks notice for voluntary resignation."
+          ],
+          "unsupported_claims": [],
+          "answer_relevancy": 1.0,
+          "relevancy_reason": "The answer directly provides the number of annual sick leave days (10 days) and refers to the employee handbook for the information, which is relevant to the question.",
+          "hallucination_score": 0.0,
+          "hallucinated_facts": [],
+          "ground_truth_similarity": 0.9,
+          "key_facts_matched": [
+            "10 days of sick leave",
+            "annually",
+            "employee handbook",
+            "paid sick leave",
+            "receive"
+          ],
+          "key_facts_missed": [],
+          "overall_score": 0.9667
+        },
+        "verdict": "EXCELLENT"
+      }
+    },
+    {
+      "question": "What percentage of health insurance premium does the company cover for employees?",
+      "answer": "I don't have information about the exact percentage of health insurance premium that the company covers for employees. Please provide more specific details about the insurance plan or refer to the HR department for assistance. ",
+      "ground_truth": "The company covers 80% of the medical insurance premium for employees.",
+      "retrieval": {
+        "num_chunks_retrieved": 5,
+        "metrics": {
+          "diversity": 0.5931,
+          "avg_relevance": 0.3039,
+          "max_relevance": 0.5252,
+          "min_relevance": 0.1818,
+          "hit_rate": 0.4,
+          "hits_above_threshold": 2,
+          "recall_at_5": 1.0,
+          "mrr": 0.5,
+          "precision": 0.2,
+          "recall": 1.0,
+          "f1": 0.3333
+        },
+        "relevance_per_chunk": [
+          0.3727,
+          0.5252,
+          0.2402,
+          0.1818,
+          0.1998
+        ],
+        "verdict": "FAIR"
+      },
+      "generation": {
+        "answer": "I don't have information about the exact percentage of health insurance premium that the company covers for employees. Please provide more specific details about the insurance plan or refer to the HR department for assistance. ",
+        "metrics": {
+          "faithfulness": 0.8,
+          "supported_claims": [
+            "Riverton Technology Inc. is a software development company.",
+            "Performance reviews are conducted semi-annually, in June and December.",
+            "Full-time employees receive 20 days of PTO per year."
+          ],
+          "unsupported_claims": [
+            "The exact percentage of health insurance premium that the company covers for employees.",
+            "PTO accrual rate for part-time employees.",
+            "Details about dental and vision insurance coverage."
+          ],
+          "answer_relevancy": 0.0,
+          "relevancy_reason": "The answer does not provide the requested percentage and instead indicates lack of information.",
+          "hallucination_score": 0.0,
+          "hallucinated_facts": [],
+          "ground_truth_similarity": 0.5,
+          "key_facts_matched": [
+            "company covers health insurance premium",
+            "employees"
+          ],
+          "key_facts_missed": [
+            "80% of medical insurance premium",
+            "specific details about the insurance plan",
+            "refer to HR department for assistance"
+          ],
+          "overall_score": 0.6
+        },
+        "verdict": "GOOD"
+      }
+    }
+  ]
+}

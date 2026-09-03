@@ -1,0 +1,581 @@
+{
+  "method": "semantic",
+  "total": 10,
+  "recall_at_5": 0.9,
+  "mrr": 0.8333,
+  "avg_relevance": 0.2801,
+  "avg_faithfulness": 0.66,
+  "avg_answer_relevancy": 0.33,
+  "avg_hallucination": 0.0,
+  "avg_generation_score": 0.7483,
+  "excellent_retrieval": 0,
+  "excellent_generation": 4,
+  "results": [
+    {
+      "question": "What are the standard working hours?",
+      "answer": "The standard working hours at Riverton Technology are from 9:00 AM to 5:30 PM, Monday through Friday. ",
+      "ground_truth": "Standard working hours are 9:00 AM to 5:30 PM Pacific Time, Monday through Friday.",
+      "retrieval": {
+        "num_chunks_retrieved": 5,
+        "metrics": {
+          "diversity": 0.613,
+          "avg_relevance": 0.2712,
+          "max_relevance": 0.4417,
+          "min_relevance": 0.1823,
+          "hit_rate": 0.2,
+          "hits_above_threshold": 1,
+          "recall_at_5": 1.0,
+          "mrr": 1.0,
+          "precision": 0.2,
+          "recall": 1.0,
+          "f1": 0.3333
+        },
+        "relevance_per_chunk": [
+          0.4417,
+          0.3004,
+          0.2163,
+          0.2155,
+          0.1823
+        ],
+        "verdict": "POOR"
+      },
+      "generation": {
+        "answer": "The standard working hours at Riverton Technology are from 9:00 AM to 5:30 PM, Monday through Friday. ",
+        "metrics": {
+          "faithfulness": 0.9,
+          "supported_claims": [
+            "Riverton Technology is a software development company.",
+            "Riverton Technology has a hybrid work model with specific days assigned for remote work and in-office work.",
+            "Full-time employees receive a salary range.",
+            "Riverton Technology offers annual performance bonuses as part of their compensation structure."
+          ],
+          "unsupported_claims": [
+            "The answer provided is a direct quote from the context."
+          ],
+          "answer_relevancy": 1.0,
+          "relevancy_reason": "The answer directly states the standard working hours, fully addressing the question.",
+          "hallucination_score": 0.0,
+          "hallucinated_facts": [],
+          "ground_truth_similarity": 0.9,
+          "key_facts_matched": [
+            "standard working hours",
+            "9:00 AM to 5:30 PM",
+            "Monday through Friday"
+          ],
+          "key_facts_missed": [],
+          "overall_score": 0.9667
+        },
+        "verdict": "EXCELLENT"
+      }
+    },
+    {
+      "question": "What are the core hours employees must be available?",
+      "answer": "Employees must be available during core hours, which are 10:00 AM to 6:00 PM Pacific Time, Monday through Friday. ",
+      "ground_truth": "Core hours are 10:00 AM to 3:00 PM Pacific Time.",
+      "retrieval": {
+        "num_chunks_retrieved": 5,
+        "metrics": {
+          "diversity": 0.613,
+          "avg_relevance": 0.3584,
+          "max_relevance": 0.4681,
+          "min_relevance": 0.2109,
+          "hit_rate": 0.6,
+          "hits_above_threshold": 3,
+          "recall_at_5": 1.0,
+          "mrr": 1.0,
+          "precision": 0.3333,
+          "recall": 1.0,
+          "f1": 0.5
+        },
+        "relevance_per_chunk": [
+          0.4681,
+          0.4331,
+          0.4045,
+          0.2756,
+          0.2109
+        ],
+        "verdict": "FAIR"
+      },
+      "generation": {
+        "answer": "Employees must be available during core hours, which are 10:00 AM to 6:00 PM Pacific Time, Monday through Friday. ",
+        "metrics": {
+          "faithfulness": null,
+          "answer_relevancy": 0.8,
+          "relevancy_reason": "The answer provides specific core hours (10:00 AM to 6:00 PM) for employee availability, addressing the question directly.",
+          "hallucination_score": 0.0,
+          "hallucinated_facts": [],
+          "ground_truth_similarity": 0.4,
+          "key_facts_matched": [
+            "core hours",
+            "10:00 AM to 6:00 PM Pacific Time"
+          ],
+          "key_facts_missed": [
+            "3:00 PM",
+            "Monday through Friday"
+          ],
+          "overall_score": 0.9
+        },
+        "verdict": "EXCELLENT"
+      }
+    },
+    {
+      "question": "Which days are employees required to work from the office?",
+      "answer": "Employees are required to work from the office on Tuesdays and Thursdays. ",
+      "ground_truth": "Employees are required to work from the office on Tuesdays and Thursdays.",
+      "retrieval": {
+        "num_chunks_retrieved": 5,
+        "metrics": {
+          "diversity": 0.613,
+          "avg_relevance": 0.2842,
+          "max_relevance": 0.4229,
+          "min_relevance": 0.1584,
+          "hit_rate": 0.2,
+          "hits_above_threshold": 1,
+          "recall_at_5": 1.0,
+          "mrr": 1.0,
+          "precision": 0.25,
+          "recall": 1.0,
+          "f1": 0.4
+        },
+        "relevance_per_chunk": [
+          0.4229,
+          0.3044,
+          0.2966,
+          0.2388,
+          0.1584
+        ],
+        "verdict": "POOR"
+      },
+      "generation": {
+        "answer": "Employees are required to work from the office on Tuesdays and Thursdays. ",
+        "metrics": {
+          "faithfulness": null,
+          "answer_relevancy": 0.5,
+          "relevancy_reason": "The answer provides specific days (Tuesdays and Thursdays) when employees must work from the office, addressing the question. However, it would be perfect if the answer also included the reason or policy behind this requirement.",
+          "hallucination_score": 0.0,
+          "hallucinated_facts": [],
+          "ground_truth_similarity": 1.0,
+          "key_facts_matched": [
+            "Employees are required to work from the office",
+            "on Tuesdays and Thursdays"
+          ],
+          "key_facts_missed": [],
+          "overall_score": 0.75
+        },
+        "verdict": "GOOD"
+      }
+    },
+    {
+      "question": "What is the home office setup allowance?",
+      "answer": "I don't have information about a specific \"home office setup allowance\" mentioned in the provided handbook. The handbook covers topics such as employment policies, benefits, performance reviews, code of conduct, and employee rights and responsibilities, but there is no mention of a home office setup allowance. If you have any other questions about employment policies, feel free to ask, and I will do my best to assist you. ",
+      "ground_truth": "Home office setup allowance is $1,500 one-time.",
+      "retrieval": {
+        "num_chunks_retrieved": 5,
+        "metrics": {
+          "diversity": 0.613,
+          "avg_relevance": 0.2483,
+          "max_relevance": 0.3417,
+          "min_relevance": 0.116,
+          "hit_rate": 0.0,
+          "hits_above_threshold": 0,
+          "recall_at_5": 1.0,
+          "mrr": 0.3333,
+          "precision": 0.2,
+          "recall": 1.0,
+          "f1": 0.3333
+        },
+        "relevance_per_chunk": [
+          0.3417,
+          0.3266,
+          0.3248,
+          0.1324,
+          0.116
+        ],
+        "verdict": "POOR"
+      },
+      "generation": {
+        "answer": "I don't have information about a specific \"home office setup allowance\" mentioned in the provided handbook. The handbook covers topics such as employment policies, benefits, performance reviews, code of conduct, and employee rights and responsibilities, but there is no mention of a home office setup allowance. If you have any other questions about employment policies, feel free to ask, and I will do my best to assist you. ",
+        "metrics": {
+          "faithfulness": 0.8,
+          "supported_claims": [
+            "PTO Policy",
+            "Compensation",
+            "Benefits",
+            "Performance Reviews",
+            "Code of Conduct",
+            "Training and Development"
+          ],
+          "unsupported_claims": [
+            "Home office setup allowance",
+            "Data Security",
+            "Intellectual Property",
+            "Onboarding"
+          ],
+          "answer_relevancy": 0.0,
+          "relevancy_reason": "The provided answer does not directly address the question about 'home office setup allowance'. Instead, it discusses the content of the handbook but not the specific allowance in question.",
+          "hallucination_score": 0.0,
+          "hallucinated_facts": [
+            "home office setup allowance"
+          ],
+          "ground_truth_similarity": 0.0,
+          "key_facts_matched": [],
+          "key_facts_missed": [
+            "Home office setup allowance is $1,500 one-time."
+          ],
+          "overall_score": 0.6
+        },
+        "verdict": "GOOD"
+      }
+    },
+    {
+      "question": "What is the salary range for a Senior Developer?",
+      "answer": "The salary range for a Senior Developer is not specified in the provided context. \n\nIf you have any other questions about the employee handbook or policies, please feel free to ask, and I will do my best to assist you. ",
+      "ground_truth": "Senior Developer salary range is $130,000 to $170,000 per year.",
+      "retrieval": {
+        "num_chunks_retrieved": 5,
+        "metrics": {
+          "diversity": 0.613,
+          "avg_relevance": 0.2701,
+          "max_relevance": 0.5443,
+          "min_relevance": 0.0943,
+          "hit_rate": 0.2,
+          "hits_above_threshold": 1,
+          "recall_at_5": 1.0,
+          "mrr": 1.0,
+          "precision": 0.2,
+          "recall": 1.0,
+          "f1": 0.3333
+        },
+        "relevance_per_chunk": [
+          0.5443,
+          0.2718,
+          0.243,
+          0.1969,
+          0.0943
+        ],
+        "verdict": "POOR"
+      },
+      "generation": {
+        "answer": "The salary range for a Senior Developer is not specified in the provided context. \n\nIf you have any other questions about the employee handbook or policies, please feel free to ask, and I will do my best to assist you. ",
+        "metrics": {
+          "faithfulness": 0.8,
+          "supported_claims": [
+            "Riverton Technology Inc. is a software development company.",
+            "The company was founded in 2015.",
+            "Riverton Technology Inc. specializes in cloud computing solutions and enterprise software.",
+            "As of January 2024, Riverton employs 1,847 people across 5 offices worldwide.",
+            "Senior Developers are eligible for benefits such as health insurance, dental and vision coverage, 401(k) matching, learning stipend, home office setup, and a hybrid work model."
+          ],
+          "unsupported_claims": [
+            "The exact salary range for a Senior Developer is specified in the context."
+          ],
+          "answer_relevancy": null,
+          "hallucination_score": 0.0,
+          "hallucinated_facts": [],
+          "ground_truth_similarity": 0.0,
+          "key_facts_matched": [],
+          "key_facts_missed": [
+            "Senior Developer salary range",
+            "130,000 to 170,000 per year"
+          ],
+          "overall_score": 0.9
+        },
+        "verdict": "EXCELLENT"
+      }
+    },
+    {
+      "question": "What is the sign-on bonus for senior positions?",
+      "answer": "I don't know the specific sign-on bonus amount for senior positions, as it is not mentioned in the provided employee handbook. ",
+      "ground_truth": "Sign-on bonus is up to $10,000 for senior positions.",
+      "retrieval": {
+        "num_chunks_retrieved": 5,
+        "metrics": {
+          "diversity": 0.613,
+          "avg_relevance": 0.2562,
+          "max_relevance": 0.456,
+          "min_relevance": 0.1427,
+          "hit_rate": 0.2,
+          "hits_above_threshold": 1,
+          "recall_at_5": 1.0,
+          "mrr": 1.0,
+          "precision": 0.25,
+          "recall": 1.0,
+          "f1": 0.4
+        },
+        "relevance_per_chunk": [
+          0.456,
+          0.2462,
+          0.2276,
+          0.2087,
+          0.1427
+        ],
+        "verdict": "POOR"
+      },
+      "generation": {
+        "answer": "I don't know the specific sign-on bonus amount for senior positions, as it is not mentioned in the provided employee handbook. ",
+        "metrics": {
+          "faithfulness": 0.8,
+          "supported_claims": [
+            "Full-time employees receive 20 days of PTO per year.",
+            "Senior positions receive a sign-on bonus."
+          ],
+          "unsupported_claims": [
+            "The sign-on bonus amount for senior positions is $10,000."
+          ],
+          "answer_relevancy": 0.0,
+          "relevancy_reason": "The answer provided does not mention any specific sign-on bonus amount for senior positions. It only states that the information is not available in the employee handbook.",
+          "hallucination_score": 0.0,
+          "hallucinated_facts": [],
+          "ground_truth_similarity": 0.4,
+          "key_facts_matched": [
+            "sign-on bonus",
+            "senior positions",
+            "up to $10,000"
+          ],
+          "key_facts_missed": [
+            "not mentioned in the provided employee handbook",
+            "specific sign-on bonus amount"
+          ],
+          "overall_score": 0.6
+        },
+        "verdict": "GOOD"
+      }
+    },
+    {
+      "question": "How much is the employee referral bonus?",
+      "answer": "The employee referral bonus is not mentioned in the provided employee handbook. \n\nIf you have any other questions about the handbook, feel free to ask, and I'll do my best to assist you. ",
+      "ground_truth": "Referral bonus is $3,000 for successful employee referrals.",
+      "retrieval": {
+        "num_chunks_retrieved": 5,
+        "metrics": {
+          "diversity": 0.613,
+          "avg_relevance": 0.3264,
+          "max_relevance": 0.5516,
+          "min_relevance": 0.2124,
+          "hit_rate": 0.2,
+          "hits_above_threshold": 1,
+          "recall_at_5": 1.0,
+          "mrr": 1.0,
+          "precision": 0.2,
+          "recall": 1.0,
+          "f1": 0.3333
+        },
+        "relevance_per_chunk": [
+          0.5516,
+          0.3267,
+          0.2815,
+          0.2599,
+          0.2124
+        ],
+        "verdict": "FAIR"
+      },
+      "generation": {
+        "answer": "The employee referral bonus is not mentioned in the provided employee handbook. \n\nIf you have any other questions about the handbook, feel free to ask, and I'll do my best to assist you. ",
+        "metrics": {
+          "faithfulness": 0.8,
+          "supported_claims": [
+            "Full-time employees receive PTO",
+            "Unused PTO can be carried over to a maximum of 10 days",
+            "Employees must provide a 2-week notice for voluntary resignation",
+            "Severance is provided for involuntary termination"
+          ],
+          "unsupported_claims": [
+            "Employee referral bonus",
+            "Employee referral bonus amount",
+            "Employee referral bonus is mentioned in the employee handbook"
+          ],
+          "answer_relevancy": 0.0,
+          "relevancy_reason": "The answer does not directly provide the information about the employee referral bonus. Instead, it mentions that the bonus is not mentioned in the handbook and redirects the questioner to ask another question.",
+          "hallucination_score": 0.0,
+          "hallucinated_facts": [],
+          "ground_truth_similarity": 0.1,
+          "key_facts_matched": [
+            "employee referral bonus",
+            "employee handbook"
+          ],
+          "key_facts_missed": [
+            "Referral bonus amount",
+            "successful employee referrals"
+          ],
+          "overall_score": 0.6
+        },
+        "verdict": "GOOD"
+      }
+    },
+    {
+      "question": "How many PTO days do full-time employees receive per year?",
+      "answer": "Full-time employees receive 20 PTO days per year. ",
+      "ground_truth": "Full-time employees receive 20 days of PTO per year.",
+      "retrieval": {
+        "num_chunks_retrieved": 5,
+        "metrics": {
+          "diversity": 0.613,
+          "avg_relevance": 0.3776,
+          "max_relevance": 0.704,
+          "min_relevance": 0.2585,
+          "hit_rate": 0.4,
+          "hits_above_threshold": 2,
+          "recall_at_5": 1.0,
+          "mrr": 1.0,
+          "precision": 0.25,
+          "recall": 1.0,
+          "f1": 0.4
+        },
+        "relevance_per_chunk": [
+          0.704,
+          0.3623,
+          0.2861,
+          0.277,
+          0.2585
+        ],
+        "verdict": "FAIR"
+      },
+      "generation": {
+        "answer": "Full-time employees receive 20 PTO days per year. ",
+        "metrics": {
+          "faithfulness": 0.9,
+          "supported_claims": [
+            "Full-time employees receive PTO days.",
+            "Full-time employees receive 20 PTO days per year."
+          ],
+          "unsupported_claims": [],
+          "answer_relevancy": 1.0,
+          "relevancy_reason": "The answer directly provides the information requested, which is the number of PTO days full-time employees receive per year. This is a perfectly relevant response.",
+          "hallucination_score": 0.0,
+          "hallucinated_facts": [],
+          "ground_truth_similarity": 0.9,
+          "key_facts_matched": [
+            "Full-time employees",
+            "receive PTO days",
+            "20 PTO days per year"
+          ],
+          "key_facts_missed": [],
+          "overall_score": 0.9667
+        },
+        "verdict": "EXCELLENT"
+      }
+    },
+    {
+      "question": "How many sick leave days are provided annually?",
+      "answer": "I don't know the exact number of sick leave days provided annually, as it is not mentioned in the given context.  However, it is stated that employees can take unused sick days when they leave the company, and there is no mention of a set number of days provided. ",
+      "ground_truth": "Employees receive 10 days of paid sick leave per year.",
+      "retrieval": {
+        "num_chunks_retrieved": 5,
+        "metrics": {
+          "diversity": 0.613,
+          "avg_relevance": 0.1939,
+          "max_relevance": 0.3194,
+          "min_relevance": 0.1052,
+          "hit_rate": 0.0,
+          "hits_above_threshold": 0,
+          "recall_at_5": 1.0,
+          "mrr": 1.0,
+          "precision": 0.2,
+          "recall": 1.0,
+          "f1": 0.3333
+        },
+        "relevance_per_chunk": [
+          0.3194,
+          0.2503,
+          0.1667,
+          0.1278,
+          0.1052
+        ],
+        "verdict": "POOR"
+      },
+      "generation": {
+        "answer": "I don't know the exact number of sick leave days provided annually, as it is not mentioned in the given context.  However, it is stated that employees can take unused sick days when they leave the company, and there is no mention of a set number of days provided. ",
+        "metrics": {
+          "faithfulness": 0.8,
+          "supported_claims": [
+            "Full-time employees receive 20 days of PTO per year",
+            "Unused PTO can be carried over to the next year (maximum 10 days)",
+            "Senior positions receive a sign-on bonus",
+            "Senior positions require 4 weeks notice for voluntary resignation",
+            "Employees can take unused sick days when they leave the company"
+          ],
+          "unsupported_claims": [
+            "The exact number of sick leave days provided annually"
+          ],
+          "answer_relevancy": 0.0,
+          "relevancy_reason": "The answer does not directly provide the number of annual sick leave days but rather discusses the accumulation of unused sick days at departure. This is not addressing the question.",
+          "hallucination_score": 0.0,
+          "hallucinated_facts": [],
+          "ground_truth_similarity": 0.4,
+          "key_facts_matched": [
+            "paid sick leave",
+            "employees",
+            "leave the company",
+            "unused sick days"
+          ],
+          "key_facts_missed": [
+            "10 days",
+            "receive",
+            "annually",
+            "not mentioned in the context"
+          ],
+          "overall_score": 0.6
+        },
+        "verdict": "GOOD"
+      }
+    },
+    {
+      "question": "What percentage of health insurance premium does the company cover for employees?",
+      "answer": "The context provided does not mention the exact percentage of health insurance premium the company covers for employees. I don't know the exact percentage. ",
+      "ground_truth": "The company covers 80% of the medical insurance premium for employees.",
+      "retrieval": {
+        "num_chunks_retrieved": 5,
+        "metrics": {
+          "diversity": 0.613,
+          "avg_relevance": 0.215,
+          "max_relevance": 0.3727,
+          "min_relevance": 0.1282,
+          "hit_rate": 0.2,
+          "hits_above_threshold": 1,
+          "recall_at_5": 0.0,
+          "mrr": 0,
+          "precision": 0.0,
+          "recall": 0.0,
+          "f1": 0
+        },
+        "relevance_per_chunk": [
+          0.3727,
+          0.2402,
+          0.1998,
+          0.1341,
+          0.1282
+        ],
+        "verdict": "POOR"
+      },
+      "generation": {
+        "answer": "The context provided does not mention the exact percentage of health insurance premium the company covers for employees. I don't know the exact percentage. ",
+        "metrics": {
+          "faithfulness": 0.8,
+          "supported_claims": [
+            "Riverton Technology Inc. is a software development company.",
+            "The company specializes in cloud computing solutions and enterprise software.",
+            "As of January 2024, Riverton employs 1,847 people across 5 offices worldwide.",
+            "Employees are required to work from the office on Tuesdays and Thursdays."
+          ],
+          "unsupported_claims": [
+            "The exact percentage of health insurance premium the company covers for employees."
+          ],
+          "answer_relevancy": 0.0,
+          "relevancy_reason": "The answer admits it does not know the percentage, so it does not provide the requested information.",
+          "hallucination_score": 0.0,
+          "hallucinated_facts": [],
+          "ground_truth_similarity": 0.6,
+          "key_facts_matched": [
+            "company covers health insurance premium",
+            "employees"
+          ],
+          "key_facts_missed": [
+            "80% of medical insurance premium"
+          ],
+          "overall_score": 0.6
+        },
+        "verdict": "GOOD"
+      }
+    }
+  ]
+}

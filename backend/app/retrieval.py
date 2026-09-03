@@ -105,9 +105,11 @@ def answer_with_rag(doc_id: str, question: str, top_k: int = 3, method: str = "s
     prompt = PromptTemplate(
         input_variables=["context", "question"],
         template=(
-            "Answer the question using ONLY the context below.\n"
-            "If the answer is not present in the context, say \"I don't know\".\n\n"
-            "Context:\n{context}\n\nQuestion:\n{question}"
+            "You are a helpful assistant answering questions about an employee handbook.\n"
+            "Use the context below to answer the question directly and concisely.\n"
+            "If the answer is clearly stated in the context, provide it.\n"
+            "Only say \"I don't know\" if you have carefully checked the entire context and the answer is truly not there.\n\n"
+            "Context:\n{context}\n\nQuestion:\n{question}\n\nAnswer:"
         ),
     )
 
@@ -148,8 +150,10 @@ def answer_with_rag_with_history(doc_id: str, question: str, top_k: int, session
         full_prompt = build_rag_prompt(session, question, context)
     else:
         full_prompt = (
-            "Answer the question using ONLY the context below.\n"
-            "If the answer is not present in the context, say \"I don't know\".\n\n"
+            "You are a helpful assistant answering questions about an employee handbook.\n"
+            "Use the context below to answer the question directly and concisely.\n"
+            "If the answer is clearly stated in the context, provide it.\n"
+            "Only say \"I don't know\" if you have carefully checked the entire context and the answer is truly not there.\n\n"
             f"Context:\n{context}\n\nQuestion:\n{question}\n\nAnswer:"
         )
 

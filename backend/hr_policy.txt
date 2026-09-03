@@ -1,0 +1,268 @@
+================================================================================
+RIVERTON TECHNOLOGIES — EMPLOYEE HANDBOOK & HR POLICY DOCUMENT
+Version 3.2 | Effective Date: January 1, 2024
+================================================================================
+
+SECTION 1: COMPANY OVERVIEW
+--------------------------------------------------------------------------------
+Riverton Technologies is a software product company headquartered in San
+Francisco, California. As of January 2024, Riverton employs 1,847 people
+across 5 offices worldwide: San Francisco (HQ), Austin, New York, London,
+and Bangalore.
+
+Founded in 2011, Riverton builds enterprise data infrastructure tools used
+by over 3,000 companies globally. Our mission is to make data accessible,
+reliable, and actionable for every organization.
+
+Core Values:
+- Transparency: We share information openly across teams.
+- Ownership: Every employee takes responsibility for outcomes.
+- Inclusion: We build a workplace where everyone belongs.
+- Excellence: We hold ourselves to the highest standards.
+
+--------------------------------------------------------------------------------
+SECTION 2: WORKING HOURS & ATTENDANCE
+--------------------------------------------------------------------------------
+2.1 Standard Working Hours
+Standard working hours are 9:00 AM to 5:30 PM Pacific Time, Monday through
+Friday. Core hours — during which all employees must be available — are
+10:00 AM to 4:00 PM Pacific Time.
+
+2.2 Flexible Work Arrangements
+Employees may adjust their start/end times by up to 2 hours with manager
+approval. Flexible arrangements must not reduce total weekly hours below 40.
+
+2.3 Hybrid Work Policy (Updated January 2024)
+Employees are required to work from the office on Tuesdays and Thursdays.
+The remaining three days (Monday, Wednesday, Friday) may be worked remotely.
+This policy applies to all employees within 50 miles of an office location.
+
+2.4 Remote Work Equipment
+Employees working remotely are provided:
+- Home office setup allowance: $1,500 one-time
+- Monthly internet stipend: $80 per month
+- Laptop and peripherals provided by the company
+
+2.5 Attendance & Punctuality
+Employees are expected to be punctual. More than 3 unexcused late arrivals
+per quarter will be escalated to HR for review. Persistent absenteeism
+without justification may result in disciplinary action.
+
+--------------------------------------------------------------------------------
+SECTION 3: COMPENSATION & SALARY
+--------------------------------------------------------------------------------
+3.1 Salary Bands (Annual, as of January 2024)
+- Junior Developer:        $80,000  - $100,000
+- Mid-Level Developer:     $100,000 - $130,000
+- Senior Developer:        $130,000 - $170,000
+- Staff Engineer:          $170,000 - $210,000
+- Principal Engineer:      $210,000 - $260,000
+- Engineering Manager:     $160,000 - $200,000
+- Product Manager:         $120,000 - $160,000
+- Data Analyst:            $90,000  - $120,000
+- UX Designer:             $95,000  - $130,000
+- HR Specialist:           $75,000  - $95,000
+
+3.2 Pay Schedule
+Salaries are paid on the 15th and last day of each month (bi-monthly).
+Direct deposit is mandatory for all employees.
+
+3.3 Bonuses
+- Annual performance bonus: 5% to 20% of base salary, based on rating
+- Sign-on bonus: Up to $10,000 for senior positions
+- Referral bonus: $3,000 for successful employee referrals (paid after
+  referred employee completes 6 months)
+- Spot bonus: Managers may award up to $2,000 for exceptional contributions
+
+3.4 Salary Reviews
+Salary reviews are conducted annually in January. Adjustments are based on
+performance rating, market benchmarks, and company financial performance.
+Average salary increase in 2023: 7.2%.
+
+--------------------------------------------------------------------------------
+SECTION 4: LEAVE POLICY
+--------------------------------------------------------------------------------
+4.1 Paid Time Off (PTO)
+Full-time employees receive 20 days of PTO per year. PTO accrues at
+1.67 days per month starting from the first day of employment. Unused PTO
+up to 10 days may be carried over to the next calendar year. PTO beyond
+10 days is forfeited at year end.
+
+4.2 Sick Leave
+Employees receive 10 days of paid sick leave per year. Sick leave does not
+carry over to the next year. For absences longer than 3 consecutive days,
+a medical certificate is required.
+
+4.3 Parental Leave
+- Primary caregiver: 16 weeks fully paid parental leave
+- Secondary caregiver: 6 weeks fully paid parental leave
+Parental leave must be taken within 12 months of the birth or adoption.
+Employees must notify HR at least 8 weeks before planned leave start date.
+
+4.4 Bereavement Leave
+- Immediate family (spouse, child, parent, sibling): 5 days paid
+- Extended family (grandparent, in-law): 3 days paid
+- Close friend or colleague: 1 day paid
+
+4.5 Jury Duty & Civic Leave
+Employees called for jury duty receive full pay for up to 15 days.
+Voting leave: Up to 2 hours paid leave to vote in federal/state elections.
+
+4.6 Unpaid Leave of Absence
+Employees may request unpaid leave of up to 3 months after exhausting all
+paid leave. Approval requires manager and HR sign-off. Benefits continue
+during approved unpaid leave.
+
+--------------------------------------------------------------------------------
+SECTION 5: BENEFITS & PERKS
+--------------------------------------------------------------------------------
+5.1 Health Insurance
+- Medical: Company covers 80% of premium for employee and 60% for dependents
+- Dental: Company covers 70% of premium
+- Vision: Company covers 70% of premium
+- Coverage begins on the first day of employment
+
+5.2 Retirement
+- 401(k) matching: 4% of salary (vests over 3 years: 33% Year 1, 66% Year 2, 100% Year 3)
+- Financial planning sessions: 2 free sessions per year with a certified advisor
+
+5.3 Learning & Development
+- Learning stipend: $2,000 per year (books, courses, conferences, certifications)
+- Internal learning platform: Free access to 5,000+ courses
+- Conference attendance: Up to 1 major conference per year (expenses covered)
+- Tuition reimbursement: Up to $5,000 per year for job-related degrees
+
+5.4 Wellness
+- Gym membership reimbursement: Up to $50 per month
+- Mental health: 12 free therapy sessions per year via Employee Assistance Program
+- Annual wellness stipend: $500 (can be used for fitness equipment, apps, etc.)
+
+5.5 Other Perks
+- Free daily lunch at HQ office
+- $150 per month commuter benefit (transit/parking)
+- Employee stock purchase plan (ESPP): 15% discount on company stock
+
+--------------------------------------------------------------------------------
+SECTION 6: PERFORMANCE MANAGEMENT
+--------------------------------------------------------------------------------
+6.1 Review Cycle
+Performance reviews are conducted semi-annually, in June and December.
+Mid-year reviews (June) focus on goal progress and feedback.
+Year-end reviews (December) determine ratings and compensation changes.
+
+6.2 Rating Scale
+- Outstanding (5): Consistently exceeds all goals and expectations
+- Exceeds Expectations (4): Frequently exceeds goals
+- Meets Expectations (3): Consistently meets all goals
+- Needs Improvement (2): Partially meets goals; improvement required
+- Unsatisfactory (1): Fails to meet minimum expectations
+
+6.3 Performance Improvement Plan (PIP)
+Employees receiving Needs Improvement twice in a row will be placed on a
+Performance Improvement Plan (PIP). A PIP lasts 90 days and includes
+specific measurable goals. Failure to meet PIP goals may result in
+termination. Employees on PIP are not eligible for bonuses or promotions.
+
+6.4 Promotion Criteria
+Promotions require: minimum 2 years in current role, rating of Exceeds
+Expectations or Outstanding in last two reviews, and manager nomination.
+Promotion decisions are made annually in January.
+
+--------------------------------------------------------------------------------
+SECTION 7: CODE OF CONDUCT & DISCIPLINARY POLICY
+--------------------------------------------------------------------------------
+7.1 Expected Behavior
+All employees must act with integrity, respect colleagues, protect company
+assets, and maintain confidentiality of proprietary information. Employees
+must avoid conflicts of interest and disclose any potential conflicts to HR.
+
+7.2 Zero Tolerance Policy
+The following are grounds for immediate termination without notice:
+- Harassment, discrimination, or bullying of any kind
+- Theft or fraud
+- Sharing confidential company or customer data without authorization
+- Violence or threats of violence in the workplace
+- Falsifying company records or expense reports
+
+7.3 Disciplinary Process (for non-zero-tolerance violations)
+Step 1: Verbal warning (documented in HR system)
+Step 2: Written warning
+Step 3: Final written warning with 30-day review period
+Step 4: Termination
+
+7.4 Grievance Process
+Employees may raise grievances by submitting a formal complaint to HR.
+HR will acknowledge the complaint within 2 business days and complete
+investigation within 15 business days. All complaints are treated
+confidentially.
+
+--------------------------------------------------------------------------------
+SECTION 8: TERMINATION POLICY
+--------------------------------------------------------------------------------
+8.1 Voluntary Resignation
+Employees must provide 2 weeks notice for voluntary resignation.
+Senior positions (Staff Engineer and above) require 4 weeks notice.
+Notice must be submitted in writing to the direct manager and HR.
+
+8.2 Involuntary Termination
+Severance: 1 month per year of service for involuntary termination.
+Minimum severance: 1 month. Maximum severance: 6 months.
+COBRA health coverage is available for up to 18 months post-termination.
+
+8.3 Exit Process
+Departing employees must return all company equipment within 3 business
+days of their last day. Final paycheck (including unused PTO payout) is
+issued within 72 hours of last day. Exit interviews are conducted by HR.
+
+--------------------------------------------------------------------------------
+SECTION 9: IT & SECURITY POLICY
+--------------------------------------------------------------------------------
+9.1 Password Policy
+Passwords must be changed every 90 days. Minimum password length: 12
+characters. Must include uppercase, lowercase, number, and special character.
+Password reuse is prohibited for the last 12 passwords.
+
+9.2 Device Policy
+Company devices must not be used for personal activities beyond incidental
+use. Installing unauthorized software on company devices is prohibited.
+All company devices are encrypted and subject to remote wipe.
+
+9.3 Data Classification
+- Public: Marketing materials, press releases
+- Internal: Internal memos, project plans
+- Confidential: Financial data, customer data, source code
+- Restricted: Legal documents, executive communications
+
+9.4 Incident Reporting
+Security incidents must be reported to security@riverton.com within 1 hour
+of discovery. This includes lost/stolen devices, phishing attempts, and
+suspected data breaches.
+
+--------------------------------------------------------------------------------
+SECTION 10: TRAVEL & EXPENSE POLICY
+--------------------------------------------------------------------------------
+10.1 Travel Booking
+All business travel must be booked through the company's approved travel
+portal (TripActions). Economy class for flights under 6 hours. Business
+class permitted for flights over 6 hours with VP approval.
+
+10.2 Expense Limits
+- Meals (domestic): $75 per day
+- Meals (international): $100 per day
+- Hotel (domestic): Up to $250 per night
+- Hotel (San Francisco/New York): Up to $350 per night
+- Ground transport: Rideshare/taxi receipts required over $25
+
+10.3 Expense Submission
+Expenses must be submitted within 30 days of incurrence via Expensify.
+Receipts required for all expenses over $25. Expenses submitted after
+60 days will not be reimbursed.
+
+10.4 Personal Vehicle
+Mileage reimbursement: $0.67 per mile (IRS standard rate, 2024).
+
+================================================================================
+END OF DOCUMENT
+Riverton Technologies HR Policy v3.2 — January 2024
+For questions contact: hr@riverton.com | HR Hotline: +1-415-555-0192
+================================================================================
