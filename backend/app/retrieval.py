@@ -1,5 +1,5 @@
 from fastapi import HTTPException
-from app.database import get_vectorstore
+from app.database import get_vectorstore, get_semantic_vectorstore
 from app.reranker import get_cross_encoder
 from app.llm import CerebrasLLM
 from app.context_builder import build_rag_prompt
@@ -15,7 +15,7 @@ def retrieve_simple(doc_id: str, question: str, top_k: int = 3):
 
 
 def retrieve_semantic(doc_id: str, question: str, top_k: int = 3):
-    vectordb = get_vectorstore(doc_id)
+    vectordb = get_semantic_vectorstore(doc_id)
     docs = vectordb.similarity_search(question, k=top_k)
     return docs
 
@@ -61,15 +61,44 @@ def retrieve_hybrid(doc_id: str, question: str, top_k: int = 3):
 
 
 def retrieve_reranked(doc_id: str, question: str, top_k: int = 3):
-    vectordb = get_vectorstore(doc_id)
+    # Step 1: Get Semantic search results with similarity scores
+    vectordb = get_semantic_vectorstore(doc_id)
     initial_k = top_k * 4
-    docs = vectordb.similarity_search(question, k=initial_k)
+    
+    # Get docs with similarity scores
+    results = vectordb.similarity_search_with_relevance_scores(question, k=initial_k)
+    
+    if not results:
+        return []
+    
+    docs = [doc for doc, _ in results]
+    vector_scores = [score for _, score in results]
 
+    # Step 2: Rerank with cross-encoder, but combine with vector scores
     cross_encoder = get_cross_encoder()
     if cross_encoder and len(docs) > top_k:
         pairs = [[question, doc.page_content] for doc in docs]
-        scores = cross_encoder.score(pairs)
-        ranked = sorted(zip(docs, scores), key=lambda x: x[1], reverse=True)
+        ce_scores = cross_encoder.score(pairs)
+        
+        # Normalize cross-encoder scores to 0-1 range
+        import numpy as np
+        ce_arr = np.array(ce_scores)
+        if ce_arr.max() != ce_arr.min():
+            ce_normalized = (ce_arr - ce_arr.min()) / (ce_arr.max() - ce_arr.min())
+        else:
+            ce_normalized = np.ones_like(ce_arr) * 0.5
+        
+        # Normalize vector scores to 0-1 range
+        vec_arr = np.array(vector_scores)
+        if vec_arr.max() != vec_arr.min():
+            vec_normalized = (vec_arr - vec_arr.min()) / (vec_arr.max() - vec_arr.min())
+        else:
+            vec_normalized = np.ones_like(vec_arr) * 0.5
+        
+        # Combine scores: 60% cross-encoder + 40% vector similarity
+        combined_scores = 0.6 * ce_normalized + 0.4 * vec_normalized
+        
+        ranked = sorted(zip(docs, combined_scores), key=lambda x: x[1], reverse=True)
         docs = [doc for doc, _ in ranked[:top_k]]
 
     return docs[:top_k]
@@ -107,6 +136,7 @@ def answer_with_rag(doc_id: str, question: str, top_k: int = 3, method: str = "s
         template=(
             "You are a helpful assistant answering questions about an employee handbook.\n"
             "Use the context below to answer the question directly and concisely.\n"
+            "If the context contains multiple pieces of information, prioritize the one that most directly answers the question.\n"
             "If the answer is clearly stated in the context, provide it.\n"
             "Only say \"I don't know\" if you have carefully checked the entire context and the answer is truly not there.\n\n"
             "Context:\n{context}\n\nQuestion:\n{question}\n\nAnswer:"
@@ -152,6 +182,7 @@ def answer_with_rag_with_history(doc_id: str, question: str, top_k: int, session
         full_prompt = (
             "You are a helpful assistant answering questions about an employee handbook.\n"
             "Use the context below to answer the question directly and concisely.\n"
+            "If the context contains multiple pieces of information, prioritize the one that most directly answers the question.\n"
             "If the answer is clearly stated in the context, provide it.\n"
             "Only say \"I don't know\" if you have carefully checked the entire context and the answer is truly not there.\n\n"
             f"Context:\n{context}\n\nQuestion:\n{question}\n\nAnswer:"

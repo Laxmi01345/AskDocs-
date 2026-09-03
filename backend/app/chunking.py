@@ -26,7 +26,7 @@ def _cosine_similarity(a, b):
     return float(np.dot(a, b) / (norm_a * norm_b))
 
 
-def chunk_semantic(text: str, max_chunk_size: int = 1500, breakpoint_threshold: float = 0.5) -> List[str]:
+def chunk_semantic(text: str, max_chunk_size: int = 3000, breakpoint_threshold: float = 0.3) -> List[str]:
     from app.embeddings import get_embeddings
 
     sentences = _split_sentences(text)

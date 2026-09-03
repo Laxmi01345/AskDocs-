@@ -51,9 +51,9 @@ def list_documents():
 
 @app.post("/upload")
 async def upload_file(file: UploadFile = File(...)):
-    from app.chunking import chunk_text
+    from app.chunking import chunk_text, chunk_semantic
     from app.parsing import load_document
-    from app.database import store_document
+    from app.database import store_document, store_semantic_chunks
 
     data = await file.read()
     ext = (file.filename or "").lower().split(".")[-1]
@@ -62,9 +62,16 @@ async def upload_file(file: UploadFile = File(...)):
 
     text = load_document(data, file.filename or "document")
     doc_id = str(uuid.uuid4())
+    
+    # Store simple chunks
     chunks = chunk_text(text)
     store_document(doc_id, file.filename or "document", chunks)
-    return {"doc_id": doc_id, "filename": file.filename, "chunks": len(chunks)}
+    
+    # Store semantic chunks
+    semantic_chunks = chunk_semantic(text)
+    store_semantic_chunks(doc_id, file.filename or "document", semantic_chunks)
+    
+    return {"doc_id": doc_id, "filename": file.filename, "chunks": len(chunks), "semantic_chunks": len(semantic_chunks)}
 
 
 @app.post("/ask")
