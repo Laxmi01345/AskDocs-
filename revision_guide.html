@@ -1106,24 +1106,20 @@ python validate.py --doc-id YOUR_DOC_ID --method simple<br><br>
 # Compare all 4 methods<br>
 python validate.py --doc-id YOUR_DOC_ID --compare<br><br>
 # Output comparison table:<br>
-# Configuration          Recall@5   MRR    Correctness  Faithfulness<br>
-# Simple Chunking        90.0%      0.83   80.8%        76.0%<br>
-# Semantic Chunking      90.0%      0.83   74.8%        66.0%<br>
-# Hybrid (BM25+Vec+RRF)  100.0%     0.90   75.8%        70.0%<br>
-# Reranked               90.0%      0.83   82.7%        68.0%<br><br>
-# IMPROVEMENT OVER PREVIOUS METHOD:<br>
-# Semantic vs Simple:    +0.0%      +0.0%  -7.4%        -13.2%<br>
-# Hybrid vs Semantic:    +11.1%     +8.3%  +1.3%        +6.1%<br>
-# Reranked vs Hybrid:    -11.1%     -7.8%  +9.1%        -2.9%<br><br>
-# BEST METHOD:<br>
-# Highest Recall:   Hybrid (100%)<br>
-# Highest MRR:      Hybrid (0.90)<br>
-# Highest Correctness: Reranked (82.7%)<br>
-# Highest Faithfulness: Simple (76.0%)
+# Configuration          Recall@5   MRR    Correctness<br>
+# Simple Chunking        90.0%      0.90   83.8%<br>
+# Semantic Chunking      100.0%     1.00   89.3%<br>
+# Hybrid (BM25+Vec+RRF)  90.0%      0.90   69.8%<br>
+# Reranked               100.0%     1.00   89.5%<br><br>
+# IMPROVEMENT PROGRESSION:<br>
+# Simple → Semantic:  +11.1% Recall, +11.1% MRR, +6.6% Correctness<br>
+# Semantic → Hybrid:  -10% Recall, -10% MRR, -19.5% Correctness<br>
+# Hybrid → Reranked:  +11.1% Recall, +11.1% MRR, +28.2% Correctness<br><br>
+# BEST METHOD: Reranked (Semantic + Cross-encoder) = 89.5% Correctness
         </div>
         <br>
         <div class="tip">
-            <strong>Key Insight:</strong> No single method dominates all metrics. Hybrid excels at retrieval (finding the answer), while Reranked excels at generation (producing the correct answer). Simple wins on faithfulness (least hallucination). The choice depends on your priority: retrieval coverage vs answer accuracy.
+            <strong>Key Insight:</strong> Reranked achieves the highest correctness by combining Semantic chunks (topic-aware retrieval) with Cross-encoder reranking (precision scoring). The progression shows that each method builds on the previous: Simple (baseline) → Semantic (better chunks) → Reranked (best precision).
         </div>
     </section>
 
