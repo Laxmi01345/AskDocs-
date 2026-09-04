@@ -1,4 +1,4 @@
-# AskDocs v2 – Multi-Method RAG Document Q&A
+# AskDocs – Multi-Method RAG Document Q&A
 
 AskDocs v2 is a Retrieval-Augmented Generation (RAG) system with 4 retrieval methods and comparative evaluation.
 
