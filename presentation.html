@@ -185,17 +185,18 @@
                 <p style="font-size: 1.1em;">Vector similarity search with fixed-size chunks</p>
                 <p style="font-size: 0.9em; color: #94a3b8; margin-top: 10px;">Baseline approach</p>
             </div>
-            <div class="highlight-box" style="margin-top: 20px;">
+            <div class="diagram" style="margin-top: 20px; padding: 20px;">
+                <p style="font-size: 0.95em; margin-bottom: 10px;"><strong>How it works:</strong></p>
+                <p style="font-size: 0.85em; color: #94a3b8; text-align: left;">
+                    1. Document split into fixed-size chunks (500 chars)<br>
+                    2. Each chunk converted to embedding vector<br>
+                    3. Query converted to embedding vector<br>
+                    4. Cosine similarity finds closest chunks
+                </p>
+            </div>
+            <div class="highlight-box" style="margin-top: 15px;">
                 <p style="font-size: 1em;">Chunk: 500 chars, overlap: 100</p>
                 <p style="font-size: 1em;">16 chunks per document</p>
-            </div>
-            <div class="diagram" style="margin-top: 20px; padding: 20px; text-align: left;">
-                <p style="font-size: 0.85em; color: #94a3b8;">
-                    <strong style="color: #a78bfa;">Recall@5:</strong> % of relevant chunks found in top 5<br>
-                    <strong style="color: #a78bfa;">MRR:</strong> Rank position of first relevant result<br>
-                    <strong style="color: #a78bfa;">Correctness:</strong> LLM-judge accuracy score<br>
-                    <strong style="color: #a78bfa;">Faithfulness:</strong> % claims supported by context
-                </p>
             </div>
         </div>
         <div class="col">
@@ -231,16 +232,17 @@
                 <p style="font-size: 1.1em;">Split at topic boundaries using embedding similarity</p>
                 <p style="font-size: 0.9em; color: #94a3b8; margin-top: 10px;">Threshold: similarity &lt; 0.3</p>
             </div>
-            <div class="highlight-box success" style="margin-top: 20px;">
-                <p style="font-size: 1em;"><strong>Key Insight:</strong> Chunking strategy impacts RAG performance</p>
-            </div>
-            <div class="diagram" style="margin-top: 20px; padding: 20px; text-align: left;">
-                <p style="font-size: 0.85em; color: #94a3b8;">
-                    <strong style="color: #a78bfa;">Recall@5:</strong> % of relevant chunks found in top 5<br>
-                    <strong style="color: #a78bfa;">MRR:</strong> Rank position of first relevant result<br>
-                    <strong style="color: #a78bfa;">Correctness:</strong> LLM-judge accuracy score<br>
-                    <strong style="color: #a78bfa;">Faithfulness:</strong> % claims supported by context
+            <div class="diagram" style="margin-top: 20px; padding: 20px;">
+                <p style="font-size: 0.95em; margin-bottom: 10px;"><strong>How it works:</strong></p>
+                <p style="font-size: 0.85em; color: #94a3b8; text-align: left;">
+                    1. Embed consecutive sentences<br>
+                    2. Compare similarity between neighbors<br>
+                    3. Split when similarity drops below threshold<br>
+                    4. Preserves topic coherence per chunk
                 </p>
+            </div>
+            <div class="highlight-box success" style="margin-top: 15px;">
+                <p style="font-size: 1em;"><strong>Key Insight:</strong> Chunking strategy impacts RAG performance</p>
             </div>
         </div>
         <div class="col">
@@ -280,20 +282,19 @@
                 <p style="font-size: 0.9em; color: #94a3b8; margin-top: 10px;">Combines keyword + semantic search</p>
             </div>
             <div class="diagram" style="margin-top: 20px; padding: 20px;">
-                <p style="font-size: 0.95em; margin-bottom: 10px;"><strong>Reciprocal Rank Fusion (k=60):</strong></p>
-                <div class="flow" style="font-size: 0.85em; flex-wrap: wrap; justify-content: center;">
-                    <span class="flow-box" style="padding: 6px 10px;">BM25 Ranks</span>
-                    <span class="flow-arrow">+</span>
-                    <span class="flow-box" style="padding: 6px 10px;">Vec Ranks</span>
-                    <span class="flow-arrow">→</span>
-                    <span class="flow-box" style="padding: 6px 10px;">RRF Score</span>
-                    <span class="flow-arrow">→</span>
-                    <span class="flow-box" style="padding: 6px 10px;">Top 5</span>
-                </div>
-                <p style="font-size: 0.8em; color: #94a3b8; margin-top: 10px;">score = 1/(k + rank_bm25) + 1/(k + rank_vec)</p>
+                <p style="font-size: 0.95em; margin-bottom: 10px;"><strong>How it works:</strong></p>
+                <p style="font-size: 0.85em; color: #94a3b8; text-align: left;">
+                    1. BM25 ranks by keyword matching (like search engines)<br>
+                    2. Vector search ranks by semantic similarity<br>
+                    3. RRF merges both ranked lists into one
+                </p>
             </div>
-            <div class="highlight-box warning" style="margin-top: 15px;">
-                <p style="font-size: 1em;"><strong>Unexpected Result:</strong> Performance dropped</p>
+            <div class="diagram" style="margin-top: 15px; padding: 15px;">
+                <p style="font-size: 0.85em; color: #94a3b8; text-align: left;">
+                    <strong>Reciprocal Rank Fusion (k=60):</strong><br>
+                    score = 1/(60 + rank_bm25) + 1/(60 + rank_vec)<br>
+                    Documents ranked by combined score
+                </p>
             </div>
         </div>
         <div class="col">
@@ -333,23 +334,18 @@
                 <p style="font-size: 0.9em; color: #94a3b8; margin-top: 10px;">60% cross-encoder + 40% vector</p>
             </div>
             <div class="diagram" style="margin-top: 20px; padding: 20px;">
-                <p style="font-size: 0.95em; margin-bottom: 10px;"><strong>Pipeline:</strong></p>
-                <div class="flow" style="font-size: 0.9em;">
-                    <span class="flow-box" style="padding: 8px 12px;">Semantic</span>
-                    <span class="flow-arrow" style="font-size: 1.2em;">→</span>
-                    <span class="flow-box" style="padding: 8px 12px;">20 Chunks</span>
-                    <span class="flow-arrow" style="font-size: 1.2em;">→</span>
-                    <span class="flow-box" style="padding: 8px 12px;">Cross-Encoder</span>
-                    <span class="flow-arrow" style="font-size: 1.2em;">→</span>
-                    <span class="flow-box" style="padding: 8px 12px;">Top 5</span>
-                </div>
+                <p style="font-size: 0.95em; margin-bottom: 10px;"><strong>How it works:</strong></p>
+                <p style="font-size: 0.85em; color: #94a3b8; text-align: left;">
+                    1. Start with semantic chunks (topic-coherent)<br>
+                    2. Vector search retrieves candidate chunks<br>
+                    3. Cross-encoder re-scores each query-chunk pair<br>
+                    4. Final score: 60% cross-encoder + 40% vector
+                </p>
             </div>
-            <div class="diagram" style="margin-top: 15px; padding: 15px; text-align: left;">
-                <p style="font-size: 0.85em; color: #94a3b8;">
-                    <strong style="color: #a78bfa;">Recall@5:</strong> % of relevant chunks found in top 5<br>
-                    <strong style="color: #a78bfa;">MRR:</strong> Rank position of first relevant result<br>
-                    <strong style="color: #a78bfa;">Correctness:</strong> LLM-judge accuracy score<br>
-                    <strong style="color: #a78bfa;">Faithfulness:</strong> % claims supported by context
+            <div class="diagram" style="margin-top: 15px; padding: 15px;">
+                <p style="font-size: 0.85em; color: #94a3b8; text-align: left;">
+                    <strong>Why cross-encoder?</strong> Sees query + chunk together,<br>
+                    more accurate than separate embeddings
                 </p>
             </div>
         </div>
