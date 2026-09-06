@@ -21,7 +21,7 @@ class AskRequest(BaseModel):
     question: str
     top_k: int = 3
     session_id: Optional[str] = None
-    method: str = "simple"
+    method: str = "reranked"
 
 
 @app.get("/")

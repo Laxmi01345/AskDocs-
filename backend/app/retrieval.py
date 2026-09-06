@@ -112,7 +112,7 @@ RETRIEVAL_METHODS = {
 }
 
 
-def retrieve(doc_id: str, question: str, top_k: int = 3, method: str = "simple"):
+def retrieve(doc_id: str, question: str, top_k: int = 3, method: str = "reranked"):
     fn = RETRIEVAL_METHODS.get(method)
     if fn is None:
         raise ValueError(f"Unknown retrieval method: {method}. Choose from: {list(RETRIEVAL_METHODS.keys())}")
@@ -123,7 +123,7 @@ def _retrieve_and_rerank(doc_id: str, question: str, top_k: int = 3):
     return retrieve_reranked(doc_id, question, top_k)
 
 
-def answer_with_rag(doc_id: str, question: str, top_k: int = 3, method: str = "simple"):
+def answer_with_rag(doc_id: str, question: str, top_k: int = 3, method: str = "reranked"):
     retrieved_docs = retrieve(doc_id, question, top_k, method)
 
     if not retrieved_docs:
@@ -168,7 +168,7 @@ def answer_with_rag(doc_id: str, question: str, top_k: int = 3, method: str = "s
     return answer, context, retrieved_chunks
 
 
-def answer_with_rag_with_history(doc_id: str, question: str, top_k: int, session: Session, method: str = "simple"):
+def answer_with_rag_with_history(doc_id: str, question: str, top_k: int, session: Session, method: str = "reranked"):
     retrieved_docs = retrieve(doc_id, question, top_k, method)
 
     if not retrieved_docs:
