@@ -104,46 +104,8 @@
     </div>
 </div>
 
-<!-- SLIDE 2: Product Walkthrough -->
+<!-- SLIDE 2: Architecture -->
 <div class="slide" id="slide2">
-    <h2>Application Walkthrough</h2>
-    <div class="two-col">
-        <div class="col">
-            <div class="diagram">
-                <h3 style="margin-bottom: 20px;">Live Demo</h3>
-                <p style="font-size: 1em; color: #a78bfa;">askdocs-2.onrender.com</p>
-                <div style="margin-top: 30px; text-align: left;">
-                    <p style="font-size: 1em;">📄 Upload: PDF, DOCX, TXT</p>
-                    <p style="font-size: 1em;">❓ Ask questions</p>
-                    <p style="font-size: 1em;">🔄 Select retrieval method</p>
-                    <p style="font-size: 1em;">📊 Compare results</p>
-                </div>
-            </div>
-        </div>
-        <div class="col">
-            <h3>4 Retrieval Methods</h3>
-            <div style="margin-top: 20px;">
-                <div class="method-flow" style="flex-direction: column; align-items: flex-start;">
-                    <div class="method-step" style="width: 100%; text-align: left;">
-                        <strong>1. Simple</strong> — Vector similarity only
-                    </div>
-                    <div class="method-step" style="width: 100%; text-align: left;">
-                        <strong>2. Semantic</strong> — Topic-aware chunks
-                    </div>
-                    <div class="method-step" style="width: 100%; text-align: left;">
-                        <strong>3. Hybrid</strong> — BM25 + Vector + RRF
-                    </div>
-                    <div class="method-step" style="width: 100%; text-align: left;">
-                        <strong>4. Reranked</strong> — Semantic + Cross-Encoder
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
-</div>
-
-<!-- SLIDE 3: Architecture -->
-<div class="slide" id="slide3">
     <h2>Backend Architecture</h2>
     <div class="diagram">
         <h3 style="margin-bottom: 30px;">Upload Pipeline</h3>
@@ -176,8 +138,8 @@
     </div>
 </div>
 
-<!-- SLIDE 4: Evaluation Setup -->
-<div class="slide" id="slide4">
+<!-- SLIDE 3: Evaluation Setup -->
+<div class="slide" id="slide3">
     <h2>Evaluation Methodology</h2>
     <div class="two-col">
         <div class="col">
@@ -199,23 +161,23 @@
             <div class="highlight-box">
                 <h3>Retrieval Validation</h3>
                 <p style="font-size: 1em; margin-top: 10px;">
-                    <strong>Recall@5</strong> — Is the answer in top 5 chunks?<br>
-                    <strong>MRR</strong> — How high up is the first relevant chunk?
+                    <strong>Recall@5</strong> — Did the relevant chunks appear in the top 5 retrieved results?<br>
+                    <strong>MRR</strong> — How high up was the first relevant result ranked?
                 </p>
             </div>
             <div class="highlight-box" style="margin-top: 20px;">
                 <h3>Generation Validation</h3>
                 <p style="font-size: 1em; margin-top: 10px;">
-                    <strong>Correctness</strong> — Is the answer factually accurate?<br>
-                    <strong>Faithfulness</strong> — Is it grounded in context?
+                    <strong>Correctness</strong> — Is the generated answer factually accurate?<br>
+                    <strong>Faithfulness</strong> — Are all claims in the answer supported by the retrieved context?
                 </p>
             </div>
         </div>
     </div>
 </div>
 
-<!-- SLIDE 5: Simple Retrieval -->
-<div class="slide" id="slide5">
+<!-- SLIDE 4: Simple Retrieval -->
+<div class="slide" id="slide4">
     <h2>Method 1: Simple Retrieval</h2>
     <div class="two-col">
         <div class="col">
@@ -226,6 +188,14 @@
             <div class="highlight-box" style="margin-top: 20px;">
                 <p style="font-size: 1em;">Chunk: 500 chars, overlap: 100</p>
                 <p style="font-size: 1em;">16 chunks per document</p>
+            </div>
+            <div class="diagram" style="margin-top: 20px; padding: 20px; text-align: left;">
+                <p style="font-size: 0.85em; color: #94a3b8;">
+                    <strong style="color: #a78bfa;">Recall@5:</strong> % of relevant chunks found in top 5<br>
+                    <strong style="color: #a78bfa;">MRR:</strong> Rank position of first relevant result<br>
+                    <strong style="color: #a78bfa;">Correctness:</strong> LLM-judge accuracy score<br>
+                    <strong style="color: #a78bfa;">Faithfulness:</strong> % claims supported by context
+                </p>
             </div>
         </div>
         <div class="col">
@@ -252,8 +222,8 @@
     </div>
 </div>
 
-<!-- SLIDE 6: Semantic Chunking -->
-<div class="slide" id="slide6">
+<!-- SLIDE 5: Semantic Chunking -->
+<div class="slide" id="slide5">
     <h2>Method 2: Semantic Chunking</h2>
     <div class="two-col">
         <div class="col">
@@ -263,6 +233,14 @@
             </div>
             <div class="highlight-box success" style="margin-top: 20px;">
                 <p style="font-size: 1em;"><strong>Key Insight:</strong> Chunking strategy impacts RAG performance</p>
+            </div>
+            <div class="diagram" style="margin-top: 20px; padding: 20px; text-align: left;">
+                <p style="font-size: 0.85em; color: #94a3b8;">
+                    <strong style="color: #a78bfa;">Recall@5:</strong> % of relevant chunks found in top 5<br>
+                    <strong style="color: #a78bfa;">MRR:</strong> Rank position of first relevant result<br>
+                    <strong style="color: #a78bfa;">Correctness:</strong> LLM-judge accuracy score<br>
+                    <strong style="color: #a78bfa;">Faithfulness:</strong> % claims supported by context
+                </p>
             </div>
         </div>
         <div class="col">
@@ -292,8 +270,8 @@
     </div>
 </div>
 
-<!-- SLIDE 7: Hybrid Retrieval -->
-<div class="slide" id="slide7">
+<!-- SLIDE 6: Hybrid Retrieval -->
+<div class="slide" id="slide6">
     <h2>Method 3: Hybrid Retrieval</h2>
     <div class="two-col">
         <div class="col">
@@ -303,6 +281,14 @@
             </div>
             <div class="highlight-box warning" style="margin-top: 20px;">
                 <p style="font-size: 1em;"><strong>Unexpected Result:</strong> Performance dropped</p>
+            </div>
+            <div class="diagram" style="margin-top: 20px; padding: 20px; text-align: left;">
+                <p style="font-size: 0.85em; color: #94a3b8;">
+                    <strong style="color: #a78bfa;">Recall@5:</strong> % of relevant chunks found in top 5<br>
+                    <strong style="color: #a78bfa;">MRR:</strong> Rank position of first relevant result<br>
+                    <strong style="color: #a78bfa;">Correctness:</strong> LLM-judge accuracy score<br>
+                    <strong style="color: #a78bfa;">Faithfulness:</strong> % claims supported by context
+                </p>
             </div>
         </div>
         <div class="col">
@@ -332,8 +318,8 @@
     </div>
 </div>
 
-<!-- SLIDE 8: Reranking -->
-<div class="slide" id="slide8">
+<!-- SLIDE 7: Reranking -->
+<div class="slide" id="slide7">
     <h2>Method 4: Cross-Encoder Reranking</h2>
     <div class="two-col">
         <div class="col">
@@ -352,6 +338,14 @@
                     <span class="flow-arrow" style="font-size: 1.2em;">→</span>
                     <span class="flow-box" style="padding: 8px 12px;">Top 5</span>
                 </div>
+            </div>
+            <div class="diagram" style="margin-top: 15px; padding: 15px; text-align: left;">
+                <p style="font-size: 0.85em; color: #94a3b8;">
+                    <strong style="color: #a78bfa;">Recall@5:</strong> % of relevant chunks found in top 5<br>
+                    <strong style="color: #a78bfa;">MRR:</strong> Rank position of first relevant result<br>
+                    <strong style="color: #a78bfa;">Correctness:</strong> LLM-judge accuracy score<br>
+                    <strong style="color: #a78bfa;">Faithfulness:</strong> % claims supported by context
+                </p>
             </div>
         </div>
         <div class="col">
@@ -381,8 +375,8 @@
     </div>
 </div>
 
-<!-- SLIDE 9: Conclusion -->
-<div class="slide" id="slide9">
+<!-- SLIDE 8: Conclusion -->
+<div class="slide" id="slide8">
     <h2>Results & Key Learnings</h2>
     <div class="two-col">
         <div class="col">
@@ -448,7 +442,7 @@
 
 <script>
     let currentSlide = 1;
-    const totalSlides = 9;
+    const totalSlides = 8;
 
     function changeSlide(direction) {
         const newSlide = currentSlide + direction;
