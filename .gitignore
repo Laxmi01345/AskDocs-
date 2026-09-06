@@ -8,3 +8,4 @@ backend/chunks_store/
 *.pyc
 backend/.env
 backend/bm25_cache/
+video.mp4
