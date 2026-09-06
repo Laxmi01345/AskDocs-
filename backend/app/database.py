@@ -44,7 +44,13 @@ def store_document(doc_id: str, filename: str, chunks: List[str] | None = None, 
     if not chunks:
         return
 
-    vectorstore = _vectorstore(doc_id)
+    emb = embeddings or get_embeddings()
+    _ensure_persist_dir()
+    vectorstore = Chroma(
+        collection_name=f"doc_{doc_id}",
+        persist_directory=PERSIST_DIR,
+        embedding_function=emb,
+    )
     metadatas = [{"chunk_index": i, "filename": filename, "method": "simple"} for i in range(len(chunks))]
     vectorstore.add_texts(texts=chunks, metadatas=metadatas)
 
@@ -58,15 +64,17 @@ def store_document(doc_id: str, filename: str, chunks: List[str] | None = None, 
     save_bm25_index(doc_id, bm25, chunks)
 
 
-def store_semantic_chunks(doc_id: str, filename: str, chunks: List[str]):
+def store_semantic_chunks(doc_id: str, filename: str, chunks: List[str], embeddings=None):
     """Store semantic chunks in a separate collection."""
     if not chunks:
         return
 
+    emb = embeddings or get_embeddings()
+    _ensure_persist_dir()
     vectorstore = Chroma(
         collection_name=f"doc_{doc_id}_semantic",
         persist_directory=PERSIST_DIR,
-        embedding_function=get_embeddings(),
+        embedding_function=emb,
     )
     metadatas = [{"chunk_index": i, "filename": filename, "method": "semantic"} for i in range(len(chunks))]
     vectorstore.add_texts(texts=chunks, metadatas=metadatas)

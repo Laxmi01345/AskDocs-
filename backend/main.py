@@ -54,6 +54,8 @@ async def upload_file(file: UploadFile = File(...)):
     from app.chunking import chunk_text, chunk_semantic
     from app.parsing import load_document
     from app.database import store_document, store_semantic_chunks
+    from app.embeddings import get_embeddings
+    from app.chunking import _split_sentences
 
     data = await file.read()
     ext = (file.filename or "").lower().split(".")[-1]
@@ -62,15 +64,20 @@ async def upload_file(file: UploadFile = File(...)):
 
     text = load_document(data, file.filename or "document")
     doc_id = str(uuid.uuid4())
-    
-    # Store simple chunks
+
+    # Embed ONCE, reuse everywhere
+    embeddings = get_embeddings()
+    sentences = _split_sentences(text) if len(text) > 100 else [text]
+    sentence_embs = embeddings.embed_documents(sentences) if len(sentences) > 1 else None
+
+    # Simple chunks
     chunks = chunk_text(text)
-    store_document(doc_id, file.filename or "document", chunks)
-    
-    # Store semantic chunks
-    semantic_chunks = chunk_semantic(text)
-    store_semantic_chunks(doc_id, file.filename or "document", semantic_chunks)
-    
+    store_document(doc_id, file.filename or "document", chunks, embeddings=embeddings)
+
+    # Semantic chunks (reuse sentence embeddings)
+    semantic_chunks = chunk_semantic(text, sentence_embs=sentence_embs)
+    store_semantic_chunks(doc_id, file.filename or "document", semantic_chunks, embeddings=embeddings)
+
     return {"doc_id": doc_id, "filename": file.filename, "chunks": len(chunks), "semantic_chunks": len(semantic_chunks)}
 
 
