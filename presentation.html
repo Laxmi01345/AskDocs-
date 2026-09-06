@@ -5,198 +5,444 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>AskDocs v2 - Presentation</title>
     <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap');
+        
         * { margin: 0; padding: 0; box-sizing: border-box; }
-        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background: #0f0f23; color: #e0e0e0; overflow: hidden; height: 100vh; }
-
+        body { font-family: 'Inter', sans-serif; background: #0a0a1a; color: #e0e0e0; overflow: hidden; height: 100vh; }
+        
         /* Slide container */
-        .slide { display: none; width: 100vw; height: 100vh; padding: 60px 80px; flex-direction: column; justify-content: center; }
+        .slide { 
+            display: none; width: 100vw; height: 100vh; 
+            padding: 50px 70px; flex-direction: column; justify-content: center;
+            background: linear-gradient(135deg, #0a0a1a 0%, #1a1a3e 100%);
+            position: relative;
+        }
+        .slide::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: radial-gradient(circle at 20% 80%, rgba(124, 58, 237, 0.1) 0%, transparent 50%),
+                        radial-gradient(circle at 80% 20%, rgba(167, 139, 250, 0.08) 0%, transparent 50%);
+            pointer-events: none;
+        }
         .slide.active { display: flex; }
-
+        
         /* Navigation */
-        .nav { position: fixed; bottom: 30px; right: 40px; display: flex; gap: 12px; align-items: center; z-index: 100; }
-        .nav button { background: #7c3aed; color: white; border: none; padding: 10px 20px; border-radius: 8px; cursor: pointer; font-size: 1em; transition: all 0.3s; }
-        .nav button:hover { background: #6d28d9; }
-        .nav button:disabled { background: #333; cursor: not-allowed; }
-        .slide-counter { color: #94a3b8; font-size: 0.9em; }
-
+        .nav { 
+            position: fixed; bottom: 30px; right: 40px; 
+            display: flex; gap: 12px; align-items: center; z-index: 100; 
+        }
+        .nav button { 
+            background: linear-gradient(135deg, #7c3aed, #6d28d9); 
+            color: white; border: none; padding: 12px 24px; 
+            border-radius: 10px; cursor: pointer; font-size: 1em; 
+            font-weight: 500; transition: all 0.3s; box-shadow: 0 4px 15px rgba(124, 58, 237, 0.3);
+        }
+        .nav button:hover { transform: translateY(-2px); box-shadow: 0 6px 20px rgba(124, 58, 237, 0.4); }
+        .nav button:disabled { background: #333; cursor: not-allowed; transform: none; box-shadow: none; }
+        .slide-counter { color: #94a3b8; font-size: 0.9em; font-weight: 500; }
+        
         /* Progress bar */
-        .progress { position: fixed; top: 0; left: 0; height: 4px; background: linear-gradient(90deg, #7c3aed, #a78bfa); transition: width 0.3s; z-index: 100; }
-
-        /* Slide styles */
-        h1 { font-size: 3.5em; color: #a78bfa; margin-bottom: 20px; }
-        h2 { font-size: 2.5em; color: #a78bfa; margin-bottom: 30px; border-bottom: 3px solid #7c3aed; padding-bottom: 15px; display: inline-block; }
-        h3 { font-size: 1.5em; color: #c4b5fd; margin: 20px 0 10px; }
-        p { font-size: 1.3em; line-height: 1.8; color: #e0e0e0; }
-        .subtitle { font-size: 1.6em; color: #94a3b8; margin-bottom: 40px; }
-        .tag { display: inline-block; background: #7c3aed; color: white; padding: 6px 16px; border-radius: 20px; font-size: 0.9em; margin: 5px; }
-
+        .progress { 
+            position: fixed; top: 0; left: 0; height: 4px; 
+            background: linear-gradient(90deg, #7c3aed, #a78bfa, #c4b5fd); 
+            transition: width 0.3s; z-index: 100; 
+        }
+        
+        /* Typography */
+        h1 { 
+            font-size: 4em; font-weight: 800; 
+            background: linear-gradient(135deg, #a78bfa, #7c3aed, #c4b5fd);
+            -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+            background-clip: text; margin-bottom: 15px; line-height: 1.1;
+        }
+        h2 { 
+            font-size: 2.8em; font-weight: 700; color: #a78bfa; 
+            margin-bottom: 25px; position: relative; padding-bottom: 15px;
+        }
+        h2::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 80px;
+            height: 4px;
+            background: linear-gradient(90deg, #7c3aed, #a78bfa);
+            border-radius: 2px;
+        }
+        h3 { font-size: 1.4em; color: #c4b5fd; margin: 15px 0 10px; font-weight: 600; }
+        p { font-size: 1.2em; line-height: 1.7; color: #d1d5db; }
+        .subtitle { font-size: 1.5em; color: #94a3b8; margin-bottom: 30px; font-weight: 400; }
+        
+        /* Tags */
+        .tag-container { display: flex; flex-wrap: wrap; gap: 10px; margin: 20px 0; }
+        .tag { 
+            display: inline-block; 
+            background: linear-gradient(135deg, rgba(124, 58, 237, 0.2), rgba(167, 139, 250, 0.1));
+            color: #c4b5fd; padding: 8px 18px; border-radius: 25px; 
+            font-size: 0.85em; font-weight: 500; border: 1px solid rgba(124, 58, 237, 0.3);
+        }
+        
         /* Diagrams */
-        .diagram { background: #1a1a2e; padding: 40px; border-radius: 16px; border: 1px solid #333; margin: 20px 0; text-align: center; }
-        .flow { display: flex; align-items: center; justify-content: center; flex-wrap: wrap; gap: 10px; font-family: monospace; font-size: 1.1em; }
-        .flow-box { background: #7c3aed; color: white; padding: 12px 20px; border-radius: 10px; font-weight: bold; }
-        .flow-arrow { color: #a78bfa; font-size: 1.8em; }
-
+        .diagram { 
+            background: rgba(26, 26, 46, 0.8); padding: 30px; border-radius: 16px; 
+            border: 1px solid rgba(124, 58, 237, 0.2); margin: 15px 0; 
+            backdrop-filter: blur(10px);
+        }
+        .flow { 
+            display: flex; align-items: center; justify-content: center; 
+            flex-wrap: wrap; gap: 8px; font-size: 1em; 
+        }
+        .flow-box { 
+            background: linear-gradient(135deg, #7c3aed, #6d28d9); 
+            color: white; padding: 10px 18px; border-radius: 8px; 
+            font-weight: 600; font-size: 0.9em; box-shadow: 0 4px 10px rgba(124, 58, 237, 0.3);
+        }
+        .flow-arrow { color: #a78bfa; font-size: 1.5em; }
+        
         /* Tables */
-        table { width: 100%; border-collapse: collapse; margin: 20px 0; font-size: 1.2em; }
-        th { background: #7c3aed; color: white; padding: 16px 20px; text-align: center; }
-        td { padding: 16px 20px; border-bottom: 1px solid #333; text-align: center; }
-        tr:hover { background: #2d2d4e; }
-
+        table { 
+            width: 100%; border-collapse: collapse; margin: 15px 0; 
+            font-size: 1.1em; background: rgba(26, 26, 46, 0.6);
+            border-radius: 12px; overflow: hidden;
+        }
+        th { 
+            background: linear-gradient(135deg, #7c3aed, #6d28d9); 
+            color: white; padding: 14px 16px; text-align: center; font-weight: 600;
+        }
+        td { padding: 14px 16px; border-bottom: 1px solid rgba(124, 58, 237, 0.1); text-align: center; }
+        tr:hover { background: rgba(124, 58, 237, 0.1); }
+        
         /* Results cards */
-        .results-card { background: #1a1a2e; padding: 30px; border-radius: 16px; border: 1px solid #333; margin: 15px 0; }
-        .metric { display: inline-block; margin: 10px 20px; text-align: center; }
-        .metric-value { font-size: 2.5em; font-weight: bold; color: #a78bfa; }
-        .metric-label { font-size: 0.9em; color: #94a3b8; margin-top: 5px; }
-
+        .results-card { 
+            background: rgba(26, 26, 46, 0.8); padding: 25px; border-radius: 16px; 
+            border: 1px solid rgba(124, 58, 237, 0.2); backdrop-filter: blur(10px);
+        }
+        .metric { display: inline-block; margin: 8px 15px; text-align: center; }
+        .metric-value { font-size: 2.2em; font-weight: 700; color: #a78bfa; }
+        .metric-label { font-size: 0.85em; color: #94a3b8; margin-top: 3px; font-weight: 500; }
+        
         /* Improvement indicators */
-        .improve { color: #22c55e; font-weight: bold; }
-        .degrade { color: #ef4444; font-weight: bold; }
-        .neutral { color: #94a3b8; }
-
+        .improve { color: #22c55e; font-weight: 600; }
+        .degrade { color: #ef4444; font-weight: 600; }
+        
         /* Two column layout */
-        .two-col { display: grid; grid-template-columns: 1fr 1fr; gap: 40px; align-items: center; }
-        .col { padding: 20px; }
-
+        .two-col { display: grid; grid-template-columns: 1fr 1fr; gap: 35px; align-items: start; }
+        .col { padding: 15px; }
+        
         /* Highlight box */
-        .highlight-box { background: #1e1e3a; padding: 25px; border-radius: 12px; border-left: 4px solid #7c3aed; margin: 20px 0; }
-        .highlight-box.warning { border-left-color: #ef4444; background: #2e1a1a; }
-        .highlight-box.success { border-left-color: #22c55e; background: #1a2e1a; }
-
-        /* Tech stack grid */
-        .tech-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 15px; margin: 20px 0; }
-        .tech-item { background: #1e1e3a; padding: 15px; border-radius: 10px; text-align: center; border: 1px solid #333; }
-        .tech-item strong { color: #a78bfa; display: block; margin-bottom: 5px; }
-
-        /* Evaluation tree */
-        .eval-tree { text-align: center; font-family: monospace; font-size: 1.1em; line-height: 2; }
-        .eval-tree .box { display: inline-block; background: #7c3aed; color: white; padding: 10px 20px; border-radius: 8px; margin: 5px; }
-        .eval-tree .line { color: #a78bfa; }
-
-        /* Conclusion list */
-        .learn-list { list-style: none; padding: 0; }
-        .learn-list li { padding: 15px 0; border-bottom: 1px solid #333; font-size: 1.2em; }
-        .learn-list li:before { content: "→ "; color: #a78bfa; font-weight: bold; }
-
-        /* Method flow */
-        .method-flow { display: flex; align-items: center; justify-content: center; gap: 15px; margin: 20px 0; flex-wrap: wrap; }
-        .method-step { background: #1e1e3a; padding: 15px 25px; border-radius: 10px; border: 1px solid #333; text-align: center; }
-        .method-step.active { border-color: #7c3aed; background: #2d1b69; }
+        .highlight-box { 
+            background: rgba(30, 30, 58, 0.8); padding: 20px; border-radius: 12px; 
+            border-left: 4px solid #7c3aed; margin: 15px 0; 
+            backdrop-filter: blur(10px);
+        }
+        .highlight-box.warning { border-left-color: #f59e0b; background: rgba(245, 158, 11, 0.1); }
+        .highlight-box.success { border-left-color: #22c55e; background: rgba(34, 197, 94, 0.1); }
+        .highlight-box.info { border-left-color: #3b82f6; background: rgba(59, 130, 246, 0.1); }
+        
+        /* Feature list */
+        .feature-list { list-style: none; padding: 0; }
+        .feature-list li { 
+            padding: 10px 0; font-size: 1.1em; display: flex; align-items: center; gap: 12px;
+        }
+        .feature-list li::before { 
+            content: '✓'; color: #22c55e; font-weight: bold; font-size: 1.2em;
+        }
+        
+        /* Step list */
+        .step-list { list-style: none; padding: 0; counter-reset: step; }
+        .step-list li { 
+            padding: 10px 0; font-size: 1.05em; display: flex; align-items: flex-start; gap: 12px;
+            counter-increment: step;
+        }
+        .step-list li::before { 
+            content: counter(step); 
+            background: linear-gradient(135deg, #7c3aed, #6d28d9);
+            color: white; width: 24px; height: 24px; border-radius: 50%;
+            display: flex; align-items: center; justify-content: center;
+            font-size: 0.8em; font-weight: 600; flex-shrink: 0;
+        }
+        
+        /* Tech grid */
+        .tech-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; }
+        .tech-item { 
+            background: rgba(30, 30, 58, 0.6); padding: 12px; border-radius: 10px; 
+            text-align: center; border: 1px solid rgba(124, 58, 237, 0.2);
+        }
+        .tech-item strong { color: #a78bfa; display: block; margin-bottom: 3px; font-size: 0.9em; }
+        .tech-item span { color: #94a3b8; font-size: 0.8em; }
+        
+        /* Method card */
+        .method-card {
+            background: rgba(26, 26, 46, 0.8); padding: 25px; border-radius: 16px;
+            border: 1px solid rgba(124, 58, 237, 0.2); height: 100%;
+        }
+        .method-card h4 {
+            color: #a78bfa; font-size: 1.3em; margin-bottom: 15px;
+            padding-bottom: 10px; border-bottom: 2px solid rgba(124, 58, 237, 0.3);
+        }
+        
+        /* Stats row */
+        .stats-row { display: flex; gap: 20px; margin: 15px 0; }
+        .stat-box {
+            background: rgba(30, 30, 58, 0.6); padding: 15px; border-radius: 10px;
+            text-align: center; flex: 1; border: 1px solid rgba(124, 58, 237, 0.2);
+        }
+        .stat-box .value { font-size: 1.8em; font-weight: 700; color: #a78bfa; }
+        .stat-box .label { font-size: 0.8em; color: #94a3b8; margin-top: 3px; }
+        
+        /* Animated gradient text */
+        .gradient-text {
+            background: linear-gradient(135deg, #a78bfa, #7c3aed, #c4b5fd, #a78bfa);
+            background-size: 300% 300%;
+            -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+            background-clip: text; animation: gradientShift 4s ease infinite;
+        }
+        @keyframes gradientShift {
+            0%, 100% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+        }
+        
+        /* Badge */
+        .badge {
+            display: inline-block; background: linear-gradient(135deg, #22c55e, #16a34a);
+            color: white; padding: 6px 14px; border-radius: 20px;
+            font-size: 0.8em; font-weight: 600; margin-left: 10px;
+        }
+        .badge.warning { background: linear-gradient(135deg, #f59e0b, #d97706); }
+        .badge.danger { background: linear-gradient(135deg, #ef4444, #dc2626); }
+        
+        /* Quote */
+        .quote {
+            font-style: italic; color: #94a3b8; padding: 20px;
+            border-left: 3px solid #7c3aed; margin: 20px 0;
+            background: rgba(124, 58, 237, 0.05); border-radius: 0 8px 8px 0;
+        }
+        
+        /* Comparison highlight */
+        .comparison-best {
+            background: rgba(34, 197, 94, 0.1); border: 1px solid rgba(34, 197, 94, 0.3);
+            border-radius: 12px; padding: 15px; margin-top: 15px;
+        }
+        .comparison-worst {
+            background: rgba(239, 68, 68, 0.1); border: 1px solid rgba(239, 68, 68, 0.3);
+            border-radius: 12px; padding: 15px; margin-top: 15px;
+        }
     </style>
 </head>
 <body>
 
 <div class="progress" id="progress"></div>
 
-<!-- SLIDE 1: Introduction -->
+<!-- SLIDE 1: Title -->
 <div class="slide active" id="slide1">
-    <h1>AskDocs v2</h1>
-    <p class="subtitle">RAG Document Q&A with Comparative Evaluation</p>
-    <div style="margin-top: 40px;">
-        <span class="tag">FastAPI</span>
-        <span class="tag">ChromaDB</span>
-        <span class="tag">BM25</span>
-        <span class="tag">Cross-Encoder</span>
-        <span class="tag">Groq LLM</span>
-        <span class="tag">React</span>
-    </div>
-    <div class="highlight-box" style="margin-top: 50px;">
-        <p style="font-size: 1.1em;">A RAG system that compares <strong>4 retrieval strategies</strong> to find which approach actually performs better.</p>
+    <div style="text-align: center;">
+        <p style="font-size: 1.1em; color: #94a3b8; margin-bottom: 20px; letter-spacing: 3px; text-transform: uppercase;">Presentation by Laxmi</p>
+        <h1 style="font-size: 5em; margin-bottom: 20px;">AskDocs v2</h1>
+        <p class="subtitle" style="font-size: 1.8em; margin-bottom: 40px;">RAG Document Q&A with Comparative Evaluation</p>
+        
+        <div class="tag-container" style="justify-content: center; margin: 30px 0;">
+            <span class="tag">FastAPI</span>
+            <span class="tag">ChromaDB</span>
+            <span class="tag">BM25</span>
+            <span class="tag">Cross-Encoder</span>
+            <span class="tag">Groq LLM</span>
+            <span class="tag">React</span>
+        </div>
+        
+        <div class="highlight-box info" style="max-width: 700px; margin: 40px auto 0; text-align: left;">
+            <p style="font-size: 1.1em;">A RAG system that compares <strong>4 retrieval strategies</strong> to find which approach actually performs better.</p>
+            <p style="font-size: 0.95em; color: #94a3b8; margin-top: 10px;">Live at: <strong style="color: #a78bfa;">askdocs-2.onrender.com</strong></p>
+        </div>
     </div>
 </div>
 
-<!-- SLIDE 2: Architecture -->
+<!-- SLIDE 2: Problem & Solution -->
 <div class="slide" id="slide2">
-    <h2>Backend Architecture</h2>
-    <div class="diagram">
-        <h3 style="margin-bottom: 30px;">Upload Pipeline</h3>
-        <div class="flow">
-            <span class="flow-box">Upload</span>
-            <span class="flow-arrow">→</span>
-            <span class="flow-box">Parse</span>
-            <span class="flow-arrow">→</span>
-            <span class="flow-box">Chunk</span>
-            <span class="flow-arrow">→</span>
-            <span class="flow-box">Embed</span>
-            <span class="flow-arrow">→</span>
-            <span class="flow-box">Store</span>
+    <h2>Problem & Solution</h2>
+    <div class="two-col">
+        <div class="col">
+            <h3>The Problem</h3>
+            <p style="margin-bottom: 20px;">When building RAG systems, we face critical questions:</p>
+            <ul class="feature-list" style="margin-bottom: 25px;">
+                <li>How should we chunk documents?</li>
+                <li>Which retrieval method works best?</li>
+                <li>How to measure if answers are actually correct?</li>
+            </ul>
+            
+            <div class="quote">
+                "RAG isn't just about connecting an LLM to a vector database. The quality of your retrieval strategy determines the quality of your answers."
+            </div>
         </div>
-        <p style="margin: 15px 0; color: #94a3b8; font-size: 0.9em;">ChromaDB (vectors) + BM25 Index (keywords)</p>
-
-        <h3 style="margin-top: 40px; margin-bottom: 30px;">Query Pipeline</h3>
-        <div class="flow">
-            <span class="flow-box">Question</span>
-            <span class="flow-arrow">→</span>
-            <span class="flow-box">Retrieval</span>
-            <span class="flow-arrow">→</span>
-            <span class="flow-box">Context</span>
-            <span class="flow-arrow">→</span>
-            <span class="flow-box">LLM</span>
-            <span class="flow-arrow">→</span>
-            <span class="flow-box">Answer</span>
+        <div class="col">
+            <h3>Our Solution</h3>
+            <p style="margin-bottom: 20px;">A side-by-side comparison of 4 retrieval approaches:</p>
+            
+            <div class="method-card" style="margin-bottom: 15px;">
+                <h4>📊 What We Built</h4>
+                <ul class="step-list">
+                    <li>Upload any PDF, DOCX, or TXT file</li>
+                    <li>System creates both simple & semantic chunks</li>
+                    <li>Choose from 4 retrieval strategies</li>
+                    <li>See real-time comparison of results</li>
+                </ul>
+            </div>
+            
+            <div class="highlight-box success">
+                <p><strong>Key Innovation:</strong> Same document, same questions, different retrieval methods — fair comparison</p>
+            </div>
         </div>
-        <p style="margin: 15px 0; color: #94a3b8; font-size: 0.9em;">Simple | Semantic | Hybrid | Reranked</p>
     </div>
 </div>
 
-<!-- SLIDE 3: Evaluation Setup -->
+<!-- SLIDE 3: Architecture -->
 <div class="slide" id="slide3">
+    <h2>System Architecture</h2>
+    <div class="two-col">
+        <div class="col">
+            <div class="diagram">
+                <h3 style="margin-bottom: 20px; text-align: center;">Upload Pipeline</h3>
+                <div class="flow">
+                    <span class="flow-box">📄 Upload</span>
+                    <span class="flow-arrow">→</span>
+                    <span class="flow-box">🔍 Parse</span>
+                    <span class="flow-arrow">→</span>
+                    <span class="flow-box">✂️ Chunk</span>
+                    <span class="flow-arrow">→</span>
+                    <span class="flow-box">🧠 Embed</span>
+                    <span class="flow-arrow">→</span>
+                    <span class="flow-box">💾 Store</span>
+                </div>
+                <p style="margin-top: 15px; color: #94a3b8; font-size: 0.9em; text-align: center;">
+                    Two parallel storage systems: ChromaDB (vectors) + BM25 Index (keywords)
+                </p>
+            </div>
+            
+            <div class="diagram" style="margin-top: 20px;">
+                <h3 style="margin-bottom: 20px; text-align: center;">Query Pipeline</h3>
+                <div class="flow">
+                    <span class="flow-box">❓ Question</span>
+                    <span class="flow-arrow">→</span>
+                    <span class="flow-box">🔎 Retrieve</span>
+                    <span class="flow-arrow">→</span>
+                    <span class="flow-box">📋 Context</span>
+                    <span class="flow-arrow">→</span>
+                    <span class="flow-box">🤖 LLM</span>
+                    <span class="flow-arrow">→</span>
+                    <span class="flow-box">💡 Answer</span>
+                </div>
+                <p style="margin-top: 15px; color: #94a3b8; font-size: 0.9em; text-align: center;">
+                    Select method: Simple | Semantic | Hybrid | Reranked
+                </p>
+            </div>
+        </div>
+        <div class="col">
+            <h3>Tech Stack</h3>
+            <div class="tech-grid" style="margin-bottom: 25px;">
+                <div class="tech-item"><strong>FastAPI</strong><span>Backend</span></div>
+                <div class="tech-item"><strong>ChromaDB</strong><span>Vectors</span></div>
+                <div class="tech-item"><strong>rank_bm25</strong><span>Keywords</span></div>
+                <div class="tech-item"><strong>Cross-Encoder</strong><span>Reranking</span></div>
+                <div class="tech-item"><strong>Groq</strong><span>LLM</span></div>
+                <div class="tech-item"><strong>React</strong><span>Frontend</span></div>
+            </div>
+            
+            <div class="highlight-box">
+                <h3>Fixed Configuration</h3>
+                <p style="font-size: 0.95em; margin-top: 8px;">
+                    All methods use the same settings to ensure fair comparison:
+                </p>
+                <ul class="feature-list" style="font-size: 0.9em;">
+                    <li>top_k = 5 chunks retrieved</li>
+                    <li>Same embedding model (ONNX)</li>
+                    <li>Same LLM (Groq)</li>
+                    <li>Same RAG prompt</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- SLIDE 4: Evaluation Setup -->
+<div class="slide" id="slide4">
     <h2>Evaluation Methodology</h2>
     <div class="two-col">
         <div class="col">
-            <div class="eval-tree">
-                <div class="box" style="font-size: 1.2em;">Evaluation</div>
-                <br><span class="line">|</span><br>
-                <div style="display: flex; justify-content: center; gap: 40px;">
-                    <div>
-                        <span class="line">┌───────┴───────┐</span><br>
-                        <div style="display: flex; gap: 20px;">
-                            <div class="box">Retrieval</div>
-                            <div class="box">Generation</div>
-                        </div>
-                    </div>
+            <h3>Two-Phase Evaluation</h3>
+            <div class="method-card" style="margin-bottom: 20px;">
+                <h4>🎯 Phase 1: Retrieval Validation</h4>
+                <p style="font-size: 0.95em; margin-bottom: 12px;">Did the system find the right information?</p>
+                <div class="highlight-box" style="margin: 0;">
+                    <p><strong>Recall@5</strong></p>
+                    <p style="font-size: 0.9em; color: #94a3b8;">What percentage of relevant chunks appeared in the top 5 results?</p>
+                    <p style="font-size: 0.85em; color: #94a3b8; margin-top: 8px;">Example: If 4 out of 5 relevant chunks are found → 80% recall</p>
+                </div>
+                <div class="highlight-box" style="margin-top: 12px;">
+                    <p><strong>MRR (Mean Reciprocal Rank)</strong></p>
+                    <p style="font-size: 0.9em; color: #94a3b8;">How high up was the first relevant result ranked?</p>
+                    <p style="font-size: 0.85em; color: #94a3b8; margin-top: 8px;">MRR = 1.0 means first result is always relevant</p>
                 </div>
             </div>
         </div>
         <div class="col">
-            <div class="highlight-box">
-                <h3>Retrieval Validation</h3>
-                <p style="font-size: 1em; margin-top: 10px;">
-                    <strong>Recall@5</strong> — Did the relevant chunks appear in the top 5 retrieved results?<br>
-                    <strong>MRR</strong> — How high up was the first relevant result ranked?
-                </p>
+            <div class="method-card">
+                <h4>🤖 Phase 2: Generation Validation</h4>
+                <p style="font-size: 0.95em; margin-bottom: 12px;">Is the generated answer actually good?</p>
+                <div class="highlight-box" style="margin: 0;">
+                    <p><strong>Correctness</strong></p>
+                    <p style="font-size: 0.9em; color: #94a3b8;">Is the answer factually accurate? (LLM-as-judge scoring)</p>
+                    <p style="font-size: 0.85em; color: #94a3b8; margin-top: 8px;">Evaluated by a separate LLM scoring 0-100%</p>
+                </div>
+                <div class="highlight-box" style="margin-top: 12px;">
+                    <p><strong>Faithfulness</strong></p>
+                    <p style="font-size: 0.9em; color: #94a3b8;">Are all claims in the answer supported by the retrieved context?</p>
+                    <p style="font-size: 0.85em; color: #94a3b8; margin-top: 8px;">Prevents hallucination — answer must be grounded in document</p>
+                </div>
             </div>
-            <div class="highlight-box" style="margin-top: 20px;">
-                <h3>Generation Validation</h3>
-                <p style="font-size: 1em; margin-top: 10px;">
-                    <strong>Correctness</strong> — Is the generated answer factually accurate?<br>
-                    <strong>Faithfulness</strong> — Are all claims in the answer supported by the retrieved context?
-                </p>
+            
+            <div class="highlight-box info" style="margin-top: 20px;">
+                <p style="font-size: 0.9em;"><strong>Test Dataset:</strong> 10 validated questions from Riverton Employee Handbook with known ground truth chunks</p>
             </div>
         </div>
     </div>
 </div>
 
-<!-- SLIDE 4: Simple Retrieval -->
-<div class="slide" id="slide4">
+<!-- SLIDE 5: Simple Retrieval -->
+<div class="slide" id="slide5">
     <h2>Method 1: Simple Retrieval</h2>
     <div class="two-col">
         <div class="col">
-            <div class="method-step active" style="padding: 25px;">
-                <p style="font-size: 1.1em;">Vector similarity search with fixed-size chunks</p>
-                <p style="font-size: 0.9em; color: #94a3b8; margin-top: 10px;">Baseline approach</p>
-            </div>
-            <div class="diagram" style="margin-top: 20px; padding: 20px;">
-                <p style="font-size: 0.95em; margin-bottom: 10px;"><strong>How it works:</strong></p>
-                <p style="font-size: 0.85em; color: #94a3b8; text-align: left;">
-                    1. Document split into fixed-size chunks (500 chars)<br>
-                    2. Each chunk converted to embedding vector<br>
-                    3. Query converted to embedding vector<br>
-                    4. Cosine similarity finds closest chunks
-                </p>
-            </div>
-            <div class="highlight-box" style="margin-top: 15px;">
-                <p style="font-size: 1em;">Chunk: 500 chars, overlap: 100</p>
-                <p style="font-size: 1em;">16 chunks per document</p>
+            <div class="method-card">
+                <h4>📊 How It Works</h4>
+                <ol class="step-list">
+                    <li>Document split into fixed-size chunks (500 characters)</li>
+                    <li>Each chunk converted to embedding vector</li>
+                    <li>User query converted to embedding vector</li>
+                    <li>Cosine similarity finds closest chunks</li>
+                </ol>
+                
+                <div class="stats-row" style="margin-top: 20px;">
+                    <div class="stat-box">
+                        <div class="value">500</div>
+                        <div class="label">Chars per chunk</div>
+                    </div>
+                    <div class="stat-box">
+                        <div class="value">100</div>
+                        <div class="label">Overlap chars</div>
+                    </div>
+                    <div class="stat-box">
+                        <div class="value">16</div>
+                        <div class="label">Chunks total</div>
+                    </div>
+                </div>
+                
+                <div class="highlight-box" style="margin-top: 15px;">
+                    <p style="font-size: 0.9em;"><strong>Pros:</strong> Simple, fast, predictable</p>
+                    <p style="font-size: 0.9em;"><strong>Cons:</strong> May split topics mid-sentence</p>
+                </div>
             </div>
         </div>
         <div class="col">
@@ -219,30 +465,47 @@
                     <div class="metric-label">Faithfulness</div>
                 </div>
             </div>
+            
+            <div class="highlight-box" style="margin-top: 15px;">
+                <p style="font-size: 0.95em;"><strong>Baseline Performance</strong></p>
+                <p style="font-size: 0.85em; color: #94a3b8;">Good recall but faithfulness shows room for improvement</p>
+            </div>
         </div>
     </div>
 </div>
 
-<!-- SLIDE 5: Semantic Chunking -->
-<div class="slide" id="slide5">
+<!-- SLIDE 6: Semantic Chunking -->
+<div class="slide" id="slide6">
     <h2>Method 2: Semantic Chunking</h2>
     <div class="two-col">
         <div class="col">
-            <div class="method-step active" style="padding: 25px;">
-                <p style="font-size: 1.1em;">Split at topic boundaries using embedding similarity</p>
-                <p style="font-size: 0.9em; color: #94a3b8; margin-top: 10px;">Threshold: similarity &lt; 0.3</p>
-            </div>
-            <div class="diagram" style="margin-top: 20px; padding: 20px;">
-                <p style="font-size: 0.95em; margin-bottom: 10px;"><strong>How it works:</strong></p>
-                <p style="font-size: 0.85em; color: #94a3b8; text-align: left;">
-                    1. Embed consecutive sentences<br>
-                    2. Compare similarity between neighbors<br>
-                    3. Split when similarity drops below threshold<br>
-                    4. Preserves topic coherence per chunk
-                </p>
-            </div>
-            <div class="highlight-box success" style="margin-top: 15px;">
-                <p style="font-size: 1em;"><strong>Key Insight:</strong> Chunking strategy impacts RAG performance</p>
+            <div class="method-card">
+                <h4>🧠 How It Works</h4>
+                <ol class="step-list">
+                    <li>Embed consecutive sentences using ONNX</li>
+                    <li>Compare similarity between neighboring sentences</li>
+                    <li>Split when similarity drops below threshold (0.3)</li>
+                    <li>Result: Topic-coherent chunks of varying sizes</li>
+                </ol>
+                
+                <div class="stats-row" style="margin-top: 20px;">
+                    <div class="stat-box">
+                        <div class="value">0.3</div>
+                        <div class="label">Similarity threshold</div>
+                    </div>
+                    <div class="stat-box">
+                        <div class="value">3000</div>
+                        <div class="label">Max chunk size</div>
+                    </div>
+                    <div class="stat-box">
+                        <div class="value">27</div>
+                        <div class="label">Chunks total</div>
+                    </div>
+                </div>
+                
+                <div class="highlight-box success" style="margin-top: 15px;">
+                    <p style="font-size: 0.95em;"><strong>Key Insight:</strong> Semantic chunking respects topic boundaries</p>
+                </div>
             </div>
         </div>
         <div class="col">
@@ -265,36 +528,43 @@
                     <div class="metric-label">Faithfulness</div>
                 </div>
             </div>
-            <div class="highlight-box success" style="margin-top: 15px;">
-                <p style="font-size: 0.95em;">↑ +11% Recall &nbsp; ↑ +6.6% Correctness &nbsp; ↑ +16% Faithfulness</p>
+            
+            <div class="comparison-best">
+                <p style="font-size: 0.95em;"><strong>vs Simple:</strong></p>
+                <p style="font-size: 0.9em;">
+                    <span class="improve">↑ +10% Recall</span> &nbsp;
+                    <span class="improve">↑ +5.5% Correctness</span> &nbsp;
+                    <span class="improve">↑ +16% Faithfulness</span>
+                </p>
             </div>
         </div>
     </div>
 </div>
 
-<!-- SLIDE 6: Hybrid Retrieval -->
-<div class="slide" id="slide6">
+<!-- SLIDE 7: Hybrid Retrieval -->
+<div class="slide" id="slide7">
     <h2>Method 3: Hybrid Retrieval</h2>
     <div class="two-col">
         <div class="col">
-            <div class="method-step active" style="padding: 25px;">
-                <p style="font-size: 1.1em;">BM25 + Vector + Reciprocal Rank Fusion</p>
-                <p style="font-size: 0.9em; color: #94a3b8; margin-top: 10px;">Combines keyword + semantic search</p>
-            </div>
-            <div class="diagram" style="margin-top: 20px; padding: 20px;">
-                <p style="font-size: 0.95em; margin-bottom: 10px;"><strong>How it works:</strong></p>
-                <p style="font-size: 0.85em; color: #94a3b8; text-align: left;">
-                    1. BM25 ranks by keyword matching (like search engines)<br>
-                    2. Vector search ranks by semantic similarity<br>
-                    3. RRF merges both ranked lists into one
-                </p>
-            </div>
-            <div class="diagram" style="margin-top: 15px; padding: 15px;">
-                <p style="font-size: 0.85em; color: #94a3b8; text-align: left;">
-                    <strong>Reciprocal Rank Fusion (k=60):</strong><br>
-                    score = 1/(60 + rank_bm25) + 1/(60 + rank_vec)<br>
-                    Documents ranked by combined score
-                </p>
+            <div class="method-card">
+                <h4>🔄 How It Works</h4>
+                <ol class="step-list">
+                    <li><strong>BM25:</strong> Ranks by keyword matching (like search engines)</li>
+                    <li><strong>Vector:</strong> Ranks by semantic similarity</li>
+                    <li><strong>RRF Fusion:</strong> Merges both ranked lists</li>
+                </ol>
+                
+                <div class="diagram" style="margin-top: 20px; padding: 20px;">
+                    <p style="font-size: 0.95em; margin-bottom: 12px;"><strong>Reciprocal Rank Fusion Formula:</strong></p>
+                    <div style="background: rgba(124, 58, 237, 0.1); padding: 12px; border-radius: 8px; font-family: monospace; font-size: 0.9em;">
+                        score = 1/(k + rank<sub>bm25</sub>) + 1/(k + rank<sub>vec</sub>)
+                    </div>
+                    <p style="font-size: 0.85em; color: #94a3b8; margin-top: 10px;">k = 60 (constant to prevent over-weighting top ranks)</p>
+                </div>
+                
+                <div class="highlight-box warning" style="margin-top: 15px;">
+                    <p style="font-size: 0.9em;"><strong>Hypothesis:</strong> Combining methods should improve results</p>
+                </div>
             </div>
         </div>
         <div class="col">
@@ -317,36 +587,42 @@
                     <div class="metric-label">Faithfulness</div>
                 </div>
             </div>
-            <div class="highlight-box warning" style="margin-top: 15px;">
-                <p style="font-size: 0.95em;">↓ -10% Recall &nbsp; ↓ -19.5% Correctness &nbsp; ↓ -43% Faithfulness</p>
+            
+            <div class="comparison-worst">
+                <p style="font-size: 0.95em;"><strong>⚠️ Unexpected Result:</strong></p>
+                <p style="font-size: 0.9em; color: #94a3b8;">
+                    Performance dropped significantly. BM25's keyword matching can conflict with semantic meaning, causing LLM confusion.
+                </p>
             </div>
         </div>
     </div>
 </div>
 
-<!-- SLIDE 7: Reranking -->
-<div class="slide" id="slide7">
+<!-- SLIDE 8: Cross-Encoder Reranking -->
+<div class="slide" id="slide8">
     <h2>Method 4: Cross-Encoder Reranking</h2>
     <div class="two-col">
         <div class="col">
-            <div class="method-step active" style="padding: 25px;">
-                <p style="font-size: 1.1em;">Semantic chunks + Cross-Encoder precision</p>
-                <p style="font-size: 0.9em; color: #94a3b8; margin-top: 10px;">60% cross-encoder + 40% vector</p>
-            </div>
-            <div class="diagram" style="margin-top: 20px; padding: 20px;">
-                <p style="font-size: 0.95em; margin-bottom: 10px;"><strong>How it works:</strong></p>
-                <p style="font-size: 0.85em; color: #94a3b8; text-align: left;">
-                    1. Start with semantic chunks (topic-coherent)<br>
-                    2. Vector search retrieves candidate chunks<br>
-                    3. Cross-encoder re-scores each query-chunk pair<br>
-                    4. Final score: 60% cross-encoder + 40% vector
-                </p>
-            </div>
-            <div class="diagram" style="margin-top: 15px; padding: 15px;">
-                <p style="font-size: 0.85em; color: #94a3b8; text-align: left;">
-                    <strong>Why cross-encoder?</strong> Sees query + chunk together,<br>
-                    more accurate than separate embeddings
-                </p>
+            <div class="method-card">
+                <h4>🎯 How It Works</h4>
+                <ol class="step-list">
+                    <li>Start with semantic chunks (topic-coherent)</li>
+                    <li>Vector search retrieves candidate chunks</li>
+                    <li>Cross-encoder re-scores each query-chunk pair</li>
+                    <li>Final score: 60% cross-encoder + 40% vector</li>
+                </ol>
+                
+                <div class="diagram" style="margin-top: 20px; padding: 20px;">
+                    <p style="font-size: 0.95em; margin-bottom: 12px;"><strong>Combined Scoring Formula:</strong></p>
+                    <div style="background: rgba(124, 58, 237, 0.1); padding: 12px; border-radius: 8px; font-family: monospace; font-size: 0.9em;">
+                        final = 0.6 × cross_encoder + 0.4 × vector_sim
+                    </div>
+                </div>
+                
+                <div class="highlight-box info" style="margin-top: 15px;">
+                    <p style="font-size: 0.9em;"><strong>Why Cross-Encoder?</strong></p>
+                    <p style="font-size: 0.85em; color: #94a3b8;">Sees query + chunk together, more accurate than separate embeddings</p>
+                </div>
             </div>
         </div>
         <div class="col">
@@ -369,81 +645,142 @@
                     <div class="metric-label">Faithfulness</div>
                 </div>
             </div>
-            <div class="highlight-box success" style="margin-top: 15px;">
-                <p style="font-size: 0.95em;">✓ Best overall performance</p>
+            
+            <div class="comparison-best">
+                <p style="font-size: 0.95em;"><strong>🏆 Best Overall Performance</strong></p>
+                <p style="font-size: 0.9em;">
+                    <span class="improve">✓ 100% Recall</span> &nbsp;
+                    <span class="improve">✓ Best Correctness</span> &nbsp;
+                    <span class="improve">✓ High Faithfulness</span>
+                </p>
             </div>
         </div>
     </div>
 </div>
 
-<!-- SLIDE 8: Conclusion -->
-<div class="slide" id="slide8">
-    <h2>Results & Key Learnings</h2>
+<!-- SLIDE 9: Comparison Table -->
+<div class="slide" id="slide9">
+    <h2>Comparison Results</h2>
     <div class="two-col">
         <div class="col">
             <table>
                 <tr>
                     <th>Method</th>
                     <th>Recall@5</th>
+                    <th>MRR</th>
                     <th>Correctness</th>
                     <th>Faithfulness</th>
                 </tr>
                 <tr>
                     <td>Simple</td>
                     <td>90%</td>
+                    <td>0.90</td>
                     <td>83.8%</td>
                     <td>79%</td>
                 </tr>
                 <tr>
                     <td>Semantic</td>
                     <td class="improve">100%</td>
+                    <td class="improve">1.00</td>
                     <td class="improve">89.3%</td>
                     <td class="improve">95%</td>
                 </tr>
                 <tr>
                     <td>Hybrid</td>
                     <td class="degrade">90%</td>
+                    <td class="degrade">0.90</td>
                     <td class="degrade">69.8%</td>
                     <td class="degrade">52%</td>
                 </tr>
-                <tr style="background: #2d1b69;">
-                    <td><strong>Reranked</strong></td>
+                <tr style="background: rgba(34, 197, 94, 0.1);">
+                    <td><strong>Reranked</strong> <span class="badge">Winner</span></td>
                     <td class="improve"><strong>100%</strong></td>
+                    <td class="improve"><strong>1.00</strong></td>
                     <td class="improve"><strong>89.5%</strong></td>
                     <td class="improve"><strong>93.5%</strong></td>
                 </tr>
             </table>
+            
+            <div class="highlight-box" style="margin-top: 20px;">
+                <p style="font-size: 0.9em;"><strong>Key Finding:</strong> Semantic chunking + Cross-Encoder reranking = Best results</p>
+            </div>
         </div>
         <div class="col">
             <h3>Key Learnings</h3>
-            <ul class="learn-list">
-                <li>Chunking strategy impacts RAG performance</li>
-                <li>Combining methods doesn't always help</li>
+            <ul class="feature-list" style="margin-bottom: 25px;">
+                <li>Chunking strategy significantly impacts RAG performance</li>
+                <li>Combining methods (hybrid) doesn't always help</li>
                 <li>Reranking adds precision to retrieval</li>
                 <li>Evaluation drives improvement</li>
             </ul>
-            <div class="tech-grid" style="margin-top: 30px;">
-                <div class="tech-item"><strong>FastAPI</strong>Backend</div>
-                <div class="tech-item"><strong>ChromaDB</strong>Vectors</div>
-                <div class="tech-item"><strong>BM25</strong>Keywords</div>
-                <div class="tech-item"><strong>Cross-Encoder</strong>Reranking</div>
-                <div class="tech-item"><strong>Groq</strong>LLM</div>
-                <div class="tech-item"><strong>React</strong>Frontend</div>
+            
+            <div class="highlight-box success">
+                <p style="font-size: 0.95em;"><strong>Recommendation:</strong></p>
+                <p style="font-size: 0.9em; color: #94a3b8;">Use semantic chunking with cross-encoder reranking for production RAG systems</p>
             </div>
         </div>
+    </div>
+</div>
+
+<!-- SLIDE 10: Conclusion -->
+<div class="slide" id="slide10">
+    <div style="text-align: center; max-width: 900px; margin: 0 auto;">
+        <h2 style="font-size: 3em; margin-bottom: 30px;">Conclusion</h2>
+        
+        <div class="quote" style="text-align: left; margin-bottom: 30px;">
+            <p style="font-size: 1.2em; font-style: italic;">
+                "RAG isn't just about connecting an LLM to a vector database. It's about finding the <strong style="color: #a78bfa;">right chunks</strong> so the model can give the <strong style="color: #a78bfa;">right answers</strong>."
+            </p>
+        </div>
+        
+        <div class="stats-row" style="margin: 30px 0;">
+            <div class="stat-box">
+                <div class="value gradient-text">4</div>
+                <div class="label">Methods Compared</div>
+            </div>
+            <div class="stat-box">
+                <div class="value gradient-text">100%</div>
+                <div class="label">Best Recall</div>
+            </div>
+            <div class="stat-box">
+                <div class="value gradient-text">89.5%</div>
+                <div class="label">Best Correctness</div>
+            </div>
+            <div class="stat-box">
+                <div class="value gradient-text">93.5%</div>
+                <div class="label">Best Faithfulness</div>
+            </div>
+        </div>
+        
+        <div class="highlight-box info" style="text-align: left; margin: 30px 0;">
+            <h3>Final Takeaways</h3>
+            <ul class="feature-list" style="margin-top: 15px;">
+                <li>Semantic chunking preserves topic coherence</li>
+                <li>Cross-encoder reranking improves precision</li>
+                <li>Not all "advanced" methods improve results</li>
+                <li>Systematic evaluation reveals what actually works</li>
+            </ul>
+        </div>
+        
+        <p style="font-size: 1.3em; color: #94a3b8; margin-top: 30px;">
+            Thank you for listening. Questions?
+        </p>
+        <p style="font-size: 1em; color: #7c3aed; margin-top: 15px;">
+            Live Demo: <strong>askdocs-2.onrender.com</strong>
+        </p>
     </div>
 </div>
 
 <!-- Navigation -->
 <div class="nav">
     <button id="prevBtn" onclick="changeSlide(-1)" disabled>← Prev</button>
-    <span class="slide-counter" id="slideCounter">1 / 9</span>
+    <span class="slide-counter" id="slideCounter">1 / 10</span>
     <button id="nextBtn" onclick="changeSlide(1)">Next →</button>
 </div>
 
 <script>
     let currentSlide = 1;
-    const totalSlides = 8;
+    const totalSlides = 10;
 
     function changeSlide(direction) {
         const newSlide = currentSlide + direction;
