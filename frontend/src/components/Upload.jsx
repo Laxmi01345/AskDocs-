@@ -35,9 +35,11 @@ function Upload({ onUpload }) {
 
   return (
     <div className="flex justify-center items-center">
-      <div className="bg-white rounded-xl shadow-2xl p-10 max-w-md w-full">
-        <h2 className="text-3xl font-bold text-center mb-2 text-gray-800">📤 Upload Document</h2>
-        <p className="text-center text-gray-600 mb-8">Supported: TXT, PDF, DOCX</p>
+      <div className="rounded-2xl shadow-2xl p-10 max-w-md w-full" style={{ background: 'rgba(255,255,255,0.95)', backdropFilter: 'blur(10px)' }}>
+        <h2 className="text-3xl font-bold text-center mb-2" style={{ color: '#1f2937' }}>
+          <span className="mr-2">📤</span>Upload Document
+        </h2>
+        <p className="text-center mb-8" style={{ color: '#6b7280', fontSize: '0.95em' }}>Supported: TXT, PDF, DOCX</p>
 
         <form onSubmit={handleUpload}>
           <input
@@ -45,18 +47,20 @@ function Upload({ onUpload }) {
             accept=".txt,.pdf,.docx"
             onChange={handleFileChange}
             disabled={loading}
-            className="block w-full mb-6 p-3 border-2 border-gray-300 rounded-lg cursor-pointer hover:border-purple-600 transition"
+            className="block w-full mb-6 p-3 rounded-xl cursor-pointer transition"
+            style={{ border: '2px solid #e5e7eb', fontSize: '0.9em' }}
           />
           <button 
             type="submit" 
             disabled={loading}
-            className="w-full bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700 text-white font-bold py-3 rounded-lg transition disabled:opacity-50 disabled:cursor-not-allowed"
+            className="w-full text-white font-bold py-3 rounded-xl transition disabled:opacity-50 disabled:cursor-not-allowed"
+            style={{ background: 'linear-gradient(135deg, #3b82f6, #2563eb)' }}
           >
             {loading ? '⏳ Uploading...' : '📁 Upload'}
           </button>
         </form>
 
-        {error && <p className="text-red-600 font-bold mt-4 text-center">{error}</p>}
+        {error && <p className="font-bold mt-4 text-center" style={{ color: '#ef4444' }}>{error}</p>}
       </div>
     </div>
   );
