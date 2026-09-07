@@ -64,80 +64,62 @@ function Chat({ docId }) {
   };
 
   return (
-    <div style={{
-      background: 'white', borderRadius: '16px',
-      boxShadow: '0 8px 32px rgba(0,0,0,0.12)',
-      overflow: 'hidden', display: 'flex', flexDirection: 'column',
-      height: '520px'
-    }}>
+    <div className="rounded-2xl overflow-hidden flex flex-col h-[500px] shadow-2xl" style={{ background: 'rgba(255,255,255,0.95)', backdropFilter: 'blur(10px)' }}>
       {/* Header */}
-      <div style={{
-        padding: '12px 20px', display: 'flex', justifyContent: 'space-between', alignItems: 'center',
-        borderBottom: '1px solid #f3f4f6'
-      }}>
-        <span style={{ fontSize: '0.8rem', color: '#9ca3af' }}>
+      <div className="px-5 py-3 flex justify-between items-center" style={{ background: 'rgba(255,255,255,0.9)', borderBottom: '1px solid rgba(0,0,0,0.06)' }}>
+        <span className="text-xs font-medium" style={{ color: '#6b7280' }}>
           {sessionId ? `Session: ${sessionId.slice(0, 8)}...` : 'New conversation'}
         </span>
         <button
           onClick={handleNewChat}
-          style={{ fontSize: '0.8rem', color: '#7c3aed', background: 'none', border: 'none', cursor: 'pointer', textDecoration: 'underline' }}
+          className="text-xs font-medium hover:underline"
+          style={{ color: '#6366f1' }}
         >
           New Chat
         </button>
       </div>
 
       {/* Messages */}
-      <div style={{ flex: 1, overflowY: 'auto', padding: '20px', background: '#fafafa' }}>
+      <div className="flex-1 overflow-y-auto px-5 py-4" style={{ background: 'linear-gradient(180deg, #f8f9ff 0%, #f0f1f8 100%)' }}>
         {messages.length === 0 && (
-          <p style={{ textAlign: 'center', color: '#9ca3af', marginTop: '160px' }}>
+          <p className="text-center mt-20" style={{ color: '#9ca3af', fontSize: '1rem' }}>
             Ask me anything about the document!
           </p>
         )}
         {messages.map((msg, idx) => (
-          <div key={idx} style={{
-            marginBottom: '16px',
-            display: 'flex',
-            justifyContent: msg.role === 'user' ? 'flex-end' : 'flex-start',
-            alignItems: 'flex-start', gap: '8px'
-          }}>
-            {msg.role !== 'user' && (
-              <div style={{
-                width: '28px', height: '28px', borderRadius: '50%', flexShrink: 0,
-                background: 'linear-gradient(135deg, #a855f7, #7c3aed)',
-                display: 'flex', alignItems: 'center', justifyContent: 'center',
-                fontSize: '14px', marginTop: '18px'
-              }}>🤖</div>
+          <div key={idx} className={`mb-4 flex ${msg.role === 'user' ? 'justify-end' : 'justify-start'}`}>
+            {msg.role === 'assistant' && (
+              <div className="mr-2 mt-1 flex-shrink-0">
+                <div className="w-7 h-7 rounded-full flex items-center justify-center text-xs" style={{ background: 'linear-gradient(135deg, #6366f1, #8b5cf6)', color: 'white' }}>
+                  🤖
+                </div>
+              </div>
             )}
-            <div style={{ maxWidth: '70%' }}>
-              <div style={{
-                fontSize: '0.7rem', fontWeight: 'bold', marginBottom: '4px',
-                color: msg.role === 'user' ? '#3b82f6' : '#7c3aed',
-                letterSpacing: '0.05em', textAlign: msg.role === 'user' ? 'right' : 'left'
-              }}>
+            <div className={`max-w-md ${msg.role === 'user' ? '' : ''}`}>
+              <div className="text-xs font-bold mb-1" style={{ color: msg.role === 'user' ? '#3b82f6' : '#6366f1', letterSpacing: '0.05em' }}>
                 {msg.role === 'user' ? 'YOU' : msg.role === 'error' ? 'ERROR' : 'ASSISTANT'}
               </div>
-              <div style={{
-                padding: '12px 16px',
-                borderRadius: msg.role === 'user' ? '16px 16px 4px 16px' : '16px 16px 16px 4px',
-                background: msg.role === 'user'
-                  ? 'linear-gradient(135deg, #3b82f6, #2563eb)'
-                  : msg.role === 'error' ? '#fee2e2' : 'white',
-                color: msg.role === 'user' ? 'white' : msg.role === 'error' ? '#991b1b' : '#1f2937',
-                boxShadow: msg.role === 'user' ? 'none' : '0 1px 4px rgba(0,0,0,0.06)',
-                border: msg.role === 'user' ? 'none' : '1px solid #f3f4f6',
-                fontSize: '0.9rem', lineHeight: '1.6'
-              }}>
-                <div style={{ fontSize: '0.85rem' }}>
+              <div
+                className="px-4 py-3 rounded-2xl"
+                style={
+                  msg.role === 'user'
+                    ? { background: 'linear-gradient(135deg, #3b82f6, #2563eb)', color: 'white', borderRadius: '18px 18px 4px 18px' }
+                    : msg.role === 'error'
+                    ? { background: '#fee2e2', color: '#991b1b', borderRadius: '18px 18px 18px 4px' }
+                    : { background: 'white', color: '#1f2937', borderRadius: '18px 18px 18px 4px', boxShadow: '0 1px 3px rgba(0,0,0,0.08)', border: '1px solid rgba(0,0,0,0.04)' }
+                }
+              >
+                <div className="prose prose-sm max-w-none">
                   <ReactMarkdown>{msg.text}</ReactMarkdown>
                 </div>
                 {msg.context && (
-                  <details style={{ marginTop: '10px', fontSize: '0.8rem' }}>
-                    <summary style={{ cursor: 'pointer', fontWeight: 'bold', color: '#7c3aed' }}>Sources</summary>
-                    <div style={{ marginTop: '8px' }}>
+                  <details className="mt-3 text-sm cursor-pointer">
+                    <summary className="font-bold hover:underline" style={{ color: '#6366f1', fontSize: '0.8em' }}>Sources</summary>
+                    <div className="mt-2 space-y-2">
                       {msg.chunks && msg.chunks.map((chunk, ci) => (
-                        <div key={ci} style={{ padding: '8px', background: '#f3f4f6', borderRadius: '6px', marginBottom: '6px', fontSize: '0.75rem' }}>
-                          <span style={{ fontWeight: '600' }}>Chunk {chunk.rank}</span>
-                          <p style={{ color: '#6b7280', marginTop: '4px' }}>{chunk.text}</p>
+                        <div key={ci} className="p-2 rounded-lg" style={{ background: '#f3f4f6', fontSize: '0.75em' }}>
+                          <span className="font-semibold">Chunk {chunk.rank}</span>
+                          <p className="mt-1" style={{ color: '#6b7280' }}>{chunk.text}</p>
                         </div>
                       ))}
                     </div>
@@ -146,33 +128,28 @@ function Chat({ docId }) {
               </div>
             </div>
             {msg.role === 'user' && (
-              <div style={{
-                width: '28px', height: '28px', borderRadius: '50%', flexShrink: 0,
-                background: 'linear-gradient(135deg, #3b82f6, #2563eb)',
-                display: 'flex', alignItems: 'center', justifyContent: 'center',
-                fontSize: '14px', marginTop: '18px'
-              }}>👤</div>
+              <div className="ml-2 mt-1 flex-shrink-0">
+                <div className="w-7 h-7 rounded-full flex items-center justify-center text-xs" style={{ background: 'linear-gradient(135deg, #3b82f6, #2563eb)', color: 'white' }}>
+                  👤
+                </div>
+              </div>
             )}
           </div>
         ))}
         {loading && (
-          <div style={{ display: 'flex', alignItems: 'flex-start', gap: '8px', marginBottom: '16px' }}>
-            <div style={{
-              width: '28px', height: '28px', borderRadius: '50%', flexShrink: 0,
-              background: 'linear-gradient(135deg, #a855f7, #7c3aed)',
-              display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '14px'
-            }}>🤖</div>
+          <div className="flex justify-start mb-4">
+            <div className="mr-2 mt-1 flex-shrink-0">
+              <div className="w-7 h-7 rounded-full flex items-center justify-center text-xs" style={{ background: 'linear-gradient(135deg, #6366f1, #8b5cf6)', color: 'white' }}>
+                🤖
+              </div>
+            </div>
             <div>
-              <div style={{ fontSize: '0.7rem', fontWeight: 'bold', color: '#7c3aed', marginBottom: '4px', letterSpacing: '0.05em' }}>ASSISTANT</div>
-              <div style={{
-                padding: '12px 16px', borderRadius: '16px 16px 16px 4px',
-                background: 'white', boxShadow: '0 1px 4px rgba(0,0,0,0.06)',
-                border: '1px solid #f3f4f6'
-              }}>
-                <div style={{ display: 'flex', gap: '4px', alignItems: 'center' }}>
-                  <div style={{ width: '6px', height: '6px', borderRadius: '50%', background: '#a855f7', animation: 'bounce 1s infinite 0ms' }}></div>
-                  <div style={{ width: '6px', height: '6px', borderRadius: '50%', background: '#a855f7', animation: 'bounce 1s infinite 150ms' }}></div>
-                  <div style={{ width: '6px', height: '6px', borderRadius: '50%', background: '#a855f7', animation: 'bounce 1s infinite 300ms' }}></div>
+              <div className="text-xs font-bold mb-1" style={{ color: '#6366f1', letterSpacing: '0.05em' }}>ASSISTANT</div>
+              <div className="px-4 py-3 rounded-2xl" style={{ background: 'white', boxShadow: '0 1px 3px rgba(0,0,0,0.08)', border: '1px solid rgba(0,0,0,0.04)', borderRadius: '18px 18px 18px 4px' }}>
+                <div className="flex items-center gap-1">
+                  <div className="w-2 h-2 rounded-full animate-bounce" style={{ background: '#6366f1', animationDelay: '0ms' }}></div>
+                  <div className="w-2 h-2 rounded-full animate-bounce" style={{ background: '#6366f1', animationDelay: '150ms' }}></div>
+                  <div className="w-2 h-2 rounded-full animate-bounce" style={{ background: '#6366f1', animationDelay: '300ms' }}></div>
                 </div>
               </div>
             </div>
@@ -182,46 +159,28 @@ function Chat({ docId }) {
       </div>
 
       {/* Input */}
-      <form onSubmit={handleAsk} style={{
-        padding: '12px 16px', display: 'flex', gap: '8px',
-        borderTop: '1px solid #f3f4f6', background: 'white'
-      }}>
+      <form onSubmit={handleAsk} className="p-4 flex gap-2" style={{ background: 'white', borderTop: '1px solid rgba(0,0,0,0.06)' }}>
         <input
           type="text"
           placeholder="Where are..."
           value={question}
           onChange={(e) => setQuestion(e.target.value)}
           disabled={loading}
-          style={{
-            flex: 1, padding: '12px 16px', borderRadius: '12px',
-            border: '1px solid #e5e7eb', background: '#f3f4f6',
-            fontSize: '0.9rem', outline: 'none'
-          }}
+          className="flex-1 px-4 py-3 rounded-xl focus:outline-none focus:ring-2"
+          style={{ background: '#f3f4f6', border: '1px solid #e5e7eb', focusRing: '#3b82f6', fontSize: '0.95em' }}
         />
         <button
           type="submit"
           disabled={loading || !question.trim()}
-          style={{
-            width: '42px', height: '42px', borderRadius: '12px', border: 'none',
-            background: 'linear-gradient(135deg, #3b82f6, #2563eb)',
-            color: 'white', cursor: 'pointer', display: 'flex',
-            alignItems: 'center', justifyContent: 'center',
-            opacity: loading || !question.trim() ? 0.4 : 1
-          }}
+          className="w-10 h-10 rounded-xl flex items-center justify-center transition-all disabled:opacity-40"
+          style={{ background: 'linear-gradient(135deg, #3b82f6, #2563eb)', color: 'white' }}
         >
-          <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+          <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
             <line x1="22" y1="2" x2="11" y2="13"></line>
             <polygon points="22 2 15 22 11 13 2 9 22 2"></polygon>
           </svg>
         </button>
       </form>
-
-      <style>{`
-        @keyframes bounce {
-          0%, 80%, 100% { transform: translateY(0); }
-          40% { transform: translateY(-6px); }
-        }
-      `}</style>
     </div>
   );
 }

@@ -3,12 +3,5 @@
 @tailwind utilities;
 
 body {
-  background: linear-gradient(135deg, #7c3aed 0%, #a855f7 25%, #d946ef 50%, #ec4899 75%, #f472b6 100%);
-  min-height: 100vh;
-  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-  margin: 0;
-}
-
-header {
-  background: rgba(0, 0, 0, 0.15);
+  @apply bg-gradient-to-br from-purple-600 to-pink-600 min-h-screen font-sans;
 }

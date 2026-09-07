@@ -8,43 +8,30 @@ function App() {
   const [filename, setFilename] = useState(null);
 
   return (
-    <div>
-      <header style={{ padding: '40px 20px 35px', textAlign: 'center' }}>
-        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '12px', marginBottom: '8px' }}>
-          <div style={{
-            width: '44px', height: '44px', borderRadius: '10px',
-            background: 'linear-gradient(135deg, #22c55e, #3b82f6)',
-            display: 'flex', alignItems: 'center', justifyContent: 'center',
-            fontSize: '24px', boxShadow: '0 2px 8px rgba(0,0,0,0.15)'
-          }}>📚</div>
-          <h1 style={{ fontSize: '3rem', fontWeight: 'bold', color: 'white', margin: 0 }}>AskDocs</h1>
+    <div className="min-h-screen">
+      <header className="text-center py-10 mb-6">
+        <div className="flex items-center justify-center gap-3 mb-2">
+          <div className="w-10 h-10 rounded-xl flex items-center justify-center text-2xl" style={{ background: 'rgba(255,255,255,0.2)' }}>
+            📚
+          </div>
+          <h1 className="text-5xl font-bold text-white">AskDocs</h1>
         </div>
-        <p style={{ color: 'rgba(255,255,255,0.9)', fontSize: '1.1rem', margin: 0 }}>
-          Upload documents and ask questions instantly
-        </p>
+        <p className="text-lg" style={{ color: 'rgba(255,255,255,0.9)' }}>Upload documents and ask questions instantly</p>
       </header>
 
-      <main style={{ maxWidth: '520px', margin: '0 auto', padding: '0 20px 60px' }}>
+      <main className="max-w-2xl mx-auto px-4 pb-16">
         {!docId ? (
           <Upload onUpload={(id, name) => { setDocId(id); setFilename(name); }} />
         ) : (
           <>
-            <div style={{
-              background: 'white', borderRadius: '16px', boxShadow: '0 4px 20px rgba(0,0,0,0.1)',
-              padding: '18px 24px', marginBottom: '20px',
-              display: 'flex', justifyContent: 'space-between', alignItems: 'center'
-            }}>
-              <p style={{ fontSize: '1rem', fontWeight: '600', color: '#374151', margin: 0 }}>
-                📄 <span style={{ color: '#7c3aed' }}>{filename}</span>
+            <div className="rounded-2xl shadow-lg p-5 mb-5 flex justify-between items-center" style={{ background: 'rgba(255,255,255,0.95)', backdropFilter: 'blur(10px)' }}>
+              <p className="text-lg font-semibold" style={{ color: '#1f2937' }}>
+                📄 <span style={{ color: '#3b82f6' }}>{filename}</span>
               </p>
               <button
                 onClick={() => { setDocId(null); setFilename(null); }}
-                style={{
-                  background: 'linear-gradient(135deg, #a855f7, #ec4899)',
-                  color: 'white', border: 'none', padding: '10px 20px',
-                  borderRadius: '10px', cursor: 'pointer', fontWeight: '600',
-                  fontSize: '0.9rem', transition: 'opacity 0.2s'
-                }}
+                className="text-white px-4 py-2 rounded-xl transition font-semibold"
+                style={{ background: 'linear-gradient(135deg, #3b82f6, #2563eb)' }}
               >
                 📁 Upload Another
               </button>

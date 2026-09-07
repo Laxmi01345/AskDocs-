@@ -34,51 +34,34 @@ function Upload({ onUpload }) {
   };
 
   return (
-    <div style={{
-      background: 'white', borderRadius: '16px',
-      boxShadow: '0 8px 32px rgba(0,0,0,0.12)',
-      padding: '40px', maxWidth: '480px', margin: '0 auto'
-    }}>
-      <h2 style={{ fontSize: '1.5rem', fontWeight: 'bold', textAlign: 'center', color: '#1f2937', marginBottom: '6px' }}>
-        📤 Upload Document
-      </h2>
-      <p style={{ textAlign: 'center', color: '#6b7280', marginBottom: '28px', fontSize: '0.9rem' }}>
-        Supported: TXT, PDF, DOCX
-      </p>
+    <div className="flex justify-center items-center">
+      <div className="rounded-2xl shadow-2xl p-10 max-w-md w-full" style={{ background: 'rgba(255,255,255,0.95)', backdropFilter: 'blur(10px)' }}>
+        <h2 className="text-3xl font-bold text-center mb-2" style={{ color: '#1f2937' }}>
+          <span className="mr-2">📤</span>Upload Document
+        </h2>
+        <p className="text-center mb-8" style={{ color: '#6b7280', fontSize: '0.95em' }}>Supported: TXT, PDF, DOCX</p>
 
-      <form onSubmit={handleUpload}>
-        <input
-          type="file"
-          accept=".txt,.pdf,.docx"
-          onChange={handleFileChange}
-          disabled={loading}
-          style={{
-            display: 'block', width: '100%', marginBottom: '24px',
-            padding: '12px 14px', borderRadius: '10px',
-            border: '1px solid #d1d5db', background: '#f9fafb',
-            fontSize: '0.9rem', boxSizing: 'border-box'
-          }}
-        />
-        <button
-          type="submit"
-          disabled={loading}
-          style={{
-            width: '100%', padding: '14px',
-            background: 'linear-gradient(135deg, #a855f7, #ec4899)',
-            color: 'white', border: 'none', borderRadius: '10px',
-            fontSize: '1rem', fontWeight: 'bold', cursor: 'pointer',
-            opacity: loading ? 0.5 : 1, transition: 'opacity 0.2s'
-          }}
-        >
-          {loading ? '⏳ Uploading...' : '📁 Upload'}
-        </button>
-      </form>
+        <form onSubmit={handleUpload}>
+          <input
+            type="file"
+            accept=".txt,.pdf,.docx"
+            onChange={handleFileChange}
+            disabled={loading}
+            className="block w-full mb-6 p-3 rounded-xl cursor-pointer transition"
+            style={{ border: '2px solid #e5e7eb', fontSize: '0.9em' }}
+          />
+          <button 
+            type="submit" 
+            disabled={loading}
+            className="w-full text-white font-bold py-3 rounded-xl transition disabled:opacity-50 disabled:cursor-not-allowed"
+            style={{ background: 'linear-gradient(135deg, #3b82f6, #2563eb)' }}
+          >
+            {loading ? '⏳ Uploading...' : '📁 Upload'}
+          </button>
+        </form>
 
-      {error && (
-        <p style={{ color: '#ef4444', fontWeight: 'bold', textAlign: 'center', marginTop: '16px' }}>
-          {error}
-        </p>
-      )}
+        {error && <p className="font-bold mt-4 text-center" style={{ color: '#ef4444' }}>{error}</p>}
+      </div>
     </div>
   );
 }
