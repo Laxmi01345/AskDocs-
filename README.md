@@ -250,3 +250,6 @@ npm run dev
 
 ## Demo
 https://github.com/user-attachments/assets/3e2d3ca6-abd3-4b1e-a1d2-4f08ee27dcba
+
+## Evaluation
+https://drive.google.com/file/d/1KubFFPPsLc0eOX43jrfx-CeBp-cCyJXM/view?usp=drive_link
