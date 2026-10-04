@@ -18,7 +18,7 @@ Upload documents, ask questions, and compare retrieval strategies: Simple Chunki
 - **Cross-Encoder Reranking** – Re-ranks candidates for precision
 - **Semantic Chunking** – Topic-aware splitting using embedding similarity
 - **Conversational Memory** – Multi-turn sessions with summarization
-- **Comparative Evaluation** – Recall@5, MRR, Correctness, Faithfulness
+- **Comparative Evaluation** – Semantic Recall@5, MRR, NDCG@5 (local) + Ragas generation metrics (LLM judge)
 
 ---
 
@@ -55,6 +55,7 @@ Question → [Simple | Semantic | Hybrid | Reranked] → Context Assembly → LL
 | Reranker | cross-encoder/ms-marco-MiniLM-L6-v2 |
 | Text Splitting | RecursiveCharacterTextSplitter + Semantic |
 | Document Parsing | PyPDF, python-docx, Docx2txt |
+| Evaluation | Ragas 0.4.3 (judge: qwen/qwen3.8-27b via Groq) |
 
 ### Frontend
 
@@ -92,9 +93,10 @@ AskDocs-
 │   │   ├── session.py           # Session manager
 │   │   ├── context_builder.py   # RAG prompt assembly
 │   │   └── validation/
-│   │       ├── retrieval_validation.py
-│   │       └── generation_validation.py
-│   ├── validate.py              # Comparative evaluation CLI
+│   │       ├── retrieval_validation.py   # local metrics incl. NDCG@5
+│   │       ├── generation_validation.py  # Ragas + custom judge
+│   │       └── ragas_compat.py           # Ragas offline/Groq adapters
+│   ├── validate.py              # Evaluation CLI (retrieval + generation)
 │   ├── employee_eval.json       # Evaluation dataset (10 Q&A)
 │   ├── requirements.txt
 │   └── .env
@@ -134,42 +136,70 @@ Methods: `simple`, `semantic`, `hybrid`, `reranked`
 
 ## Evaluation
 
+Evaluation has two independent stages, run from a single entry point (`backend/validate.py`):
+
+1. **Retrieval evaluation** – deterministic and local (no API keys): Semantic
+   Recall@5, MRR, NDCG@5, Precision, Recall, F1, average relevance, diversity.
+2. **Generation evaluation** – [Ragas](https://docs.ragas.io) LLM judge:
+   faithfulness, answer_relevancy, answer_correctness by default; optional
+   context_precision and context_recall. Answers are generated once per
+   question and reused across metrics.
+
+Ground-truth chunks are matched **semantically** (embedding cosine similarity
+≥ 0.30), so "Semantic Recall@5" is not exact chunk-ID matching.
+
 ### Running Validation
 
 ```bash
 cd backend
 
-# Single method
-python validate.py --doc-id YOUR_DOC_ID --method simple
+# Full run (retrieval + generation + Ragas), single method
+python validate.py --doc-id YOUR_DOC_ID
 
-# Compare all methods
+# Compare all 4 retrieval methods
 python validate.py --doc-id YOUR_DOC_ID --compare
+
+# Retrieval only (local, no API keys needed)
+python validate.py --doc-id YOUR_DOC_ID --skip-generation
+
+# Select Ragas metrics (default: faithfulness answer_relevancy answer_correctness)
+python validate.py --doc-id YOUR_DOC_ID --ragas-metrics faithfulness context_precision
+
+# Also run the legacy custom LLM-as-judge (opt-in)
+python validate.py --doc-id YOUR_DOC_ID --custom-judge
+
+# Smoke test: first 2 questions only
+python validate.py --doc-id YOUR_DOC_ID --limit 2
 ```
+
+Generation evaluation requires `GROQ_API_KEY` in `backend/.env`. The judge
+model defaults to `qwen/qwen3.8-27b` (override via `RAGAS_JUDGE_MODEL` /
+`RAGAS_JUDGE_BASE_URL`).
 
 ### Metrics
 
-| Metric | Description |
-|--------|-------------|
-| **Recall@5** | % of ground truth chunks found in retrieved results |
-| **MRR** | Mean Reciprocal Rank (position of first relevant result) |
-| **Correctness** | LLM-as-judge score for answer accuracy |
-| **Faithfulness** | % of answer claims supported by context |
+| Stage | Metric | Description |
+|-------|--------|-------------|
+| Retrieval | **Semantic Recall@5** | % of ground-truth chunks semantically matched in top-5 |
+| Retrieval | **MRR** | Reciprocal rank of the first matched chunk |
+| Retrieval | **NDCG@5** | Ranking quality of the retrieved list (binary gains) |
+| Retrieval | **Precision / Recall / F1** | Set overlap with ground truth |
+| Retrieval | **Avg Relevance** | Mean cosine similarity between question and chunks |
+| Retrieval | **Diversity** | 1 − mean pairwise similarity among retrieved chunks |
+| Generation | **Faithfulness** | Answer claims supported by retrieved context (Ragas) |
+| Generation | **Answer Relevancy** | Answer addresses the question (Ragas) |
+| Generation | **Answer Correctness** | Answer matches the reference answer (Ragas) |
+| Generation | **Context Precision / Recall** | Retrieval quality per Ragas (optional) |
 
-### Sample Results
+### Output
 
-| Method | Recall@5 | MRR | Correctness | Faithfulness |
-|--------|----------|-----|-------------|--------------|
-| Simple | 90.0% | 0.90 | 83.8% | 79.0% |
-| Semantic | **100.0%** | **1.00** | **89.3%** | **95.0%** |
-| Hybrid | 90.0% | 0.90 | 69.8% | 52.0% |
-| Reranked | **100.0%** | **1.00** | **89.5%** | **93.5%** |
+Results are written to `backend/evaluation_results.json` (saved incrementally
+after each method). Per method it contains `retrieval`, `generation` and
+`api_usage` blocks, each with aggregate scores plus `per_question` details.
 
-**Improvement progression:**
-- Simple → Semantic: +11.1% Recall, +11.1% MRR, +6.6% Correctness, +16% Faithfulness
-- Semantic → Hybrid: -10% Recall, -10% MRR, -19.5% Correctness, -43% Faithfulness
-- Hybrid → Reranked: +11.1% Recall, +11.1% MRR, +28.2% Correctness, +41.5% Faithfulness
-
-**Best method:** Reranked (Semantic chunks + Cross-encoder reranking) achieves 89.5% correctness and 93.5% faithfulness
+The dataset (`backend/employee_eval.json`) has 10 questions with reference
+answers and ground-truth chunks – scores are indicative, not benchmark-grade.
+Compare methods on the same dataset rather than reading absolute numbers.
 
 ---
 

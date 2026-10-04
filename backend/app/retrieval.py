@@ -1,7 +1,6 @@
 from fastapi import HTTPException
 from app.database import get_vectorstore, get_semantic_vectorstore
 from app.reranker import get_cross_encoder
-from app.llm import CerebrasLLM
 from app.context_builder import build_rag_prompt
 from app.session import Session
 from langchain_core.prompts import PromptTemplate
@@ -124,6 +123,8 @@ def _retrieve_and_rerank(doc_id: str, question: str, top_k: int = 3):
 
 
 def answer_with_rag(doc_id: str, question: str, top_k: int = 3, method: str = "reranked"):
+    from app.llm import CerebrasLLM
+
     retrieved_docs = retrieve(doc_id, question, top_k, method)
 
     if not retrieved_docs:
@@ -169,6 +170,8 @@ def answer_with_rag(doc_id: str, question: str, top_k: int = 3, method: str = "r
 
 
 def answer_with_rag_with_history(doc_id: str, question: str, top_k: int, session: Session, method: str = "reranked"):
+    from app.llm import CerebrasLLM
+
     retrieved_docs = retrieve(doc_id, question, top_k, method)
 
     if not retrieved_docs:

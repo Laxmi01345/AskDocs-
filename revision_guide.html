@@ -95,7 +95,7 @@
             <li><strong>Cross-Encoder Reranking</strong> - Precision re-scoring</li>
             <li><strong>Conversational Memory</strong> - Multi-turn chat with session tracking</li>
             <li><strong>Grounded Generation</strong> - LLM answers ONLY from retrieved context</li>
-            <li><strong>Comparative Evaluation</strong> - Recall@5, MRR, Correctness, Faithfulness</li>
+            <li><strong>Comparative Evaluation</strong> - Semantic Recall@5, MRR, NDCG@5 (local) + Ragas faithfulness/relevancy/correctness (LLM judge)</li>
         </ul>
     </section>
 
@@ -167,6 +167,7 @@ sim range: -1.0 (opposite) to 1.0 (identical)
             <tr><td>BM25</td><td>rank-bm25 (Okapi BM25)</td><td>Keyword search for hybrid retrieval</td></tr>
             <tr><td>Document Parsing</td><td>LangChain loaders (PyPDF, Docx2txt, TextLoader)</td><td>Multi-format support</td></tr>
             <tr><td>Chunking</td><td>RecursiveCharacterTextSplitter</td><td>Respects document structure</td></tr>
+            <tr><td>Evaluation</td><td>Ragas 0.4.3 (judge: qwen3.8-27b via Groq)</td><td>Standard LLM-judge metrics for faithfulness, relevancy, correctness</td></tr>
             <tr><td>Frontend</td><td>React + Vite + Tailwind CSS</td><td>Modern, fast dev experience</td></tr>
             <tr><td>Markdown Rendering</td><td>react-markdown</td><td>Renders LLM markdown output</td></tr>
         </table>
@@ -811,7 +812,7 @@ After 10 questions:<br>
 
         <div class="qa">
             <strong>Q: What is Hallucination in LLMs?</strong>
-            <p>When the LLM generates facts not present in the provided context. We mitigate this by: (1) grounding in retrieved context, (2) instructing "answer ONLY from context", (3) validation with hallucination scoring.</p>
+            <p>When the LLM generates facts not present in the provided context. We mitigate this by: (1) grounding in retrieved context, (2) instructing "answer ONLY from context", (3) validation with a Ragas faithfulness judge that flags unsupported statements.</p>
         </div>
     </section>
 
@@ -933,7 +934,91 @@ Interpretation:
   F1        = harmonic mean (balanced score)
         </div>
 
-        <h4>6. Retrieval Verdict</h4>
+        <h4>6. Semantic Recall@5 (Ground Truth Coverage)</h4>
+        <div class="code">
+Only computed when ground_truth_chunks are provided.
+Matching is SEMANTIC, not by chunk ID - each method re-chunks
+differently, so chunk IDs are not comparable across methods.
+
+Definition:
+  A ground-truth chunk is "matched" when its cosine similarity
+  to ANY retrieved chunk (top-5) is &gt;= 0.30
+  (RETRIEVAL_MATCH_THRESHOLD).
+
+Formula:
+  matched   = count of ground-truth chunks with at least one match
+  Recall@5  = matched / len(ground_truth_chunks)
+
+Example (3 ground-truth chunks, top-5 retrieved):
+  gt_41: best cosine vs retrieved = 0.87  &#10003; matched
+  gt_40: best cosine vs retrieved = 0.81  &#10003; matched
+  gt_39: best cosine vs retrieved = 0.44  &#10003; matched
+  -&gt; Recall@5 = 3 / 3 = 1.0
+
+  If gt_39 best cosine were 0.29:
+  -&gt; Recall@5 = 2 / 3 = 0.667
+
+Range: 0.0 to 1.0 (per question; dataset score = mean over questions)
+Interpretation:
+  1.0  -&gt; every ground-truth chunk was retrieved
+  &lt; 0.8 -&gt; retrieval misses key content
+Called "Semantic" Recall because near-duplicate chunks count as
+matches - it is deliberately NOT exact chunk-ID matching.
+        </div>
+
+        <h4>7. MRR (Mean Reciprocal Rank)</h4>
+        <div class="code">
+Definition:
+  retrieved_hits[i] = 1 if retrieved chunk at rank i+1 matches
+    ANY ground-truth chunk (cosine &gt;= 0.30), else 0
+  first_relevant_rank = 1-based index of the first hit
+
+Formula (per question):
+  RR = 1 / first_relevant_rank     (0 if no hit)
+Dataset score: MRR = mean(RR) over all questions
+
+Example:
+  hits = [1, 0, 1, 0, 0]  -&gt; first hit at rank 1  -&gt; RR = 1/1 = 1.0
+  hits = [0, 0, 1, 0, 0]  -&gt; first hit at rank 3  -&gt; RR = 1/3 = 0.333
+  hits = [0, 0, 0, 0, 0]  -&gt; no hit               -&gt; RR = 0.0
+
+Range: 0.0 to 1.0
+Interpretation:
+  How high up the list the first relevant chunk appears.
+  1.0 -&gt; the very first result is always relevant
+  Rewards ranking relevant chunks EARLY, not just finding them.
+        </div>
+
+        <h4>8. NDCG@5 (Normalized Discounted Cumulative Gain)</h4>
+        <div class="code">
+Definition (binary gains):
+  gain_i = 1 if retrieved chunk at rank i matches any
+    ground-truth chunk (cosine &gt;= 0.30), else 0
+
+Steps (i is 0-based index over top-5):
+  1. DCG@5  = SUM( gain_i / log2(i + 2) )           i = 0..4
+  2. IDCG@5 = same sum over gains sorted descending
+              (all 1s first, then 0s)
+  3. NDCG@5 = DCG@5 / IDCG@5     (0.0 when IDCG = 0)
+
+Example:
+  gains = [1, 0, 1, 0, 0]   (2 hits)
+  DCG   = 1/log2(2) + 1/log2(4) = 1.0 + 0.5   = 1.500
+  ideal = [1, 1, 0, 0, 0]
+  IDCG  = 1/log2(2) + 1/log2(3) = 1.0 + 0.631 = 1.631
+  NDCG  = 1.500 / 1.631 = 0.9197
+
+  All 5 hits at ranks 1-5   -&gt; DCG = IDCG -&gt; NDCG = 1.0
+  No hits                   -&gt; NDCG = 0.0
+
+Range: 0.0 to 1.0
+Interpretation:
+  Ranking quality: gains are DISCOUNTED by rank position.
+  Same set of hits in a worse order = lower NDCG.
+  NDCG = 1.0 means the ranking is optimal for these hits.
+        </div>
+
+        <h4>9. Retrieval Verdict</h4>
         <div class="code">
 Decision rules:
   avg_relevance &gt; 0.6  AND  diversity &gt; 0.3  →  EXCELLENT
@@ -953,11 +1038,139 @@ Example:
 
         <h3>7.2 Generation Validation — Metrics & Formulas</h3>
 
-        <h4>1. Faithfulness</h4>
         <div class="code">
-Method: LLM-as-judge
-Uses Cerebras AI to evaluate whether the answer is grounded in context.
+Two evaluation modes:
+  1. DEFAULT — Ragas 0.4.3 (standard open-source framework):
+     faithfulness, answer_relevancy, answer_correctness.
+     Judge LLM: qwen/qwen3.8-27b via Groq (env: RAGAS_JUDGE_MODEL).
+     Embeddings: local MiniLM — same model as retrieval (offline).
+     All samples are scored in ONE batched ragas.evaluate() call.
+  2. LEGACY — the project's own prompt-based judge, opt-in via
+     --custom-judge (subsections 5–10 below).
 
+Cost note: answers are generated once per question, then reused by
+every metric — judge calls scale with metrics × questions, not with
+the number of methods (in --compare mode each method scores its own
+answers).
+        </div>
+
+        <h4>1. Ragas Faithfulness (default)</h4>
+        <div class="code">
+Method: Ragas LLM judge (natural-language-inference style)
+
+How ragas 0.4.3 computes it:
+  1. Judge LLM extracts every factual STATEMENT from the answer
+     (statement_generator_prompt, conditioned on the question)
+  2. Judge LLM labels each statement against the concatenated
+     retrieved contexts: supported / not supported
+     (nli_statements_prompt)
+  3. score = supported_statements / total_statements
+
+Inputs per sample:
+  user_input         = the question
+  response           = the answer
+  retrieved_contexts = the top-5 chunk texts
+
+Example:
+  Context: "Standard working hours are 9:00 AM to 5:30 PM PT."
+  Answer:  "Working hours are 9:00 AM to 5:30 PM Pacific Time."
+  1 statement, supported → faithfulness = 1.0
+
+Bad case:
+  Answer: "Hours are 9:00 AM to 5:30 PM PT, overtime paid at 1.5x."
+  2 statements, 1 unsupported ("overtime at 1.5x" not in context)
+  → faithfulness = 0.5
+
+Range: 0.0 to 1.0 (dataset score = mean over questions)
+Interpretation: high = the answer sticks to retrieved context.
+This is the primary hallucination detector (layers: grounded prompt
+→ "say I don't know" instruction → this judge; see §9).
+        </div>
+
+        <h4>2. Ragas Answer Relevancy (default)</h4>
+        <div class="code">
+Method: Ragas judge (question generation) + local embeddings
+
+How ragas 0.4.3 computes it:
+  1. Judge LLM generates N questions (strictness = 3) that the
+     ANSWER could plausibly be answering
+  2. Embed the original question + the 3 generated questions
+     (local MiniLM, embed_query/embed_documents)
+  3. score = mean cosine similarity of generated vs original
+     × 0 when every generated question is non-committal ("N/A")
+
+Example:
+  Q: "How many PTO days do full-time employees receive?"
+  A: "Full-time employees receive 20 days of PTO per year."
+  generated: ["How many PTO days...?", "What is the annual PTO
+              policy...?", "PTO days for full-time staff?"]
+  cosines ≈ [0.95, 0.92, 0.97] → answer_relevancy ≈ 0.95
+
+Bad case:
+  Q: "How many PTO days...?"
+  A: "The office is in San Francisco."
+  generated questions drift away from the original → low cosines
+  → score ≈ 0.2–0.4
+
+Range: 0.0 to 1.0
+Note: needs NO reference answer — judge + retrieval embeddings only.
+        </div>
+
+        <h4>3. Ragas Answer Correctness (default)</h4>
+        <div class="code">
+Method: Ragas judge (fact classification) + local embeddings
+Needs: the reference (ground truth) answer from the dataset.
+
+How ragas 0.4.3 computes it:
+  1. Statement generator extracts key statements from the
+     REFERENCE answer
+  2. Correctness classifier labels each against the answer:
+     TP (in both), FP (answer only), FN (reference only)
+  3. fact_score = F1 over TP/FP/FN   (beta = 1.0)
+  4. blend with semantic similarity (cosine of answer vs reference):
+     score = 0.75 × fact_F1 + 0.25 × cosine
+     (weights field, default [0.75, 0.25])
+
+Example:
+  Reference: "Full-time employees receive 20 PTO days per year."
+  Answer:    "Full-time employees receive 20 days of PTO annually."
+  all facts matched, cosine ≈ 0.95 → correctness ≈ 0.96
+
+Bad case:
+  Answer: "Employees receive 15 PTO days."
+  fact mismatch (15 vs 20) → fact_F1 low → score ≈ 0.3
+
+Range: 0.0 to 1.0
+Interpretation: correctness ≈ faithfulness for factual questions —
+a faithful answer to a poor retrieval context still scores low here
+because it disagrees with the reference.
+        </div>
+
+        <h4>4. Optional Ragas Metrics (--ragas-metrics)</h4>
+        <div class="code">
+Selectable in addition to (or instead of) the default three:
+
+  context_precision  — judges each retrieved chunk's relevance,
+                       then weights precision by rank (relevant
+                       chunks higher up score higher)
+  context_recall     — compares facts in the reference answer
+                       against retrieved contexts: fraction of
+                       reference facts the context can support
+
+Both require reference data and add judge calls; off by default:
+  python validate.py --doc-id ID --ragas-metrics faithfulness context_recall
+
+SUPPORTED_RAGAS_METRICS = [faithfulness, answer_relevancy,
+  answer_correctness, context_precision, context_recall]
+        </div>
+
+        <h4>5. Legacy Custom Judge (--custom-judge, opt-in)</h4>
+        <div class="code">
+Legacy mode — the project's own prompt-based judge (CerebrasLLM,
+4 separate JSON prompts + composite score). Runs ONLY with the
+--custom-judge flag; Ragas above is the default.
+
+Faithfulness prompt:
 Prompt asks LLM to produce JSON:
 {
   "score": &lt;0.0 to 1.0&gt;,
@@ -987,7 +1200,7 @@ Bad case:
   → score 0.6 = partially hallucinated ("stock options" not in context)
         </div>
 
-        <h4>2. Answer Relevancy</h4>
+        <h4>6. Legacy: Answer Relevancy</h4>
         <div class="code">
 Method: LLM-as-judge
 Evaluates whether the answer actually addresses the question.
@@ -1012,7 +1225,7 @@ Bad case:
   → {"score": 0.1, "reason": "Answer discusses location, not salary"}
         </div>
 
-        <h4>3. Hallucination Score</h4>
+        <h4>7. Legacy: Hallucination Score</h4>
         <div class="code">
 Method: LLM-as-judge
 Detects if the LLM invented facts not present in the context.
@@ -1039,7 +1252,7 @@ Bad case:
   score 0.9 → nearly fully hallucinated, contradicts context
         </div>
 
-        <h4>4. Ground Truth Similarity (Optional)</h4>
+        <h4>8. Legacy: Ground Truth Similarity (Optional)</h4>
         <div class="code">
 Method: LLM-as-judge
 Only when ground_truth answer is provided in the eval dataset.
@@ -1059,7 +1272,7 @@ Example:
      "key_facts_missed": ["exact title 'Senior Developer'"]}
         </div>
 
-        <h4>5. Overall Score</h4>
+        <h4>9. Legacy: Overall Score</h4>
         <div class="code">
 Formula:
   scores = [faithfulness, answer_relevancy, (1 - hallucination_score)]
@@ -1084,7 +1297,7 @@ Example (problematic):
   overall = (0.6 + 0.9 + 0.7) / 3 = 0.7333
         </div>
 
-        <h4>6. Generation Verdict</h4>
+        <h4>10. Legacy: Generation Verdict</h4>
         <div class="code">
 Decision rules:
   overall_score &gt;= 0.8  →  EXCELLENT
@@ -1101,25 +1314,42 @@ Example:
 
         <h3>7.3 Running Validation</h3>
         <div class="code">
-# Single method<br>
-python validate.py --doc-id YOUR_DOC_ID --method simple<br><br>
-# Compare all 4 methods<br>
+# Retrieval only (local, deterministic, no API keys)<br>
+python validate.py --doc-id YOUR_DOC_ID --skip-generation<br><br>
+# Full run: retrieval + answer generation + Ragas (default metrics)<br>
+python validate.py --doc-id YOUR_DOC_ID<br><br>
+# Compare all 4 methods (one answer set + one judge pass per method)<br>
 python validate.py --doc-id YOUR_DOC_ID --compare<br><br>
-# Output comparison table:<br>
-# Configuration          Recall@5   MRR    Correctness  Faithfulness<br>
-# Simple Chunking        90.0%      0.90   83.8%        79.0%<br>
-# Semantic Chunking      100.0%     1.00   89.3%        95.0%<br>
-# Hybrid (BM25+Vec+RRF)  90.0%      0.90   69.8%        52.0%<br>
-# Reranked               100.0%     1.00   89.5%        93.5%<br><br>
-# IMPROVEMENT PROGRESSION:<br>
-# Simple → Semantic:  +11.1% Recall, +11.1% MRR, +6.6% Correctness, +16% Faithfulness<br>
-# Semantic → Hybrid:  -10% Recall, -10% MRR, -19.5% Correctness, -43% Faithfulness<br>
-# Hybrid → Reranked:  +11.1% Recall, +11.1% MRR, +28.2% Correctness, +41.5% Faithfulness<br><br>
-# BEST METHOD: Reranked (Semantic + Cross-encoder) = 89.5% Correctness, 93.5% Faithfulness
+# Choose Ragas metrics<br>
+# (default: faithfulness answer_relevancy answer_correctness)<br>
+python validate.py --doc-id YOUR_DOC_ID --ragas-metrics faithfulness context_precision<br><br>
+# Also run the legacy custom judge (opt-in)<br>
+python validate.py --doc-id YOUR_DOC_ID --custom-judge<br><br>
+# Smoke test: first N questions only<br>
+python validate.py --doc-id YOUR_DOC_ID --limit 2<br><br>
+# Other options:<br>
+#   --method simple|semantic|hybrid|reranked  (default: reranked)<br>
+#   --top-k 5          retrieval depth (default 5)<br>
+#   --dataset PATH     eval JSON (default: employee_eval.json)<br><br>
+# Output:<br>
+#   1. Retrieval comparison table (Recall@5, MRR, NDCG@5, P/R/F1,<br>
+#      AvgRel, Diversity) — deterministic, local<br>
+#   2. Generation comparison table (Ragas scores per metric)<br>
+#   3. Retrieval delta table vs the baseline method (percent change)<br>
+#   4. API usage counts (answer calls, judge evaluations)<br>
+#   5. evaluation_results.json — saved INCREMENTALLY after each<br>
+#      method, so a partial run keeps everything completed so far<br><br>
+# JSON schema per method:<br>
+#   retrieval:  recall_at_5, mrr, ndcg_at_5, precision, recall, f1,<br>
+#               avg_relevance, diversity, verdict, per_question<br>
+#   generation: faithfulness, answer_relevancy, answer_correctness,<br>
+#               errors, per_question<br>
+#   api_usage:  answer_llm_calls, ragas_judge_evaluations,<br>
+#               custom_judge_calls<br>
         </div>
         <br>
         <div class="tip">
-            <strong>Key Insight:</strong> Reranked achieves the highest correctness by combining Semantic chunks (topic-aware retrieval) with Cross-encoder reranking (precision scoring). The progression shows that each method builds on the previous: Simple (baseline) → Semantic (better chunks) → Reranked (best precision).
+            <strong>Key Insight:</strong> Retrieval metrics are deterministic — the same dataset always yields the same Recall@5/MRR/NDCG@5, and they run offline with no API keys. Generation metrics come from an LLM judge, so they vary slightly between runs. Compare methods <em>within a single run</em> on the same dataset; absolute numbers depend on the dataset and judge model.
         </div>
     </section>
 
@@ -1142,16 +1372,18 @@ AskDocs-/<br>
 &ensp;&ensp;&ensp;session.py          &ensp;&ensp;&ensp;&ensp;&ensp;&ensp;# Session manager (TTL, LRU)<br>
 &ensp;&ensp;&ensp;context_builder.py  &ensp;&ensp;# Prompt assembly with history<br>
 &ensp;&ensp;&ensp;validation/<br>
-&ensp;&ensp;&ensp;&ensp;retrieval_validation.py  # Retrieval scoring<br>
-&ensp;&ensp;&ensp;&ensp;generation_validation.py # Generation scoring<br>
+&ensp;&ensp;&ensp;&ensp;retrieval_validation.py  # Recall@5/MRR/NDCG@5 + P/R/F1<br>
+&ensp;&ensp;&ensp;&ensp;generation_validation.py # Ragas (default) + legacy judge<br>
+&ensp;&ensp;&ensp;&ensp;ragas_compat.py          # Ragas shims + Groq judge adapters<br>
 &ensp;&ensp;&ensp;utils/<br>
 &ensp;&ensp;&ensp;&ensp;logger.py           &ensp;&ensp;&ensp;&ensp;# JSONL logging<br>
 &ensp;&ensp;main.py               &ensp;&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;# FastAPI app setup<br>
-&ensp;&ensp;validate.py           &ensp;&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;# Validation script<br>
+&ensp;&ensp;validate.py           &ensp;&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;# Evaluation CLI (retrieval + generation)<br>
 &ensp;&ensp;requirements.txt      &ensp;&ensp;&ensp;&ensp;&ensp;&ensp;# Python dependencies<br>
 &ensp;&ensp;.env                  &ensp;&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;# API keys + config<br>
 &ensp;&ensp;demo.txt              &ensp;&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;# Sample document<br>
-&ensp;&ensp;employee_eval.json    &ensp;&ensp;&ensp;&ensp;# Evaluation dataset<br>
+&ensp;&ensp;employee_eval.json    &ensp;&ensp;&ensp;&ensp;# Evaluation dataset (10 Q&amp;A)<br>
+&ensp;evaluation_results.json &ensp;&ensp;# Latest eval output (incremental)<br>
 &ensp;frontend/<br>
 &ensp;&ensp;src/<br>
 &ensp;&ensp;&ensp;App.jsx             &ensp;&ensp;&ensp;&ensp;&ensp;&ensp;# Main app component<br>
@@ -1192,7 +1424,7 @@ AskDocs-/<br>
 
         <div class="qa">
             <strong>Q: How do you prevent LLM hallucination?</strong>
-            <p>Three layers: (1) Ground answers in retrieved context only, (2) Prompt instructs "answer ONLY from context, say I don't know if not present", (3) Validation layer scores faithfulness and hallucination.</p>
+            <p>Three layers: (1) Ground answers in retrieved context only, (2) Prompt instructs "answer ONLY from context, say I don't know if not present", (3) Validation layer scores faithfulness with a Ragas LLM judge (unsupported statements lower the score).</p>
         </div>
 
         <div class="qa">
@@ -1219,24 +1451,30 @@ AskDocs-/<br>
 
         <div class="qa">
             <strong>Q: What are the validation metrics and formulas?</strong>
-            <p><strong>Retrieval:</strong></p>
+            <p><strong>Stage 1 — Retrieval (deterministic, local):</strong></p>
             <ul>
+                <li><strong>Semantic Recall@5:</strong> matched ground-truth chunks / |ground truth| — matching by cosine &ge; 0.30, not chunk ID</li>
+                <li><strong>MRR:</strong> 1 / rank of the first relevant chunk — how high the first hit appears</li>
+                <li><strong>NDCG@5:</strong> DCG@5 / IDCG@5, binary gains, discount 1/log₂(rank+1) — ranking quality</li>
                 <li><strong>Cosine Similarity:</strong> sim(Q, C) = (Q &middot; C) / (||Q|| &times; ||C||) — measures semantic relevance</li>
-                <li><strong>Avg Relevance:</strong> (1/k) &times; &Sigma; sim(Q, C_i) — average relevance across k chunks</li>
+                <li><strong>Avg Relevance:</strong> (1/k) &times; Σ sim(Q, C_i) — average relevance across k chunks</li>
                 <li><strong>Diversity:</strong> 1 - mean(upper_tri(sim_matrix)) — chunk variety</li>
                 <li><strong>Hit Rate:</strong> count(sim_i &gt; 0.35) / k — fraction of useful chunks</li>
-                <li><strong>Precision:</strong> TP / (TP + FP) — correctness of retrieval</li>
-                <li><strong>Recall:</strong> TP / (TP + FN) — completeness of retrieval</li>
-                <li><strong>F1:</strong> 2PR / (P + R) — harmonic mean of precision &amp; recall</li>
+                <li><strong>Precision / Recall / F1:</strong> TP/(TP+FP), TP/(TP+FN), 2PR/(P+R) — set overlap with ground truth</li>
             </ul>
             <br>
-            <p><strong>Generation:</strong></p>
+            <p><strong>Stage 2 — Generation (Ragas 0.4.3 LLM judge, default):</strong></p>
             <ul>
-                <li><strong>Faithfulness:</strong> LLM-as-judge score (0-1) — are facts grounded in context?</li>
-                <li><strong>Answer Relevancy:</strong> LLM-as-judge score (0-1) — does answer address question?</li>
-                <li><strong>Hallucination Score:</strong> LLM-as-judge (0-1, where 0 = none) — invented facts?</li>
-                <li><strong>Overall Score:</strong> mean(faithfulness, relevancy, 1 - hallucination) — composite quality</li>
+                <li><strong>Faithfulness:</strong> supported statements / total statements extracted from the answer — the hallucination detector</li>
+                <li><strong>Answer Relevancy:</strong> mean cosine between the question and 3 judge-generated questions that the answer addresses</li>
+                <li><strong>Answer Correctness:</strong> 0.75 &times; F1(TP/FP/FN vs reference) + 0.25 &times; cosine(answer, reference)</li>
+                <li><strong>Legacy custom judge</strong> (opt-in <code>--custom-judge</code>): faithfulness, relevancy, hallucination score, overall = mean(F, R, 1−H)</li>
             </ul>
+        </div>
+
+        <div class="qa">
+            <strong>Q: Why two-stage evaluation, and why Ragas?</strong>
+            <p>Retrieval and generation fail differently. Stage 1 is deterministic and offline — Recall@5/MRR/NDCG@5 return the same numbers for the same dataset and need no API keys, so they isolate retrieval quality from LLM variance. Stage 2 scores the answers; Ragas is an established open-source framework, so its metric definitions (faithfulness, answer_relevancy, answer_correctness) are standard and comparable, with a pluggable judge model via Groq and our local MiniLM embeddings for the embedding-based parts. The project's original prompt-based judge is kept behind <code>--custom-judge</code> for comparison.</p>
         </div>
 
         <div class="qa">
@@ -1246,7 +1484,7 @@ AskDocs-/<br>
 
         <div class="qa">
             <strong>Q: What happens if the answer isn't in the document?</strong>
-            <p>The prompt instructs the LLM to say "I don't know" if the answer isn't in the context. Validation checks for hallucination to catch cases where the LLM fabricates answers.</p>
+            <p>The prompt instructs the LLM to say "I don't know" if the answer isn't in the context. The faithfulness judge then flags statements that aren't supported by the retrieved context.</p>
         </div>
     </section>
 
@@ -1261,10 +1499,15 @@ cd backend && uvicorn main:app --reload<br><br>
 cd frontend && npm run dev<br><br>
 # List documents<br>
 curl http://127.0.0.1:8000/documents<br><br>
-# Run validation (single method)<br>
+# Run validation (single method, full run)<br>
 python validate.py --doc-id YOUR_DOC_ID --method simple<br><br>
 # Compare all methods<br>
 python validate.py --doc-id YOUR_DOC_ID --compare<br><br>
+# Retrieval only (offline, no API keys)<br>
+python validate.py --doc-id YOUR_DOC_ID --skip-generation<br><br>
+# Select Ragas metrics / legacy judge<br>
+python validate.py --doc-id YOUR_DOC_ID --ragas-metrics faithfulness context_recall<br>
+python validate.py --doc-id YOUR_DOC_ID --custom-judge<br><br>
 # Upload via curl<br>
 curl -X POST http://127.0.0.1:8000/upload -F "file=@demo.txt"
         </div>
@@ -1285,6 +1528,11 @@ curl -X POST http://127.0.0.1:8000/upload -F "file=@demo.txt"
             <tr><td>MAX_CONTEXT_TOKENS</td><td>6000 tokens</td></tr>
             <tr><td>Token estimation</td><td>len(text) // 4</td></tr>
             <tr><td>Retrieval hit threshold</td><td>0.35 cosine similarity</td></tr>
+            <tr><td>Ground-truth match threshold</td><td>0.30 cosine (Semantic Recall@5 / MRR / NDCG)</td></tr>
+            <tr><td>NDCG cutoff k</td><td>5</td></tr>
+            <tr><td>Eval dataset</td><td>10 questions (employee_eval.json)</td></tr>
+            <tr><td>Default Ragas metrics</td><td>faithfulness, answer_relevancy, answer_correctness</td></tr>
+            <tr><td>Ragas judge model</td><td>qwen/qwen3.8-27b via Groq (env: RAGAS_JUDGE_MODEL)</td></tr>
             <tr><td>Embedding model</td><td>all-MiniLM-L6-v2 (80MB)</td></tr>
             <tr><td>Reranker model</td><td>ms-marco-MiniLM-L6-v2</td></tr>
             <tr><td>Embedding dimension</td><td>384</td></tr>
@@ -1292,12 +1540,13 @@ curl -X POST http://127.0.0.1:8000/upload -F "file=@demo.txt"
 
         <h3>Verdict Formula Reference</h3>
         <table>
-            <tr><th>Verdict</th><th>Retrieval Condition</th><th>Generation Condition</th></tr>
+            <tr><th>Verdict</th><th>Retrieval Condition</th><th>Generation Condition (legacy --custom-judge)</th></tr>
             <tr><td>EXCELLENT</td><td>avg_rel &gt; 0.6 AND diversity &gt; 0.3</td><td>overall_score &gt;= 0.8</td></tr>
             <tr><td>GOOD</td><td>avg_rel &gt; 0.4 AND diversity &gt; 0.2</td><td>overall_score &gt;= 0.6</td></tr>
             <tr><td>FAIR</td><td>avg_rel &gt; 0.3</td><td>overall_score &gt;= 0.4</td></tr>
             <tr><td>POOR / NEEDS_REVIEW</td><td>otherwise</td><td>otherwise</td></tr>
         </table>
+        <p><em>Ragas (default) reports raw 0–1 metric means — no verdict buckets. Generation verdicts only appear with --custom-judge.</em></p>
     </section>
 
     <!-- COMPLETE FORMULA REFERENCE -->
@@ -1544,7 +1793,91 @@ Example:
   F1        = harmonic mean (balanced score)
             </div>
 
-            <h4>6. Retrieval Verdict</h4>
+        <h4>6. Semantic Recall@5 (Ground Truth Coverage)</h4>
+        <div class="code">
+Only computed when ground_truth_chunks are provided.
+Matching is SEMANTIC, not by chunk ID - each method re-chunks
+differently, so chunk IDs are not comparable across methods.
+
+Definition:
+  A ground-truth chunk is "matched" when its cosine similarity
+  to ANY retrieved chunk (top-5) is &gt;= 0.30
+  (RETRIEVAL_MATCH_THRESHOLD).
+
+Formula:
+  matched   = count of ground-truth chunks with at least one match
+  Recall@5  = matched / len(ground_truth_chunks)
+
+Example (3 ground-truth chunks, top-5 retrieved):
+  gt_41: best cosine vs retrieved = 0.87  &#10003; matched
+  gt_40: best cosine vs retrieved = 0.81  &#10003; matched
+  gt_39: best cosine vs retrieved = 0.44  &#10003; matched
+  -&gt; Recall@5 = 3 / 3 = 1.0
+
+  If gt_39 best cosine were 0.29:
+  -&gt; Recall@5 = 2 / 3 = 0.667
+
+Range: 0.0 to 1.0 (per question; dataset score = mean over questions)
+Interpretation:
+  1.0  -&gt; every ground-truth chunk was retrieved
+  &lt; 0.8 -&gt; retrieval misses key content
+Called "Semantic" Recall because near-duplicate chunks count as
+matches - it is deliberately NOT exact chunk-ID matching.
+        </div>
+
+        <h4>7. MRR (Mean Reciprocal Rank)</h4>
+        <div class="code">
+Definition:
+  retrieved_hits[i] = 1 if retrieved chunk at rank i+1 matches
+    ANY ground-truth chunk (cosine &gt;= 0.30), else 0
+  first_relevant_rank = 1-based index of the first hit
+
+Formula (per question):
+  RR = 1 / first_relevant_rank     (0 if no hit)
+Dataset score: MRR = mean(RR) over all questions
+
+Example:
+  hits = [1, 0, 1, 0, 0]  -&gt; first hit at rank 1  -&gt; RR = 1/1 = 1.0
+  hits = [0, 0, 1, 0, 0]  -&gt; first hit at rank 3  -&gt; RR = 1/3 = 0.333
+  hits = [0, 0, 0, 0, 0]  -&gt; no hit               -&gt; RR = 0.0
+
+Range: 0.0 to 1.0
+Interpretation:
+  How high up the list the first relevant chunk appears.
+  1.0 -&gt; the very first result is always relevant
+  Rewards ranking relevant chunks EARLY, not just finding them.
+        </div>
+
+        <h4>8. NDCG@5 (Normalized Discounted Cumulative Gain)</h4>
+        <div class="code">
+Definition (binary gains):
+  gain_i = 1 if retrieved chunk at rank i matches any
+    ground-truth chunk (cosine &gt;= 0.30), else 0
+
+Steps (i is 0-based index over top-5):
+  1. DCG@5  = SUM( gain_i / log2(i + 2) )           i = 0..4
+  2. IDCG@5 = same sum over gains sorted descending
+              (all 1s first, then 0s)
+  3. NDCG@5 = DCG@5 / IDCG@5     (0.0 when IDCG = 0)
+
+Example:
+  gains = [1, 0, 1, 0, 0]   (2 hits)
+  DCG   = 1/log2(2) + 1/log2(4) = 1.0 + 0.5   = 1.500
+  ideal = [1, 1, 0, 0, 0]
+  IDCG  = 1/log2(2) + 1/log2(3) = 1.0 + 0.631 = 1.631
+  NDCG  = 1.500 / 1.631 = 0.9197
+
+  All 5 hits at ranks 1-5   -&gt; DCG = IDCG -&gt; NDCG = 1.0
+  No hits                   -&gt; NDCG = 0.0
+
+Range: 0.0 to 1.0
+Interpretation:
+  Ranking quality: gains are DISCOUNTED by rank position.
+  Same set of hits in a worse order = lower NDCG.
+  NDCG = 1.0 means the ranking is optimal for these hits.
+        </div>
+
+        <h4>9. Retrieval Verdict</h4>
             <div class="code" style="margin:10px 0;">
 Decision rules:
   avg_relevance > 0.6  AND  diversity > 0.3  →  EXCELLENT
@@ -1557,9 +1890,61 @@ Decision rules:
 
         <h3>11.7 Generation Validation Metrics</h3>
         <div class="card">
-            <p>Measures whether the LLM answer is good. All use <strong>LLM-as-judge</strong> (Cerebras AI evaluates).</p>
+            <p>Measures whether the LLM answer is good. <strong>Default: Ragas 0.4.3</strong> (LLM judge: qwen/qwen3.8-27b via Groq, embeddings: local MiniLM). The project's prompt-based judge runs only with <code>--custom-judge</code> (sections 5–9).</p>
 
-            <h4>1. Faithfulness</h4>
+            <h4>1. Ragas Faithfulness (default)</h4>
+            <div class="code" style="margin:10px 0;">
+Judge extracts STATEMENTS from the answer, then labels each as
+supported / not supported against the retrieved contexts (NLI).
+
+  score = supported_statements / total_statements
+
+Example:
+  Answer: "Hours are 9:00-5:30 PM PT, overtime paid at 1.5x."
+  Context mentions hours only → 1 of 2 statements supported
+  → faithfulness = 0.5
+
+Range: 0.0 to 1.0 — the primary hallucination detector.
+            </div>
+
+            <h4>2. Ragas Answer Relevancy (default)</h4>
+            <div class="code" style="margin:10px 0;">
+Judge generates 3 questions the answer could plausibly answer;
+score = mean cosine(original question, generated questions)
+using local MiniLM embeddings.
+
+  generated questions ≈ original → high score (on topic)
+  generated questions drift away  → low score
+
+Range: 0.0 to 1.0 — no reference answer needed.
+            </div>
+
+            <h4>3. Ragas Answer Correctness (default)</h4>
+            <div class="code" style="margin:10px 0;">
+Needs the reference answer. Judge labels reference statements
+TP / FP / FN against the answer, then blends with similarity:
+
+  fact_F1 = F1(TP, FP, FN)     (beta = 1.0)
+  score   = 0.75 × fact_F1 + 0.25 × cosine(answer, reference)
+
+Range: 0.0 to 1.0 — catches "faithful to context but wrong
+compared to the reference".
+            </div>
+
+            <h4>4. Optional: context_precision / context_recall</h4>
+            <div class="code" style="margin:10px 0;">
+Selectable via --ragas-metrics:
+
+  context_precision — judges each chunk's relevance, precision
+                      weighted by rank (relevant chunks higher
+                      in the list count more)
+  context_recall    — fraction of reference-answer facts the
+                      retrieved context can support
+
+Both need reference data and add judge calls.
+            </div>
+
+            <h4>5. Legacy: Faithfulness (--custom-judge)</h4>
             <div class="code" style="margin:10px 0;">
 Question: "Is every claim in the answer supported by the context?"
 
@@ -1582,7 +1967,7 @@ Example:
   → score = 0.60 ("stock options" not in context)
             </div>
 
-            <h4>2. Answer Relevancy</h4>
+            <h4>6. Legacy: Answer Relevancy</h4>
             <div class="code" style="margin:10px 0;">
 Question: "Does the answer directly address what was asked?"
 
@@ -1602,7 +1987,7 @@ Example:
   → score = 0.1 (discusses location, not salary)
             </div>
 
-            <h4>3. Hallucination Score</h4>
+            <h4>7. Legacy: Hallucination Score</h4>
             <div class="code" style="margin:10px 0;">
 Question: "Did the LLM invent facts not in the context?"
 
@@ -1624,7 +2009,7 @@ Example:
   → score = 0.9 ("$200k-$250k" invented)
             </div>
 
-            <h4>4. Overall Score</h4>
+            <h4>8. Legacy: Overall Score</h4>
             <div class="code" style="margin:10px 0;">
 Formula:
   scores = [faithfulness, answer_relevancy, (1 - hallucination_score)]
@@ -1649,7 +2034,7 @@ Example (bad):
   overall = (0.6 + 0.9 + 0.7) / 3 = 0.733
             </div>
 
-            <h4>5. Generation Verdict</h4>
+            <h4>9. Legacy: Generation Verdict</h4>
             <div class="code" style="margin:10px 0;">
 Decision rules:
   overall_score >= 0.8  →  EXCELLENT
@@ -1715,24 +2100,44 @@ Decision rules:
                     <td>"Harmonic mean of precision and recall — balanced score."</td>
                 </tr>
                 <tr>
-                    <td>Faithfulness</td>
-                    <td>LLM-as-judge (0-1)</td>
-                    <td>"Are all claims in the answer supported by the retrieved context?"</td>
+                    <td>Semantic Recall@5</td>
+                    <td>matched / |ground truth|</td>
+                    <td>"Fraction of ground-truth chunks found in top-5 (cosine ≥ 0.30 match, not chunk ID)."</td>
                 </tr>
                 <tr>
-                    <td>Answer Relevancy</td>
-                    <td>LLM-as-judge (0-1)</td>
-                    <td>"Does the answer directly address what the user asked?"</td>
+                    <td>MRR</td>
+                    <td>1 / first_relevant_rank</td>
+                    <td>"How high up the list the first relevant chunk appears."</td>
                 </tr>
                 <tr>
-                    <td>Hallucination</td>
+                    <td>NDCG@5</td>
+                    <td>DCG@5 / IDCG@5</td>
+                    <td>"Ranking quality — relevant chunks rank higher score higher (gain discounted by position)."</td>
+                </tr>
+                <tr>
+                    <td>Faithfulness (Ragas)</td>
+                    <td>supported / total statements</td>
+                    <td>"Are all statements in the answer supported by the retrieved context?"</td>
+                </tr>
+                <tr>
+                    <td>Answer Relevancy (Ragas)</td>
+                    <td>mean cosine (question, 3 generated questions)</td>
+                    <td>"Judge regenerates questions the answer addresses — are they the original question?"</td>
+                </tr>
+                <tr>
+                    <td>Answer Correctness (Ragas)</td>
+                    <td>0.75·F1(TP,FP,FN) + 0.25·cosine</td>
+                    <td>"Fact overlap with the reference answer, blended with semantic similarity."</td>
+                </tr>
+                <tr>
+                    <td>Hallucination (legacy)</td>
                     <td>LLM-as-judge (0-1, 0=good)</td>
-                    <td>"Did the LLM invent facts not present in the context?"</td>
+                    <td>"Did the LLM invent facts not present in the context? (--custom-judge only)"</td>
                 </tr>
                 <tr>
-                    <td>Overall Score</td>
+                    <td>Overall Score (legacy)</td>
                     <td>mean(F, R, 1-H)</td>
-                    <td>"Composite quality score. >= 0.8 EXCELLENT, >= 0.6 GOOD, >= 0.4 FAIR."</td>
+                    <td>"Composite quality score. >= 0.8 EXCELLENT, >= 0.6 GOOD, >= 0.4 FAIR. (--custom-judge only)"</td>
                 </tr>
                 <tr>
                     <td>Token Estimation</td>

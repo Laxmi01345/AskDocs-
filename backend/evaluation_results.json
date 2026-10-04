@@ -1,0 +1,1373 @@
+{
+  "timestamp": "2026-10-04T09:36:48.665187+00:00",
+  "config": {
+    "doc_id": "59d9421d-5090-4632-a0e4-1fd7fab73dcb",
+    "dataset": "employee_eval.json",
+    "questions": 10,
+    "top_k": 5,
+    "mode": "full",
+    "ragas_metrics": [
+      "faithfulness",
+      "answer_relevancy",
+      "answer_correctness"
+    ],
+    "custom_judge": false,
+    "methods": [
+      "simple",
+      "semantic",
+      "hybrid",
+      "reranked"
+    ],
+    "judge_model": "qwen/qwen3.8-27b"
+  },
+  "results": {
+    "simple": {
+      "retrieval": {
+        "recall_at_5": 0.9,
+        "mrr": 0.9,
+        "ndcg_at_5": 0.893,
+        "precision": 0.525,
+        "recall": 0.9,
+        "f1": 0.6233,
+        "average_relevance": 0.4159,
+        "diversity": 0.5584,
+        "per_question": [
+          {
+            "question": "What are the standard working hours?",
+            "num_chunks_retrieved": 5,
+            "metrics": {
+              "diversity": 0.615,
+              "avg_relevance": 0.3657,
+              "max_relevance": 0.5092,
+              "min_relevance": 0.2812,
+              "hit_rate": 0.4,
+              "hits_above_threshold": 2,
+              "recall_at_5": 1.0,
+              "mrr": 1.0,
+              "ndcg_at_5": 1.0,
+              "precision": 0.25,
+              "recall": 1.0,
+              "f1": 0.4
+            },
+            "relevance_per_chunk": [
+              0.5092,
+              0.4417,
+              0.3004,
+              0.2958,
+              0.2812
+            ],
+            "verdict": "FAIR"
+          },
+          {
+            "question": "What are the core hours employees must be available?",
+            "num_chunks_retrieved": 5,
+            "metrics": {
+              "diversity": 0.5507,
+              "avg_relevance": 0.4423,
+              "max_relevance": 0.4855,
+              "min_relevance": 0.4045,
+              "hit_rate": 1.0,
+              "hits_above_threshold": 5,
+              "recall_at_5": 1.0,
+              "mrr": 1.0,
+              "ndcg_at_5": 1.0,
+              "precision": 0.3333,
+              "recall": 1.0,
+              "f1": 0.5
+            },
+            "relevance_per_chunk": [
+              0.4855,
+              0.4681,
+              0.4331,
+              0.4203,
+              0.4045
+            ],
+            "verdict": "GOOD"
+          },
+          {
+            "question": "Which days are employees required to work from the office?",
+            "num_chunks_retrieved": 5,
+            "metrics": {
+              "diversity": 0.6372,
+              "avg_relevance": 0.4025,
+              "max_relevance": 0.5945,
+              "min_relevance": 0.3044,
+              "hit_rate": 0.6,
+              "hits_above_threshold": 3,
+              "recall_at_5": 1.0,
+              "mrr": 1.0,
+              "ndcg_at_5": 0.9829,
+              "precision": 0.5,
+              "recall": 1.0,
+              "f1": 0.6667
+            },
+            "relevance_per_chunk": [
+              0.5945,
+              0.4229,
+              0.3687,
+              0.3223,
+              0.3044
+            ],
+            "verdict": "GOOD"
+          },
+          {
+            "question": "What is the home office setup allowance?",
+            "num_chunks_retrieved": 5,
+            "metrics": {
+              "diversity": 0.5507,
+              "avg_relevance": 0.3778,
+              "max_relevance": 0.5217,
+              "min_relevance": 0.3248,
+              "hit_rate": 0.4,
+              "hits_above_threshold": 2,
+              "recall_at_5": 1.0,
+              "mrr": 1.0,
+              "ndcg_at_5": 0.9469,
+              "precision": 0.3333,
+              "recall": 1.0,
+              "f1": 0.5
+            },
+            "relevance_per_chunk": [
+              0.5217,
+              0.3742,
+              0.3417,
+              0.3266,
+              0.3248
+            ],
+            "verdict": "FAIR"
+          },
+          {
+            "question": "What is the salary range for a Senior Developer?",
+            "num_chunks_retrieved": 5,
+            "metrics": {
+              "diversity": 0.5718,
+              "avg_relevance": 0.4418,
+              "max_relevance": 0.6731,
+              "min_relevance": 0.2718,
+              "hit_rate": 0.8,
+              "hits_above_threshold": 4,
+              "recall_at_5": 1.0,
+              "mrr": 1.0,
+              "ndcg_at_5": 1.0,
+              "precision": 0.5,
+              "recall": 1.0,
+              "f1": 0.6667
+            },
+            "relevance_per_chunk": [
+              0.6731,
+              0.5443,
+              0.3699,
+              0.3501,
+              0.2718
+            ],
+            "verdict": "GOOD"
+          },
+          {
+            "question": "What is the sign-on bonus for senior positions?",
+            "num_chunks_retrieved": 5,
+            "metrics": {
+              "diversity": 0.5495,
+              "avg_relevance": 0.3706,
+              "max_relevance": 0.456,
+              "min_relevance": 0.3154,
+              "hit_rate": 0.4,
+              "hits_above_threshold": 2,
+              "recall_at_5": 1.0,
+              "mrr": 1.0,
+              "ndcg_at_5": 1.0,
+              "precision": 1.0,
+              "recall": 1.0,
+              "f1": 1.0
+            },
+            "relevance_per_chunk": [
+              0.456,
+              0.4123,
+              0.3403,
+              0.3289,
+              0.3154
+            ],
+            "verdict": "FAIR"
+          },
+          {
+            "question": "How much is the employee referral bonus?",
+            "num_chunks_retrieved": 5,
+            "metrics": {
+              "diversity": 0.5081,
+              "avg_relevance": 0.4819,
+              "max_relevance": 0.6185,
+              "min_relevance": 0.3529,
+              "hit_rate": 1.0,
+              "hits_above_threshold": 5,
+              "recall_at_5": 1.0,
+              "mrr": 1.0,
+              "ndcg_at_5": 1.0,
+              "precision": 0.3333,
+              "recall": 1.0,
+              "f1": 0.5
+            },
+            "relevance_per_chunk": [
+              0.6185,
+              0.5516,
+              0.4749,
+              0.4117,
+              0.3529
+            ],
+            "verdict": "GOOD"
+          },
+          {
+            "question": "How many PTO days do full-time employees receive per year?",
+            "num_chunks_retrieved": 5,
+            "metrics": {
+              "diversity": 0.5081,
+              "avg_relevance": 0.535,
+              "max_relevance": 0.7271,
+              "min_relevance": 0.3895,
+              "hit_rate": 1.0,
+              "hits_above_threshold": 5,
+              "recall_at_5": 1.0,
+              "mrr": 1.0,
+              "ndcg_at_5": 1.0,
+              "precision": 1.0,
+              "recall": 1.0,
+              "f1": 1.0
+            },
+            "relevance_per_chunk": [
+              0.7271,
+              0.704,
+              0.4385,
+              0.4158,
+              0.3895
+            ],
+            "verdict": "GOOD"
+          },
+          {
+            "question": "How many sick leave days are provided annually?",
+            "num_chunks_retrieved": 5,
+            "metrics": {
+              "diversity": 0.5468,
+              "avg_relevance": 0.3782,
+              "max_relevance": 0.5263,
+              "min_relevance": 0.3194,
+              "hit_rate": 0.4,
+              "hits_above_threshold": 2,
+              "recall_at_5": 1.0,
+              "mrr": 1.0,
+              "ndcg_at_5": 1.0,
+              "precision": 1.0,
+              "recall": 1.0,
+              "f1": 1.0
+            },
+            "relevance_per_chunk": [
+              0.5263,
+              0.3873,
+              0.3376,
+              0.3207,
+              0.3194
+            ],
+            "verdict": "FAIR"
+          },
+          {
+            "question": "What percentage of health insurance premium does the company cover for employees?",
+            "num_chunks_retrieved": 5,
+            "metrics": {
+              "diversity": 0.5464,
+              "avg_relevance": 0.3629,
+              "max_relevance": 0.4218,
+              "min_relevance": 0.3146,
+              "hit_rate": 0.6,
+              "hits_above_threshold": 3,
+              "recall_at_5": 0.0,
+              "mrr": 0,
+              "ndcg_at_5": 0.0,
+              "precision": 0.0,
+              "recall": 0.0,
+              "f1": 0
+            },
+            "relevance_per_chunk": [
+              0.4218,
+              0.3883,
+              0.3727,
+              0.3172,
+              0.3146
+            ],
+            "verdict": "FAIR"
+          }
+        ]
+      },
+      "generation": {
+        "per_question": [
+          {
+            "question": "What are the standard working hours?",
+            "answer": "The standard working hours are not explicitly stated in the provided sections. However, based on the information given, we can infer that the standard working hours are Monday through Friday, as this is the typical weekday workweek. Employees are expected to be available during core hours, which are not specified, but typically, core hours are considered the busiest working hours for a company, such as 9:00 AM to 5:00 PM. \n\nI don't have information about the standard working hours, but I can help you with any questions related to the employee handbook sections provided. ",
+            "ground_truth": "Standard working hours are 9:00 AM to 5:30 PM Pacific Time, Monday through Friday."
+          },
+          {
+            "question": "What are the core hours employees must be available?",
+            "answer": "The context provided does not explicitly mention the core hours employees must be available. However, the information about flexible work arrangements and the PTO policy suggests that employees have some flexibility in choosing their working hours within the core hours of 9:00 AM to 5:00 PM Pacific Time, Monday through Friday. \n\nEmployees are expected to be available during these core hours to ensure effective communication and collaboration with colleagues and to maintain productivity levels. ",
+            "ground_truth": "Core hours are 10:00 AM to 3:00 PM Pacific Time."
+          },
+          {
+            "question": "Which days are employees required to work from the office?",
+            "answer": "Employees are required to work from the office on Tuesdays and Thursdays. ",
+            "ground_truth": "Employees are required to work from the office on Tuesdays and Thursdays."
+          },
+          {
+            "question": "What is the home office setup allowance?",
+            "answer": "The home office setup allowance is $1,500. ",
+            "ground_truth": "Home office setup allowance is $1,500 one-time."
+          },
+          {
+            "question": "What is the salary range for a Senior Developer?",
+            "answer": "The salary range for a Senior Developer is $100,000 to $140,000. ",
+            "ground_truth": "Senior Developer salary range is $130,000 to $170,000 per year."
+          },
+          {
+            "question": "What is the sign-on bonus for senior positions?",
+            "answer": "I don't have information about sign-on bonuses in the provided context. The context mainly focuses on PTO, salary, benefits, and performance management policies. Please provide more specific information about the company or contact the HR department for assistance. ",
+            "ground_truth": "Sign-on bonus is up to $10,000 for senior positions."
+          },
+          {
+            "question": "How much is the employee referral bonus?",
+            "answer": "The referral bonus is $3,000. ",
+            "ground_truth": "Referral bonus is $3,000 for successful employee referrals."
+          },
+          {
+            "question": "How many PTO days do full-time employees receive per year?",
+            "answer": "Full-time employees receive 20 days of PTO per year. ",
+            "ground_truth": "Full-time employees receive 20 days of PTO per year."
+          },
+          {
+            "question": "How many sick leave days are provided annually?",
+            "answer": "Full-time employees are provided 10 days of sick leave per year. ",
+            "ground_truth": "Employees receive 10 days of paid sick leave per year."
+          },
+          {
+            "question": "What percentage of health insurance premium does the company cover for employees?",
+            "answer": "The company covers 80% of health insurance premiums for employees. ",
+            "ground_truth": "The company covers 80% of the medical insurance premium for employees."
+          }
+        ],
+        "faithfulness": 0.675,
+        "answer_relevancy": 0.7841,
+        "answer_correctness": 0.6618,
+        "errors": []
+      },
+      "api_usage": {
+        "answer_llm_calls": 10,
+        "ragas_judge_evaluations": 30,
+        "custom_judge_calls": 0
+      }
+    },
+    "semantic": {
+      "retrieval": {
+        "recall_at_5": 1.0,
+        "mrr": 1.0,
+        "ndcg_at_5": 1.0,
+        "precision": 0.8333,
+        "recall": 1.0,
+        "f1": 0.8833,
+        "average_relevance": 0.6324,
+        "diversity": 0.2485,
+        "per_question": [
+          {
+            "question": "What are the standard working hours?",
+            "num_chunks_retrieved": 5,
+            "metrics": {
+              "diversity": 0.1513,
+              "avg_relevance": 0.6771,
+              "max_relevance": 0.7215,
+              "min_relevance": 0.5959,
+              "hit_rate": 1.0,
+              "hits_above_threshold": 5,
+              "recall_at_5": 1.0,
+              "mrr": 1.0,
+              "ndcg_at_5": 1.0,
+              "precision": 1.0,
+              "recall": 1.0,
+              "f1": 1.0
+            },
+            "relevance_per_chunk": [
+              0.7215,
+              0.7,
+              0.6871,
+              0.681,
+              0.5959
+            ],
+            "verdict": "FAIR"
+          },
+          {
+            "question": "What are the core hours employees must be available?",
+            "num_chunks_retrieved": 5,
+            "metrics": {
+              "diversity": 0.1513,
+              "avg_relevance": 0.7222,
+              "max_relevance": 0.7652,
+              "min_relevance": 0.6114,
+              "hit_rate": 1.0,
+              "hits_above_threshold": 5,
+              "recall_at_5": 1.0,
+              "mrr": 1.0,
+              "ndcg_at_5": 1.0,
+              "precision": 1.0,
+              "recall": 1.0,
+              "f1": 1.0
+            },
+            "relevance_per_chunk": [
+              0.7652,
+              0.7569,
+              0.7454,
+              0.7324,
+              0.6114
+            ],
+            "verdict": "FAIR"
+          },
+          {
+            "question": "Which days are employees required to work from the office?",
+            "num_chunks_retrieved": 5,
+            "metrics": {
+              "diversity": 0.31,
+              "avg_relevance": 0.6346,
+              "max_relevance": 0.7104,
+              "min_relevance": 0.5367,
+              "hit_rate": 1.0,
+              "hits_above_threshold": 5,
+              "recall_at_5": 1.0,
+              "mrr": 1.0,
+              "ndcg_at_5": 1.0,
+              "precision": 1.0,
+              "recall": 1.0,
+              "f1": 1.0
+            },
+            "relevance_per_chunk": [
+              0.7104,
+              0.7104,
+              0.6788,
+              0.5367,
+              0.5367
+            ],
+            "verdict": "EXCELLENT"
+          },
+          {
+            "question": "What is the home office setup allowance?",
+            "num_chunks_retrieved": 5,
+            "metrics": {
+              "diversity": 0.4148,
+              "avg_relevance": 0.5247,
+              "max_relevance": 0.5587,
+              "min_relevance": 0.4737,
+              "hit_rate": 1.0,
+              "hits_above_threshold": 5,
+              "recall_at_5": 1.0,
+              "mrr": 1.0,
+              "ndcg_at_5": 1.0,
+              "precision": 0.3333,
+              "recall": 1.0,
+              "f1": 0.5
+            },
+            "relevance_per_chunk": [
+              0.5587,
+              0.5587,
+              0.5587,
+              0.4737,
+              0.4737
+            ],
+            "verdict": "GOOD"
+          },
+          {
+            "question": "What is the salary range for a Senior Developer?",
+            "num_chunks_retrieved": 5,
+            "metrics": {
+              "diversity": 0.2509,
+              "avg_relevance": 0.6146,
+              "max_relevance": 0.6731,
+              "min_relevance": 0.3805,
+              "hit_rate": 1.0,
+              "hits_above_threshold": 5,
+              "recall_at_5": 1.0,
+              "mrr": 1.0,
+              "ndcg_at_5": 1.0,
+              "precision": 1.0,
+              "recall": 1.0,
+              "f1": 1.0
+            },
+            "relevance_per_chunk": [
+              0.6731,
+              0.6731,
+              0.6731,
+              0.6731,
+              0.3805
+            ],
+            "verdict": "GOOD"
+          },
+          {
+            "question": "What is the sign-on bonus for senior positions?",
+            "num_chunks_retrieved": 5,
+            "metrics": {
+              "diversity": 0.2922,
+              "avg_relevance": 0.4867,
+              "max_relevance": 0.5085,
+              "min_relevance": 0.3992,
+              "hit_rate": 1.0,
+              "hits_above_threshold": 5,
+              "recall_at_5": 1.0,
+              "mrr": 1.0,
+              "ndcg_at_5": 1.0,
+              "precision": 1.0,
+              "recall": 1.0,
+              "f1": 1.0
+            },
+            "relevance_per_chunk": [
+              0.5085,
+              0.5085,
+              0.5085,
+              0.5085,
+              0.3992
+            ],
+            "verdict": "GOOD"
+          },
+          {
+            "question": "How much is the employee referral bonus?",
+            "num_chunks_retrieved": 5,
+            "metrics": {
+              "diversity": 0.2551,
+              "avg_relevance": 0.6893,
+              "max_relevance": 0.7595,
+              "min_relevance": 0.4087,
+              "hit_rate": 1.0,
+              "hits_above_threshold": 5,
+              "recall_at_5": 1.0,
+              "mrr": 1.0,
+              "ndcg_at_5": 1.0,
+              "precision": 0.5,
+              "recall": 1.0,
+              "f1": 0.6667
+            },
+            "relevance_per_chunk": [
+              0.7595,
+              0.7595,
+              0.7595,
+              0.7595,
+              0.4087
+            ],
+            "verdict": "GOOD"
+          },
+          {
+            "question": "How many PTO days do full-time employees receive per year?",
+            "num_chunks_retrieved": 5,
+            "metrics": {
+              "diversity": 0.11,
+              "avg_relevance": 0.7114,
+              "max_relevance": 0.7326,
+              "min_relevance": 0.6266,
+              "hit_rate": 1.0,
+              "hits_above_threshold": 5,
+              "recall_at_5": 1.0,
+              "mrr": 1.0,
+              "ndcg_at_5": 1.0,
+              "precision": 1.0,
+              "recall": 1.0,
+              "f1": 1.0
+            },
+            "relevance_per_chunk": [
+              0.7326,
+              0.7326,
+              0.7326,
+              0.7326,
+              0.6266
+            ],
+            "verdict": "FAIR"
+          },
+          {
+            "question": "How many sick leave days are provided annually?",
+            "num_chunks_retrieved": 5,
+            "metrics": {
+              "diversity": 0.2913,
+              "avg_relevance": 0.6968,
+              "max_relevance": 0.7732,
+              "min_relevance": 0.5555,
+              "hit_rate": 1.0,
+              "hits_above_threshold": 5,
+              "recall_at_5": 1.0,
+              "mrr": 1.0,
+              "ndcg_at_5": 1.0,
+              "precision": 1.0,
+              "recall": 1.0,
+              "f1": 1.0
+            },
+            "relevance_per_chunk": [
+              0.7732,
+              0.7732,
+              0.7635,
+              0.6185,
+              0.5555
+            ],
+            "verdict": "GOOD"
+          },
+          {
+            "question": "What percentage of health insurance premium does the company cover for employees?",
+            "num_chunks_retrieved": 5,
+            "metrics": {
+              "diversity": 0.2579,
+              "avg_relevance": 0.5663,
+              "max_relevance": 0.6333,
+              "min_relevance": 0.3883,
+              "hit_rate": 1.0,
+              "hits_above_threshold": 5,
+              "recall_at_5": 1.0,
+              "mrr": 1.0,
+              "ndcg_at_5": 1.0,
+              "precision": 0.5,
+              "recall": 1.0,
+              "f1": 0.6667
+            },
+            "relevance_per_chunk": [
+              0.6333,
+              0.6333,
+              0.6333,
+              0.5434,
+              0.3883
+            ],
+            "verdict": "GOOD"
+          }
+        ]
+      },
+      "generation": {
+        "per_question": [
+          {
+            "question": "What are the standard working hours?",
+            "answer": "Standard working hours are 9:00 AM to 5:30 PM Pacific Time, Monday through Friday.",
+            "ground_truth": "Standard working hours are 9:00 AM to 5:30 PM Pacific Time, Monday through Friday."
+          },
+          {
+            "question": "What are the core hours employees must be available?",
+            "answer": "Core hours are **10:00 AM to 4:00 PM Pacific Time**.",
+            "ground_truth": "Core hours are 10:00 AM to 3:00 PM Pacific Time."
+          },
+          {
+            "question": "Which days are employees required to work from the office?",
+            "answer": "Tuesdays and Thursdays.",
+            "ground_truth": "Employees are required to work from the office on Tuesdays and Thursdays."
+          },
+          {
+            "question": "What is the home office setup allowance?",
+            "answer": "$1,500 one‑time.",
+            "ground_truth": "Home office setup allowance is $1,500 one-time."
+          },
+          {
+            "question": "What is the salary range for a Senior Developer?",
+            "answer": "The salary range for a Senior Developer is $130,000 - $170,000. ",
+            "ground_truth": "Senior Developer salary range is $130,000 to $170,000 per year."
+          },
+          {
+            "question": "What is the sign-on bonus for senior positions?",
+            "answer": "The sign-on bonus is up to $10,000 for senior positions. ",
+            "ground_truth": "Sign-on bonus is up to $10,000 for senior positions."
+          },
+          {
+            "question": "How much is the employee referral bonus?",
+            "answer": "The employee referral bonus is $3,000 for successful employee referrals (paid after the referred employee completes 6 months). ",
+            "ground_truth": "Referral bonus is $3,000 for successful employee referrals."
+          },
+          {
+            "question": "How many PTO days do full-time employees receive per year?",
+            "answer": "Full-time employees receive 20 days of PTO per year. ",
+            "ground_truth": "Full-time employees receive 20 days of PTO per year."
+          },
+          {
+            "question": "How many sick leave days are provided annually?",
+            "answer": "Employees receive 10 days of paid sick leave per year. ",
+            "ground_truth": "Employees receive 10 days of paid sick leave per year."
+          },
+          {
+            "question": "What percentage of health insurance premium does the company cover for employees?",
+            "answer": "The company covers 80% of the health insurance premium for employees. ",
+            "ground_truth": "The company covers 80% of the medical insurance premium for employees."
+          }
+        ],
+        "faithfulness": 1.0,
+        "answer_relevancy": 0.8033,
+        "answer_correctness": 0.8724,
+        "errors": []
+      },
+      "api_usage": {
+        "answer_llm_calls": 10,
+        "ragas_judge_evaluations": 30,
+        "custom_judge_calls": 0
+      }
+    },
+    "hybrid": {
+      "retrieval": {
+        "recall_at_5": 0.9,
+        "mrr": 0.9,
+        "ndcg_at_5": 0.8877,
+        "precision": 0.3317,
+        "recall": 0.9,
+        "f1": 0.4533,
+        "average_relevance": 0.3578,
+        "diversity": 0.671,
+        "per_question": [
+          {
+            "question": "What are the standard working hours?",
+            "num_chunks_retrieved": 5,
+            "metrics": {
+              "diversity": 0.7265,
+              "avg_relevance": 0.3164,
+              "max_relevance": 0.5092,
+              "min_relevance": 0.2309,
+              "hit_rate": 0.2,
+              "hits_above_threshold": 1,
+              "recall_at_5": 1.0,
+              "mrr": 1.0,
+              "ndcg_at_5": 1.0,
+              "precision": 0.2,
+              "recall": 1.0,
+              "f1": 0.3333
+            },
+            "relevance_per_chunk": [
+              0.5092,
+              0.2651,
+              0.2812,
+              0.2958,
+              0.2309
+            ],
+            "verdict": "FAIR"
+          },
+          {
+            "question": "What are the core hours employees must be available?",
+            "num_chunks_retrieved": 5,
+            "metrics": {
+              "diversity": 0.7031,
+              "avg_relevance": 0.3392,
+              "max_relevance": 0.4855,
+              "min_relevance": 0.2582,
+              "hit_rate": 0.4,
+              "hits_above_threshold": 2,
+              "recall_at_5": 1.0,
+              "mrr": 1.0,
+              "ndcg_at_5": 1.0,
+              "precision": 0.2,
+              "recall": 1.0,
+              "f1": 0.3333
+            },
+            "relevance_per_chunk": [
+              0.4855,
+              0.3524,
+              0.3265,
+              0.2582,
+              0.2733
+            ],
+            "verdict": "FAIR"
+          },
+          {
+            "question": "Which days are employees required to work from the office?",
+            "num_chunks_retrieved": 5,
+            "metrics": {
+              "diversity": 0.7087,
+              "avg_relevance": 0.3586,
+              "max_relevance": 0.5945,
+              "min_relevance": 0.2345,
+              "hit_rate": 0.4,
+              "hits_above_threshold": 2,
+              "recall_at_5": 1.0,
+              "mrr": 1.0,
+              "ndcg_at_5": 1.0,
+              "precision": 0.25,
+              "recall": 1.0,
+              "f1": 0.4
+            },
+            "relevance_per_chunk": [
+              0.5945,
+              0.3687,
+              0.2732,
+              0.2345,
+              0.3223
+            ],
+            "verdict": "FAIR"
+          },
+          {
+            "question": "What is the home office setup allowance?",
+            "num_chunks_retrieved": 5,
+            "metrics": {
+              "diversity": 0.6741,
+              "avg_relevance": 0.3474,
+              "max_relevance": 0.5217,
+              "min_relevance": 0.2704,
+              "hit_rate": 0.4,
+              "hits_above_threshold": 2,
+              "recall_at_5": 1.0,
+              "mrr": 1.0,
+              "ndcg_at_5": 1.0,
+              "precision": 0.25,
+              "recall": 1.0,
+              "f1": 0.4
+            },
+            "relevance_per_chunk": [
+              0.5217,
+              0.3742,
+              0.2883,
+              0.2704,
+              0.2825
+            ],
+            "verdict": "FAIR"
+          },
+          {
+            "question": "What is the salary range for a Senior Developer?",
+            "num_chunks_retrieved": 5,
+            "metrics": {
+              "diversity": 0.684,
+              "avg_relevance": 0.3574,
+              "max_relevance": 0.6731,
+              "min_relevance": 0.1434,
+              "hit_rate": 0.6,
+              "hits_above_threshold": 3,
+              "recall_at_5": 1.0,
+              "mrr": 1.0,
+              "ndcg_at_5": 1.0,
+              "precision": 0.3333,
+              "recall": 1.0,
+              "f1": 0.5
+            },
+            "relevance_per_chunk": [
+              0.6731,
+              0.3699,
+              0.3501,
+              0.2507,
+              0.1434
+            ],
+            "verdict": "FAIR"
+          },
+          {
+            "question": "What is the sign-on bonus for senior positions?",
+            "num_chunks_retrieved": 5,
+            "metrics": {
+              "diversity": 0.6845,
+              "avg_relevance": 0.2981,
+              "max_relevance": 0.4123,
+              "min_relevance": 0.1672,
+              "hit_rate": 0.2,
+              "hits_above_threshold": 1,
+              "recall_at_5": 1.0,
+              "mrr": 1.0,
+              "ndcg_at_5": 1.0,
+              "precision": 0.3333,
+              "recall": 1.0,
+              "f1": 0.5
+            },
+            "relevance_per_chunk": [
+              0.4123,
+              0.3403,
+              0.3289,
+              0.2416,
+              0.1672
+            ],
+            "verdict": "POOR"
+          },
+          {
+            "question": "How much is the employee referral bonus?",
+            "num_chunks_retrieved": 5,
+            "metrics": {
+              "diversity": 0.639,
+              "avg_relevance": 0.4283,
+              "max_relevance": 0.6185,
+              "min_relevance": 0.2993,
+              "hit_rate": 0.6,
+              "hits_above_threshold": 3,
+              "recall_at_5": 1.0,
+              "mrr": 1.0,
+              "ndcg_at_5": 0.8772,
+              "precision": 0.25,
+              "recall": 1.0,
+              "f1": 0.4
+            },
+            "relevance_per_chunk": [
+              0.6185,
+              0.4117,
+              0.3368,
+              0.4749,
+              0.2993
+            ],
+            "verdict": "GOOD"
+          },
+          {
+            "question": "How many PTO days do full-time employees receive per year?",
+            "num_chunks_retrieved": 5,
+            "metrics": {
+              "diversity": 0.6102,
+              "avg_relevance": 0.4385,
+              "max_relevance": 0.7271,
+              "min_relevance": 0.3275,
+              "hit_rate": 0.6,
+              "hits_above_threshold": 3,
+              "recall_at_5": 1.0,
+              "mrr": 1.0,
+              "ndcg_at_5": 1.0,
+              "precision": 1.0,
+              "recall": 1.0,
+              "f1": 1.0
+            },
+            "relevance_per_chunk": [
+              0.7271,
+              0.4158,
+              0.3275,
+              0.3365,
+              0.3854
+            ],
+            "verdict": "GOOD"
+          },
+          {
+            "question": "How many sick leave days are provided annually?",
+            "num_chunks_retrieved": 5,
+            "metrics": {
+              "diversity": 0.6281,
+              "avg_relevance": 0.3573,
+              "max_relevance": 0.5263,
+              "min_relevance": 0.2445,
+              "hit_rate": 0.4,
+              "hits_above_threshold": 2,
+              "recall_at_5": 1.0,
+              "mrr": 1.0,
+              "ndcg_at_5": 1.0,
+              "precision": 0.5,
+              "recall": 1.0,
+              "f1": 0.6667
+            },
+            "relevance_per_chunk": [
+              0.5263,
+              0.3873,
+              0.3077,
+              0.3207,
+              0.2445
+            ],
+            "verdict": "FAIR"
+          },
+          {
+            "question": "What percentage of health insurance premium does the company cover for employees?",
+            "num_chunks_retrieved": 5,
+            "metrics": {
+              "diversity": 0.6515,
+              "avg_relevance": 0.3364,
+              "max_relevance": 0.4218,
+              "min_relevance": 0.2693,
+              "hit_rate": 0.4,
+              "hits_above_threshold": 2,
+              "recall_at_5": 0.0,
+              "mrr": 0,
+              "ndcg_at_5": 0.0,
+              "precision": 0.0,
+              "recall": 0.0,
+              "f1": 0
+            },
+            "relevance_per_chunk": [
+              0.3172,
+              0.3883,
+              0.2693,
+              0.4218,
+              0.2854
+            ],
+            "verdict": "FAIR"
+          }
+        ]
+      },
+      "generation": {
+        "per_question": [
+          {
+            "question": "What are the standard working hours?",
+            "answer": "Standard working hours are 9:00 AM to 5:30 PM Pacific Time, Monday through Friday.",
+            "ground_truth": "Standard working hours are 9:00 AM to 5:30 PM Pacific Time, Monday through Friday."
+          },
+          {
+            "question": "What are the core hours employees must be available?",
+            "answer": "I don't know ",
+            "ground_truth": "Core hours are 10:00 AM to 3:00 PM Pacific Time."
+          },
+          {
+            "question": "Which days are employees required to work from the office?",
+            "answer": "Employees are required to work from the office on Tuesdays and Thursdays. ",
+            "ground_truth": "Employees are required to work from the office on Tuesdays and Thursdays."
+          },
+          {
+            "question": "What is the home office setup allowance?",
+            "answer": "I don't know ",
+            "ground_truth": "Home office setup allowance is $1,500 one-time."
+          },
+          {
+            "question": "What is the salary range for a Senior Developer?",
+            "answer": "The salary range for a Senior Developer is $100,000 to $130,000. ",
+            "ground_truth": "Senior Developer salary range is $130,000 to $170,000 per year."
+          },
+          {
+            "question": "What is the sign-on bonus for senior positions?",
+            "answer": "I don't have information about sign-on bonuses for specific positions. Please provide the job title for a more accurate answer. ",
+            "ground_truth": "Sign-on bonus is up to $10,000 for senior positions."
+          },
+          {
+            "question": "How much is the employee referral bonus?",
+            "answer": "I don't know the exact referral bonus amount as it is not mentioned in the provided sections. ",
+            "ground_truth": "Referral bonus is $3,000 for successful employee referrals."
+          },
+          {
+            "question": "How many PTO days do full-time employees receive per year?",
+            "answer": "Full-time employees receive 20 days of Paid Time Off (PTO) per year. ",
+            "ground_truth": "Full-time employees receive 20 days of PTO per year."
+          },
+          {
+            "question": "How many sick leave days are provided annually?",
+            "answer": "Employees receive 10 days of paid sick leave per year. ",
+            "ground_truth": "Employees receive 10 days of paid sick leave per year."
+          },
+          {
+            "question": "What percentage of health insurance premium does the company cover for employees?",
+            "answer": "I don't know the exact percentage of health insurance premium that the company covers for employees, as it is not mentioned in the provided employee handbook. ",
+            "ground_truth": "The company covers 80% of the medical insurance premium for employees."
+          }
+        ],
+        "faithfulness": 0.5,
+        "answer_relevancy": 0.4495,
+        "answer_correctness": 0.4825,
+        "errors": []
+      },
+      "api_usage": {
+        "answer_llm_calls": 10,
+        "ragas_judge_evaluations": 30,
+        "custom_judge_calls": 0
+      }
+    },
+    "reranked": {
+      "retrieval": {
+        "recall_at_5": 1.0,
+        "mrr": 1.0,
+        "ndcg_at_5": 1.0,
+        "precision": 0.8333,
+        "recall": 1.0,
+        "f1": 0.8833,
+        "average_relevance": 0.6297,
+        "diversity": 0.268,
+        "per_question": [
+          {
+            "question": "What are the standard working hours?",
+            "num_chunks_retrieved": 5,
+            "metrics": {
+              "diversity": 0.1513,
+              "avg_relevance": 0.6771,
+              "max_relevance": 0.7215,
+              "min_relevance": 0.5959,
+              "hit_rate": 1.0,
+              "hits_above_threshold": 5,
+              "recall_at_5": 1.0,
+              "mrr": 1.0,
+              "ndcg_at_5": 1.0,
+              "precision": 1.0,
+              "recall": 1.0,
+              "f1": 1.0
+            },
+            "relevance_per_chunk": [
+              0.7215,
+              0.7,
+              0.681,
+              0.6871,
+              0.5959
+            ],
+            "verdict": "FAIR"
+          },
+          {
+            "question": "What are the core hours employees must be available?",
+            "num_chunks_retrieved": 5,
+            "metrics": {
+              "diversity": 0.1513,
+              "avg_relevance": 0.7222,
+              "max_relevance": 0.7652,
+              "min_relevance": 0.6114,
+              "hit_rate": 1.0,
+              "hits_above_threshold": 5,
+              "recall_at_5": 1.0,
+              "mrr": 1.0,
+              "ndcg_at_5": 1.0,
+              "precision": 1.0,
+              "recall": 1.0,
+              "f1": 1.0
+            },
+            "relevance_per_chunk": [
+              0.7569,
+              0.7454,
+              0.7652,
+              0.7324,
+              0.6114
+            ],
+            "verdict": "FAIR"
+          },
+          {
+            "question": "Which days are employees required to work from the office?",
+            "num_chunks_retrieved": 5,
+            "metrics": {
+              "diversity": 0.4055,
+              "avg_relevance": 0.6229,
+              "max_relevance": 0.7104,
+              "min_relevance": 0.4972,
+              "hit_rate": 1.0,
+              "hits_above_threshold": 5,
+              "recall_at_5": 1.0,
+              "mrr": 1.0,
+              "ndcg_at_5": 1.0,
+              "precision": 1.0,
+              "recall": 1.0,
+              "f1": 1.0
+            },
+            "relevance_per_chunk": [
+              0.7104,
+              0.7104,
+              0.6788,
+              0.4972,
+              0.5179
+            ],
+            "verdict": "EXCELLENT"
+          },
+          {
+            "question": "What is the home office setup allowance?",
+            "num_chunks_retrieved": 5,
+            "metrics": {
+              "diversity": 0.4148,
+              "avg_relevance": 0.5247,
+              "max_relevance": 0.5587,
+              "min_relevance": 0.4737,
+              "hit_rate": 1.0,
+              "hits_above_threshold": 5,
+              "recall_at_5": 1.0,
+              "mrr": 1.0,
+              "ndcg_at_5": 1.0,
+              "precision": 0.3333,
+              "recall": 1.0,
+              "f1": 0.5
+            },
+            "relevance_per_chunk": [
+              0.5587,
+              0.5587,
+              0.5587,
+              0.4737,
+              0.4737
+            ],
+            "verdict": "GOOD"
+          },
+          {
+            "question": "What is the salary range for a Senior Developer?",
+            "num_chunks_retrieved": 5,
+            "metrics": {
+              "diversity": 0.2509,
+              "avg_relevance": 0.6146,
+              "max_relevance": 0.6731,
+              "min_relevance": 0.3805,
+              "hit_rate": 1.0,
+              "hits_above_threshold": 5,
+              "recall_at_5": 1.0,
+              "mrr": 1.0,
+              "ndcg_at_5": 1.0,
+              "precision": 1.0,
+              "recall": 1.0,
+              "f1": 1.0
+            },
+            "relevance_per_chunk": [
+              0.6731,
+              0.6731,
+              0.6731,
+              0.6731,
+              0.3805
+            ],
+            "verdict": "GOOD"
+          },
+          {
+            "question": "What is the sign-on bonus for senior positions?",
+            "num_chunks_retrieved": 5,
+            "metrics": {
+              "diversity": 0.2922,
+              "avg_relevance": 0.4867,
+              "max_relevance": 0.5085,
+              "min_relevance": 0.3992,
+              "hit_rate": 1.0,
+              "hits_above_threshold": 5,
+              "recall_at_5": 1.0,
+              "mrr": 1.0,
+              "ndcg_at_5": 1.0,
+              "precision": 1.0,
+              "recall": 1.0,
+              "f1": 1.0
+            },
+            "relevance_per_chunk": [
+              0.5085,
+              0.5085,
+              0.5085,
+              0.5085,
+              0.3992
+            ],
+            "verdict": "GOOD"
+          },
+          {
+            "question": "How much is the employee referral bonus?",
+            "num_chunks_retrieved": 5,
+            "metrics": {
+              "diversity": 0.2819,
+              "avg_relevance": 0.6831,
+              "max_relevance": 0.7595,
+              "min_relevance": 0.3777,
+              "hit_rate": 1.0,
+              "hits_above_threshold": 5,
+              "recall_at_5": 1.0,
+              "mrr": 1.0,
+              "ndcg_at_5": 1.0,
+              "precision": 0.5,
+              "recall": 1.0,
+              "f1": 0.6667
+            },
+            "relevance_per_chunk": [
+              0.7595,
+              0.7595,
+              0.7595,
+              0.7595,
+              0.3777
+            ],
+            "verdict": "GOOD"
+          },
+          {
+            "question": "How many PTO days do full-time employees receive per year?",
+            "num_chunks_retrieved": 5,
+            "metrics": {
+              "diversity": 0.11,
+              "avg_relevance": 0.7114,
+              "max_relevance": 0.7326,
+              "min_relevance": 0.6266,
+              "hit_rate": 1.0,
+              "hits_above_threshold": 5,
+              "recall_at_5": 1.0,
+              "mrr": 1.0,
+              "ndcg_at_5": 1.0,
+              "precision": 1.0,
+              "recall": 1.0,
+              "f1": 1.0
+            },
+            "relevance_per_chunk": [
+              0.7326,
+              0.7326,
+              0.7326,
+              0.7326,
+              0.6266
+            ],
+            "verdict": "FAIR"
+          },
+          {
+            "question": "How many sick leave days are provided annually?",
+            "num_chunks_retrieved": 5,
+            "metrics": {
+              "diversity": 0.2913,
+              "avg_relevance": 0.6968,
+              "max_relevance": 0.7732,
+              "min_relevance": 0.5555,
+              "hit_rate": 1.0,
+              "hits_above_threshold": 5,
+              "recall_at_5": 1.0,
+              "mrr": 1.0,
+              "ndcg_at_5": 1.0,
+              "precision": 1.0,
+              "recall": 1.0,
+              "f1": 1.0
+            },
+            "relevance_per_chunk": [
+              0.7732,
+              0.7732,
+              0.7635,
+              0.5555,
+              0.6185
+            ],
+            "verdict": "GOOD"
+          },
+          {
+            "question": "What percentage of health insurance premium does the company cover for employees?",
+            "num_chunks_retrieved": 5,
+            "metrics": {
+              "diversity": 0.3304,
+              "avg_relevance": 0.5572,
+              "max_relevance": 0.6333,
+              "min_relevance": 0.3427,
+              "hit_rate": 0.8,
+              "hits_above_threshold": 4,
+              "recall_at_5": 1.0,
+              "mrr": 1.0,
+              "ndcg_at_5": 1.0,
+              "precision": 0.5,
+              "recall": 1.0,
+              "f1": 0.6667
+            },
+            "relevance_per_chunk": [
+              0.6333,
+              0.6333,
+              0.6333,
+              0.5434,
+              0.3427
+            ],
+            "verdict": "GOOD"
+          }
+        ]
+      },
+      "generation": {
+        "per_question": [
+          {
+            "question": "What are the standard working hours?",
+            "answer": "Standard working hours are 9:00 AM to 5:30 PM Pacific Time, Monday through Friday.",
+            "ground_truth": "Standard working hours are 9:00 AM to 5:30 PM Pacific Time, Monday through Friday."
+          },
+          {
+            "question": "What are the core hours employees must be available?",
+            "answer": "Core hours are **10:00 AM to 4:00 PM Pacific Time**.",
+            "ground_truth": "Core hours are 10:00 AM to 3:00 PM Pacific Time."
+          },
+          {
+            "question": "Which days are employees required to work from the office?",
+            "answer": "Employees are required to work from the office on Tuesdays and Thursdays. ",
+            "ground_truth": "Employees are required to work from the office on Tuesdays and Thursdays."
+          },
+          {
+            "question": "What is the home office setup allowance?",
+            "answer": "The home office setup allowance is $1,500 one-time. ",
+            "ground_truth": "Home office setup allowance is $1,500 one-time."
+          },
+          {
+            "question": "What is the salary range for a Senior Developer?",
+            "answer": "The salary range for a Senior Developer is $130,000 - $170,000. ",
+            "ground_truth": "Senior Developer salary range is $130,000 to $170,000 per year."
+          },
+          {
+            "question": "What is the sign-on bonus for senior positions?",
+            "answer": "Up to $10,000 ",
+            "ground_truth": "Sign-on bonus is up to $10,000 for senior positions."
+          },
+          {
+            "question": "How much is the employee referral bonus?",
+            "answer": "The employee referral bonus is $3,000. ",
+            "ground_truth": "Referral bonus is $3,000 for successful employee referrals."
+          },
+          {
+            "question": "How many PTO days do full-time employees receive per year?",
+            "answer": "Full-time employees receive 20 days of PTO per year. ",
+            "ground_truth": "Full-time employees receive 20 days of PTO per year."
+          },
+          {
+            "question": "How many sick leave days are provided annually?",
+            "answer": "Employees receive 10 days of paid sick leave per year. ",
+            "ground_truth": "Employees receive 10 days of paid sick leave per year."
+          },
+          {
+            "question": "What percentage of health insurance premium does the company cover for employees?",
+            "answer": "The company covers 80% of health insurance premium for employees. ",
+            "ground_truth": "The company covers 80% of the medical insurance premium for employees."
+          }
+        ],
+        "faithfulness": 1.0,
+        "answer_relevancy": 0.6942,
+        "answer_correctness": 1.0,
+        "errors": []
+      },
+      "api_usage": {
+        "answer_llm_calls": 10,
+        "ragas_judge_evaluations": 30,
+        "custom_judge_calls": 0
+      }
+    }
+  }
+}

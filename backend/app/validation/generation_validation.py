@@ -1,8 +1,13 @@
 """
 Generation Validation - checks if the LLM answer is correct and faithful.
+
+Two evaluation modes:
+    - validate_generation(): custom LLM-as-judge (legacy, behind --custom-judge)
+    - validate_generation_ragas(): Ragas-based metrics (default)
+
+Ragas imports are lazy so retrieval-only runs never need them.
 """
-from typing import Dict, List
-from app.llm import CerebrasLLM
+from typing import Dict, List, Optional
 
 
 def validate_generation(
@@ -12,7 +17,10 @@ def validate_generation(
     ground_truth: str = None,
 ) -> Dict:
     """
-    Validate generation quality.
+    Validate generation quality with a custom LLM-as-judge.
+
+    Legacy mode, enabled via --custom-judge. Produces overall_score and
+    custom_overall_generation_score in validate.py.
 
     Args:
         question: The user's question
@@ -20,6 +28,8 @@ def validate_generation(
         context: The retrieved context used to generate the answer
         ground_truth: Known correct answer (optional)
     """
+    from app.llm import CerebrasLLM
+
     results = {
         "answer": answer,
         "metrics": {},
@@ -165,3 +175,131 @@ JSON:"""
         results["verdict"] = "NEEDS_REVIEW"
 
     return results
+
+
+def validate_generation_ragas(
+    samples: List[Dict],
+    metric_names: Optional[List[str]] = None,
+    show_progress: bool = False,
+) -> Dict:
+    """
+    Evaluate RAG answers with Ragas (default evaluation mode).
+
+    Runs one ragas.evaluate() call over all samples (answers are generated
+    once by validate.py before this call - no duplicate LLM generation).
+
+    Args:
+        samples: list of dicts with keys:
+            question (str), answer (str), contexts (list[str]),
+            ground_truth (str | None)
+        metric_names: subset of SUPPORTED_RAGAS_METRICS; defaults to the
+            3 core metrics (faithfulness, answer_relevancy,
+            answer_correctness).
+        show_progress: ragas progress bar (off by default).
+
+    Returns:
+        {
+          "metrics": {name: mean_score_or_None},   # mean over samples
+          "per_sample": [{"question": str, "metrics": {name: score_or_None}}],
+          "errors": [str],
+        }
+
+    Raises:
+        ValueError: on unknown metric names.
+        RuntimeError: if GROQ_API_KEY is missing (judge LLM required).
+    """
+    import asyncio
+    import math
+
+    from app.validation.ragas_compat import (
+        DEFAULT_RAGAS_METRICS,
+        SUPPORTED_RAGAS_METRICS,
+        build_ragas_embeddings,
+        build_ragas_llm,
+        build_ragas_metrics,
+        ensure_ragas_ready,
+    )
+
+    errors = []
+    # Skip samples without an answer - Ragas fails on None responses.
+    total_in = len(samples)
+    samples = [s for s in samples if s.get("answer")]
+    if total_in > len(samples):
+        errors.append(f"{total_in - len(samples)} sample(s) skipped (no answer)")
+    if not samples:
+        return {"metrics": {}, "per_sample": [], "errors": errors or ["no samples to evaluate"]}
+
+    metric_names = list(metric_names or DEFAULT_RAGAS_METRICS)
+    unknown = [n for n in metric_names if n not in SUPPORTED_RAGAS_METRICS]
+    if unknown:
+        raise ValueError(
+            f"Unknown Ragas metric(s): {unknown}. "
+            f"Supported: {SUPPORTED_RAGAS_METRICS}"
+        )
+
+    ensure_ragas_ready()
+
+    from datasets import Dataset
+    from ragas import aevaluate
+
+    rows = [
+        {
+            "user_input": s["question"],
+            "response": s["answer"],
+            "retrieved_contexts": list(s["contexts"]),
+            "reference": s.get("ground_truth"),
+        }
+        for s in samples
+    ]
+    dataset = Dataset.from_list(rows)
+
+    llm = build_ragas_llm()
+    needs_embeddings = bool(
+        set(metric_names) & {"answer_relevancy", "answer_correctness"}
+    )
+    embeddings = build_ragas_embeddings() if needs_embeddings else None
+    metrics = build_ragas_metrics(metric_names, llm, embeddings)
+
+    result = asyncio.run(
+        aevaluate(
+            dataset=dataset,
+            metrics=metrics,
+            llm=llm,
+            embeddings=embeddings,
+            raise_exceptions=False,
+            show_progress=show_progress,
+        )
+    )
+
+    per_sample = []
+    for i, row in enumerate(result.scores):
+        sample_metrics = {}
+        for name in metric_names:
+            value = row.get(name)
+            if isinstance(value, float) and math.isnan(value):
+                value = None
+            elif isinstance(value, (int, float)):
+                value = round(float(value), 4)
+            sample_metrics[name] = value
+        per_sample.append(
+            {"question": samples[i]["question"], "metrics": sample_metrics}
+        )
+
+    for name in metric_names:
+        scores = [ps["metrics"][name] for ps in per_sample]
+        numeric = [v for v in scores if v is not None]
+        if not numeric:
+            errors.append(f"metric '{name}' produced no scores")
+
+    aggregate = {}
+    for name in metric_names:
+        numeric = [
+            ps["metrics"][name]
+            for ps in per_sample
+            if ps["metrics"][name] is not None
+        ]
+        aggregate[name] = (
+            round(sum(numeric) / len(numeric), 4) if numeric else None
+        )
+
+    return {"metrics": aggregate, "per_sample": per_sample, "errors": errors}
